@@ -9,14 +9,14 @@
         WallKilled,
         TileReplaced,
         WallReplaced,
+        SeedPlanted,
+        ItemPainted,
         TileWhiteListed,
         WallWhiteListed,
         ItemWhiteListed,
         TileBlackListed,
         WallBlackListed,
-        ItemBlackListed,
-        SeedPlanted,
-        ItemPainted
+        ItemBlackListed
     }
 
     public enum LogType : byte

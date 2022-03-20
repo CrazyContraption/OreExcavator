@@ -174,111 +174,138 @@ namespace OreExcavator /// The Excavator of ores
 
             Log($"Packet from: '{(Main.netMode == NetmodeID.MultiplayerClient ? $"SERVER', origin: 'Player.{Main.player[origin].name}" : "Player." + Main.player[origin].name) + $" ({origin})"}', type: 'ActionType.{msgType}'", default, LogType.Debug);
 
-            if (msgType == ActionType.HaltExcavations)
+            switch (msgType)
             {
-                if (Main.netMode == NetmodeID.Server)
-                {
-                    packet.Write((byte)ActionType.HaltExcavations);
-                    packet.Send(-1, origin);
-                }
-                playerHalted[origin] = true;
-            }
-            else if (msgType == ActionType.ResetExcavations)
-            {
-                if (Main.netMode == NetmodeID.Server)
-                {
-                    packet.Write((byte)ActionType.ResetExcavations);
-                    packet.Send(-1, origin);
-                }
-                playerHalted[origin] = false;
-            }
-            else if (msgType == ActionType.TileKilled)
-            {
-                playerHalted[origin] = false;
-                ushort x = reader.ReadUInt16(), y = reader.ReadUInt16(), limit = reader.ReadUInt16(), delay = reader.ReadUInt16();
-                bool doDiagonals = reader.ReadBoolean();
-                ushort targetType = reader.ReadUInt16(), itemToTeleport = reader.ReadUInt16();
-                ModifySpooler(msgType, x, y, limit, delay, doDiagonals, targetType, itemToTeleport, origin, true);
-            }
-            else if (msgType == ActionType.WallKilled)
-            {
-                playerHalted[origin] = false;
-                ushort x = reader.ReadUInt16(), y = reader.ReadUInt16(), limit = reader.ReadUInt16(), delay = reader.ReadUInt16();
-                bool doDiagonals = reader.ReadBoolean();
-                ushort targetType = reader.ReadUInt16();
-                ModifySpooler(msgType, x, y, limit, delay, doDiagonals, targetType, -1, origin, true);
-            }
-            else if (msgType == ActionType.TileReplaced)
-            {
-                playerHalted[origin] = false;
-                ushort x = reader.ReadUInt16(), y = reader.ReadUInt16(), limit = reader.ReadUInt16(), delay = reader.ReadUInt16();
-                bool doDiagonals = reader.ReadBoolean();
-                ushort targetType = reader.ReadUInt16(), itemToTeleport = reader.ReadUInt16(), createItem = reader.ReadUInt16();
-                ModifySpooler(msgType, x, y, limit, delay, doDiagonals, targetType, itemToTeleport, origin, true, createItem);
-            }
-            else if (msgType == ActionType.WallReplaced)
-            {
-                playerHalted[origin] = false;
-                ushort x = reader.ReadUInt16(), y = reader.ReadUInt16(), limit = reader.ReadUInt16(), delay = reader.ReadUInt16();
-                bool doDiagonals = reader.ReadBoolean();
-                ushort targetType = reader.ReadUInt16(), createItem = reader.ReadUInt16();
-                ModifySpooler(msgType, x, y, limit, delay, doDiagonals, targetType, -1, origin, true, createItem);
-            }
-            else if (msgType == ActionType.SeedPlanted)
-            {
-                playerHalted[origin] = false;
-                ushort x = reader.ReadUInt16(), y = reader.ReadUInt16(), limit = reader.ReadUInt16(), delay = reader.ReadUInt16();
-                ushort targetType = reader.ReadUInt16(), newPlant = reader.ReadUInt16();
-            }
-            else if (msgType == ActionType.ItemPainted)
-            {
-                playerHalted[origin] = false;
-                ushort x = reader.ReadUInt16(), y = reader.ReadUInt16(), limit = reader.ReadUInt16(), delay = reader.ReadUInt16();
-                ushort targetType = reader.ReadUInt16(), newPaint = reader.ReadUInt16();
-            }
-            else if (msgType >= ActionType.TileWhiteListed && msgType <= ActionType.ItemBlackListed)
-            {
-                ushort id = (ushort)reader.ReadInt32();
-
-                if (Main.netMode == NetmodeID.MultiplayerClient)
-                    switch (msgType)
+                case ActionType.HaltExcavations:
                     {
-                        case ActionType.TileWhiteListed:
-                            Log($"{Main.player[origin].name} added 'Tile.{GetFullNameById(id, msgType)} ({id})' to their personal whitelist.",
-                                Color.Green, LogType.Info);
-                            break;
-
-                        case ActionType.WallWhiteListed:
-                            Log($"{Main.player[origin].name} added 'Wall.{GetFullNameById(id, msgType)} ({id})' to their personal whitelist.",
-                                Color.Orange, LogType.Info);
-                            break;
-
-                        case ActionType.ItemWhiteListed:
-                            Log($"{Main.player[origin].name} added 'Item.{GetFullNameById(id, msgType)} ({id})' to their personal whitelist.",
-                                Color.Green, LogType.Info);
-                            break;
-
-                        case ActionType.TileBlackListed:
-                            Log($"{Main.player[origin].name} removed 'Tile.{GetFullNameById(id, msgType)} ({id})' from their personal whitelist.",
-                                Color.Orange, LogType.Info);
-                            break;
-
-                        case ActionType.WallBlackListed:
-                            Log($"{Main.player[origin].name} removed 'Wall.{GetFullNameById(id, msgType)} ({id})' from their personal whitelist.",
-                                Color.Green, LogType.Info);
-                            break;
-
-                        case ActionType.ItemBlackListed:
-                            Log($"{Main.player[origin].name} removed 'Item.{GetFullNameById(id, msgType)} ({id})' from their personal whitelist.",
-                                Color.Orange, LogType.Info);
-                            break;
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            packet.Write((byte)ActionType.HaltExcavations);
+                            packet.Send(-1, origin);
+                        }
+                        playerHalted[origin] = true;
                     }
-                else
-                {
-                    packet.Write((byte)msgType);
-                    packet.Write(id);
-                    packet.Send(-1, origin);
-                }
+                    break;
+
+                case ActionType.ResetExcavations:
+                    {
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            packet.Write((byte)ActionType.ResetExcavations);
+                            packet.Send(-1, origin);
+                        }
+                        playerHalted[origin] = false;
+                    }
+                    break;
+
+                case ActionType.TileKilled:
+                    {
+                        playerHalted[origin] = false;
+                        ushort x = reader.ReadUInt16(), y = reader.ReadUInt16(), limit = reader.ReadUInt16(), delay = reader.ReadUInt16();
+                        bool doDiagonals = reader.ReadBoolean();
+                        ushort targetType = reader.ReadUInt16(), itemToTeleport = reader.ReadUInt16();
+                        ModifySpooler(msgType, x, y, limit, delay, doDiagonals, targetType, itemToTeleport, origin, true);
+                    }
+                    break;
+
+                case ActionType.WallKilled:
+                    {
+                        playerHalted[origin] = false;
+                        ushort x = reader.ReadUInt16(), y = reader.ReadUInt16(), limit = reader.ReadUInt16(), delay = reader.ReadUInt16();
+                        bool doDiagonals = reader.ReadBoolean();
+                        ushort targetType = reader.ReadUInt16();
+                        ModifySpooler(msgType, x, y, limit, delay, doDiagonals, targetType, -1, origin, true);
+                    }
+                    break;
+
+                case ActionType.TileReplaced:
+                    {
+                        playerHalted[origin] = false;
+                        ushort x = reader.ReadUInt16(), y = reader.ReadUInt16(), limit = reader.ReadUInt16(), delay = reader.ReadUInt16();
+                        bool doDiagonals = reader.ReadBoolean();
+                        ushort targetType = reader.ReadUInt16(), itemToTeleport = reader.ReadUInt16(), createItem = reader.ReadUInt16();
+                        ModifySpooler(msgType, x, y, limit, delay, doDiagonals, targetType, itemToTeleport, origin, true, createItem);
+                    }
+                    break;
+
+                case ActionType.WallReplaced:
+                    {
+                        playerHalted[origin] = false;
+                        ushort x = reader.ReadUInt16(), y = reader.ReadUInt16(), limit = reader.ReadUInt16(), delay = reader.ReadUInt16();
+                        bool doDiagonals = reader.ReadBoolean();
+                        ushort targetType = reader.ReadUInt16(), createItem = reader.ReadUInt16();
+                        ModifySpooler(msgType, x, y, limit, delay, doDiagonals, targetType, -1, origin, true, createItem);
+                    }
+                    break;
+
+                case ActionType.SeedPlanted:
+                    {
+                        playerHalted[origin] = false;
+                        ushort x = reader.ReadUInt16(), y = reader.ReadUInt16(), limit = reader.ReadUInt16(), delay = reader.ReadUInt16();
+                        ushort targetType = reader.ReadUInt16(), newPlant = reader.ReadUInt16();
+                        // TODO: ADD SEED LOGIC AND CALL SPOOLER
+                    }
+                    break;
+
+                case ActionType.ItemPainted:
+                    {
+                        playerHalted[origin] = false;
+                        ushort x = reader.ReadUInt16(), y = reader.ReadUInt16(), limit = reader.ReadUInt16(), delay = reader.ReadUInt16();
+                        ushort targetType = reader.ReadUInt16(), newPaint = reader.ReadUInt16();
+                        // TODO: ADD PAINT LOGIC AND CALL SPOOLER
+                    }
+                    break;
+
+                case ActionType.TileWhiteListed:
+                case ActionType.WallWhiteListed:
+                case ActionType.ItemWhiteListed:
+                case ActionType.TileBlackListed:
+                case ActionType.WallBlackListed:
+                case ActionType.ItemBlackListed:
+                    {
+                        ushort id = (ushort)reader.ReadInt32();
+
+                        if (Main.netMode == NetmodeID.MultiplayerClient)
+                            switch (msgType)
+                            {
+                                case ActionType.TileWhiteListed:
+                                    Log($"{Main.player[origin].name} added 'Tile.{GetFullNameById(id, msgType)} ({id})' to their personal whitelist.",
+                                        Color.Green, LogType.Info);
+                                    break;
+
+                                case ActionType.WallWhiteListed:
+                                    Log($"{Main.player[origin].name} added 'Wall.{GetFullNameById(id, msgType)} ({id})' to their personal whitelist.",
+                                        Color.Orange, LogType.Info);
+                                    break;
+
+                                case ActionType.ItemWhiteListed:
+                                    Log($"{Main.player[origin].name} added 'Item.{GetFullNameById(id, msgType)} ({id})' to their personal whitelist.",
+                                        Color.Green, LogType.Info);
+                                    break;
+
+                                case ActionType.TileBlackListed:
+                                    Log($"{Main.player[origin].name} removed 'Tile.{GetFullNameById(id, msgType)} ({id})' from their personal whitelist.",
+                                        Color.Orange, LogType.Info);
+                                    break;
+
+                                case ActionType.WallBlackListed:
+                                    Log($"{Main.player[origin].name} removed 'Wall.{GetFullNameById(id, msgType)} ({id})' from their personal whitelist.",
+                                        Color.Green, LogType.Info);
+                                    break;
+
+                                case ActionType.ItemBlackListed:
+                                    Log($"{Main.player[origin].name} removed 'Item.{GetFullNameById(id, msgType)} ({id})' from their personal whitelist.",
+                                        Color.Orange, LogType.Info);
+                                    break;
+                            }
+                        else
+                        {
+                            packet.Write((byte)msgType);
+                            packet.Write(id);
+                            packet.Send(-1, origin);
+                        }
+                    }
+                    break;
             }
         }
 
