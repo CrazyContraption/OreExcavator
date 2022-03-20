@@ -1,0 +1,114 @@
+
+Welcome to Ore Excavator! - Last Updated 2/09/2022
+
+
+Ore Excavator has become the offical 1.4 port of VeinMiner, with VeinMiner being discontinued, and merged into Ore Excavator with permission.
+
+Just like with Minecraft's Ore Excavator, Ore Excavator aims to improve, expand, and adapt with the future of the modding community for the ultimate quality of life experience. Ore Excavator allows you to effortlessly mine groups of ores, walls, and perform many other tile manipulation features effortlessly at once, with plenty more to come before 1.0!
+
+Credit to NanobotZ for the base code and the original concept!
+
+
+FEATURES:
+ - Mine adjacent tiles/walls from a single block
+ - Vein-swap adjacent tiles/walls from a single block
+ - Configurable whitelist with block picker controls in-game
+ - Fully configurable client controls and keybindings
+ - Fully configurable client settings to tailor to dynamic performance needs
+ - Fully threaded support
+ - Autoswing enabled
+ - Progression friendly
+ - Powerful server management configurations
+ - Full multiplayer support
+ - Full modded support
+
+
+!!! THIS IS AN ALPHA VERSION !!!
+This is intended for early access users wishing to play on 1.4, and is likely to be broken several times!
+
+I will do my best to ensure that the mod stays for compatible and issue updates as needed, especially for multiplayer.
+
+Due to the nature of the mod, bugs involving deleting massive amounts of blocks, walls, and similar issues are to be expected.
+Please report any issues -no matter how small- to the Steam workshop page, or reach out to me on the tModloader Discord (@CrazyContraption#0666)
+
+PLEASE REPORT ANY ISSUES, EVEN IF YOU THINK IT MAY ALREADY BE REPORTED!!
+It helps us deduce how common the issue is, and to better gather data on who, and how it happens.
+
+We're also open to suggestions and feedback!
+
+
+FAQ
+
+Q:"Is this VeinMiner for 1.4?"
+A:Technically, yes it is! I have been given permission and the original source code to adapt and expand the mod for Terraria 1.4.
+
+Q:"Why is the name different?"
+A:The original author and I have agreed that 1.3 Terraria and earlier will be known for VeinMiner, and Ore Excavator will earn its name in 1.4, building off of the existing community and support. 
+
+Q:"Is this mod open source?"
+A:At this time, due to the mix of licensed code and the daily reworks, we've decided to keep the mod and its content private. However, in the future we plan to open source it once we feel the mod is complete, and we want the community to take over keeping it alive!
+
+Q:"What's happening to VeinMiner?"
+A:Nothing! 1.3 VeinMiner will remain as it always was, and we're simply upgrading it, and renaming it for 1.4 Terraria. The old name is still reserved however.
+
+Q:"How do I use the mod?"
+A:By default, holding tilde ( ` ) with any pick/hammer will excavate the corresponding elements they target. Additional settings and keybinds are available in the mod's configurations, take a peek!
+
+Q:"Does this work in multiplayer?"
+A:Yes! Yes! Yes! This is a huge priority for us, and we plan on implementing a full permissions system and expanding on the original multiplayer complexity of VeinMiner.
+
+Q:"Does this work with modded content?"
+A:Yes! But also no... we don't know. Every mod is different and unique, however most modded tiles, tools, and walls should work seamlessly without issue! Please let us know if you encounter any major issues, and we'll be sure to add some failsafes to include them forcefully!
+
+Q:"Do you use any IL edits?"
+A:Yes! As of v0.5.2, IL was learned and implemented to better increase the efficiency, and stability of the mod.
+
+
+ROADMAP (Order of Priority)
+
+ 1 - Chain Planting - UP NEXT
+ 2 - Chain Painting - UP NEXT
+ 3 - Highlight Blocks/Walls That Will be Excavated Before Excavation
+ 4 - Excavation Consumes Mana Toggle (for balanced play)
+ 5 - Excavation Restricted to New Modifiers Toggle (for balanced play)
+ 6 - Translations
+
+
+CHANGELOG
+
+0.6.3
+ * Refactored and removed some unused code/comments. Filesizes should be slightly smaller now.
+ * Fixed issues with the Tile struct changes.
+ * Re-fixed wall excavations again.
+ * Added some more logic to the paint and seed excavation features, still not ready yet, sorry!
+ * Added a client config to disable excavation tooltips (does not affect toggle text notifications).
+ * Added a client config to enable debug logging information (used to be always on, off by default now).
+ * Added a double-tap blacklist override for singleplayer worlds. - Thanks @Rappy#6729 on Discord for this diea!
+
+0.6.2
+ * Added a secret Frog.
+ * Fixed a bug that would consume seeds and paint, despite these features not being implemented yet. - Thanks @Nokutori on Steam for this report!
+
+0.6.1
+ * Added a toggle to disable the mod's version welcome message - Thanks to @Phaeton on Steam for this suggestion!
+
+0.6.0
+ * We've moved from ID whitelists to internal names instead. This means we're also sporting full mod support!
+ * Changed whitelists from server-side to client-side. You can now have personal whitelists!
+ * Changed block limits from server-side to client-side as well.
+ * Refactored the default whitelists. Goodbye living logs. Sorry Chippy!
+ * Completely revamped multiplayer, so we shouldn't have any more crashes... like ever.
+ * Added multiple server BLACKLISTS to determine tiles that should not be allowed for client whitelisting, mainly used for Dirt/Stone/other basics.
+ * Added server toggles for blacklists, in case people find them annoying.
+ * Added some failsafes/warnings to chat to better protect players, and their worlds from harm. Information is key!
+ * Added an ore dictionary that should auto-detect and whitelist modded ores.
+ * Added config saving! When you whitelist something, it now actually saves. Ooops.
+ * Added a server configuration to cap how many tiles the client is allowed to set their limit to, this takes priority.
+ * Added some hooks for future item features~! ;P
+ * Fixed some of the teleportation hooks. Wall drops are still broken, sorry!
+ * Fixed wall excavations. Someone hurt worldgen badly. I hurt them back.
+
+
+...See all previous updates on the Steam Workshop page!
+
+"Frog" - @pro gamer#4478
