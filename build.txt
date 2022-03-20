@@ -4,4 +4,4 @@ version = 0.6.3
 hideCode = true
 hideResources = true
 includeSource = false
-buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*
+buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*, README.*
