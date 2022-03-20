@@ -13,6 +13,14 @@ namespace OreExcavator
         internal static bool excavatorHeld = false;
         internal static byte timeout = 0;
 
+        /// <summary>
+        /// Called manually, this updates configs and does the various checks to ensure a list update is valid.
+        /// Also formats and saves the update accordingly if it is deemed valid.
+        /// </summary>
+        /// 
+        /// <param name="actionType">What was the action being performed, usually whilelisting/removing the various types</param>
+        /// <param name="name">The game-name of the object that is being modified with the list</param>
+        /// <param name="typeId">The game-ID of the object that is being modified with the list</param>
         internal static void setListUpdates(ActionType actionType, int typeId, string name)
         {
             Item item = Main.HoverItem;
@@ -164,6 +172,12 @@ namespace OreExcavator
             }
         }
 
+        /// <summary>
+        /// Called each tick to process any keybinding triggers that should be handled in that tick.
+        /// Used to update excavation status, whitelisting, etc.
+        /// </summary>
+        /// 
+        /// <param name="triggersSet"></param>
         public override void ProcessTriggers(TriggersSet triggersSet)
         {
             excavatorHeld = OreExcavator.ExcavateHotkey.Current;

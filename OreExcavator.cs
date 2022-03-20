@@ -32,7 +32,7 @@ namespace OreExcavator /// The Excavator of ores
         public static OreExcavator myMod = ModContent.GetInstance<OreExcavator>();
 
         /// <summary>
-        /// Per-thread boolean that signifies if an excavation is taking place on that thread
+        /// Per-thread boolean that signifies if an excavation-related actions are taking place on that thread.
         /// </summary>
         [ThreadStatic] public static bool killCalled = false;
         [ThreadStatic] public static bool puppeting = false;
@@ -45,11 +45,11 @@ namespace OreExcavator /// The Excavator of ores
 
         /// <summary>
         /// Called by tML when the mod is asked to load.
-        /// This binds various important aspects of the mod
+        /// This binds various important aspects of the mod.
         /// </summary>
         public override void Load()
         {
-            ExcavateHotkey = KeybindLoader.RegisterKeybind(this, "Excavate (while clicking)", "OemTilde");
+            ExcavateHotkey  = KeybindLoader.RegisterKeybind(this, "Excavate (while mining)", "OemTilde");
             WhitelistHotkey = KeybindLoader.RegisterKeybind(this, "Whitelist hovered", "Insert");
             BlacklistHotkey = KeybindLoader.RegisterKeybind(this, "Un-whitelist hovered", "Delete");
             
@@ -63,21 +63,26 @@ namespace OreExcavator /// The Excavator of ores
 
         /// <summary>
         /// Disables break noises for tiles/walls.
-        /// Prevents fatal FAudio duplication crash
+        /// Prevents fatal FAudio duplication crash.
         /// </summary>
         /// 
         /// <param name="il"></param>
         private static void SoundFixIL(ILContext il)
         {
-            var cursor = new ILCursor(il);
+            var cursor = new ILCursor(il); // The current "instruction"
             var label = il.DefineLabel();
 
-            cursor.EmitDelegate<Func<bool>>(() => killCalled);
-            cursor.Emit(Mono.Cecil.Cil.OpCodes.Brfalse, label);
-            cursor.Emit(Mono.Cecil.Cil.OpCodes.Ret);
-            cursor.MarkLabel(label);
+            cursor.EmitDelegate<Func<bool>>(() => killCalled); // If this thread manually called a kill
+            cursor.Emit(Mono.Cecil.Cil.OpCodes.Brfalse, label); // If kill was not manually called, goto label
+            cursor.Emit(Mono.Cecil.Cil.OpCodes.Ret); // If kill was called, return immediately, don't play any audio
+            cursor.MarkLabel(label); // Label
         }
 
+        /// <summary>
+        /// Executes once most -if not all- modded content is loaded by tML.
+        /// Looks for items from other mods that could be classified as ores, gems, chunks, etc.
+        /// May change from time to time as mods change their preferences.
+        /// </summary>
         public override void PostSetupContent()
         {
             Log("Looking for modded ores and gems to whitelist...", default, LogType.Debug);
