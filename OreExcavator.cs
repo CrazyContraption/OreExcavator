@@ -65,6 +65,7 @@ namespace OreExcavator /// The Excavator of ores
         /// Disables break noises for tiles/walls.
         /// Prevents fatal FAudio duplication crash
         /// </summary>
+        /// 
         /// <param name="il"></param>
         private static void SoundFixIL(ILContext il)
         {
@@ -148,6 +149,7 @@ namespace OreExcavator /// The Excavator of ores
         /// Handles incoming packets from clients, or the server.
         /// Should never execute during singleplayer scenarios
         /// </summary>
+        /// 
         /// <param name="reader">Stream of data contained by the packet, first byte is always the type</param>
         /// <param name="whoAmI">Player index of who sent the packet</param>
         public override void HandlePacket(BinaryReader reader, int whoAmI)
@@ -275,10 +277,10 @@ namespace OreExcavator /// The Excavator of ores
             }
         }
 
-
         /// <summary>
-        /// 
+        /// This "spools up" a threaded task that will define and monitor a new excavation. Clients call this locally, and servers that recieve valid packets call this with pupetting properties.
         /// </summary>
+        /// 
         /// <param name="actionType"></param>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -329,8 +331,11 @@ namespace OreExcavator /// The Excavator of ores
         }
 
         /// <summary>
-        /// Searches around the given origin for matching types, and modifies them based on refined clauses
+        /// Searches around the given origin for matching types, and modifies them based on refined clauses.
+        /// This also recursively schedules new nodes to search from, but only serially, never concurrently.
+        /// tML hates concurrency in large amounts, its got enough to worry about already.
         /// </summary>
+        /// 
         /// <param name="actionType">Type of action being performed</param>
         /// <param name="originX">X coordinate of the entity to start searching from</param>
         /// <param name="originY">Y coordinate  of the entity to start searching from (top of world is y = 0)</param>
@@ -368,9 +373,14 @@ namespace OreExcavator /// The Excavator of ores
                 ch_y = new sbyte[] { -1, 0, 1, 0, -1, 1, 1, -1 };
             }
 
+            // Untested
+            int hardlimit = Math.Min(ClientConfig.recursionLimit, ServerConfig.recursionLimit);
             if (limit < 1)
                 if (Main.netMode == NetmodeID.MultiplayerClient)
-                    limit = (isReplacing && ClientConfig.recursionLimit > Main.player[playerID].CountItem(relpaceItemType) ? Main.player[playerID].CountItem(relpaceItemType) : ClientConfig.recursionLimit);
+                    if (isReplacing && hardlimit > Main.player[playerID].CountItem(relpaceItemType))
+                        limit = Main.player[playerID].CountItem(relpaceItemType);
+                    else
+                        limit = hardlimit;
 
             Log($"(ID:{playerID} - P:{puppeting}) {actionType}, OX:{originX}, OY:{originY}, L:{limit}, D:{delay}, DD:{doDiagonals}, TT:{targetType}, TP:{itemToTeleport}, RT:{relpaceItemType}", default, LogType.Debug);
 
@@ -458,6 +468,8 @@ namespace OreExcavator /// The Excavator of ores
         }
 
         /* AlterHandler
+         * 
+         * You can tell this method is old, it's comment syntax just hits different, don't it?
          * 
          * int x - X coordinate of the block/wall to be killed
          * int y - Y coordinate of the block/wall to be killed (top of world is y = 0)
@@ -563,7 +575,7 @@ namespace OreExcavator /// The Excavator of ores
             return found;
         }
 
-        // My sad attempt at reflection
+        /// My sad attempt at reflection
         /*internal static void reflect(string assembly, object?[] parameters)
         {
             var paths = assembly.Split('.');
@@ -574,8 +586,9 @@ namespace OreExcavator /// The Excavator of ores
 
         /// <summary>
         /// Gets the fully named string of a tile/wall/item with mod prefix.
-        /// Used for writing to whitelists
+        /// Used for writing to whitelists, as this standardizes our prefixes.
         /// </summary>
+        /// 
         /// <param name="id">ID to translate into a string</param>
         /// <param name="type">Whitelist type of the ID being passed, black/white treated the same</param>
         /// <returns>Translated string</returns>
@@ -618,8 +631,9 @@ namespace OreExcavator /// The Excavator of ores
 
         /// <summary>
         /// Gets the ID of a tile/wall/item with respect to tML loader designations.
-        /// Used for reading from whitelists
+        /// Used for reading from whitelists.
         /// </summary>
+        /// 
         /// <param name="fullName">Full name to translate into an ID</param>
         /// <param name="type">Whitelist type of the ID being passed, black/white treated the same</param>
         /// <returns>Translated ID. Returns negative for invalid types</returns>
@@ -692,7 +706,8 @@ namespace OreExcavator /// The Excavator of ores
             }
         }
 
-        /*internal static void Load(ModConfig config)
+        /// OUTDATED CODE - REMOVE?
+        /* internal static void Load(ModConfig config)
         {
             string filename = config.Mod.Name + "_" + config.Name + ".json";
             string path = Path.Combine(ModConfigPath, filename);
@@ -716,6 +731,12 @@ namespace OreExcavator /// The Excavator of ores
             }
         }*/
 
+        /// <summary>
+        /// For whatever reason, ModConfig has no native way of saving runtime changes to a config.
+        /// So here I am, writing a file system to manually save changes, usually just whitelist changes.
+        /// </summary>
+        /// 
+        /// <param name="config">The configuration object to write to storage from memory.</param>
         internal static void SaveConfig(ModConfig config)
         {
             Log($"Saving config '{config.Name}' changes...", default, LogType.Debug);
@@ -763,8 +784,9 @@ namespace OreExcavator /// The Excavator of ores
     {
         /// <summary>
         /// Called when the player hits a block.
-        /// This handles the tile's death, and subsequently will kill other tiles under the right conditions
+        /// This handles the tile's death, and subsequently will kill other tiles under the right conditions.
         /// </summary>
+        /// 
         /// <param name="x">X coordinate of the tile that was struck</param>
         /// <param name="y">Y coordinate of the tile that was struck (top of world is y = 0)</param>
         /// <param name="type">Tile ID of the tile that was struck</param>
@@ -813,8 +835,9 @@ namespace OreExcavator /// The Excavator of ores
 
         /// <summary>
         /// Called when the player hits a wall.
-        /// This handles the wall's death, and subsequently will kill other walls under the right conditions
+        /// This handles the wall's death, and subsequently will kill other walls under the right conditions.
         /// </summary>
+        /// 
         /// <param name="x">X coordinate of the wall that was struck</param>
         /// <param name="y">Y coordinate of the wall that was struck (top of world is y = 0)</param>
         /// <param name="type">Tile ID of the wall that was struck</param>
@@ -858,9 +881,10 @@ namespace OreExcavator /// The Excavator of ores
     public class ExcavatorItem : GlobalItem
     {
         /// <summary>
-        /// Called whenever a player uses an item
-        /// We use this as a hook for block swap excavations
+        /// Called whenever a player uses an item.
+        /// We use this as a hook for block swap excavations.
         /// </summary>
+        /// 
         /// <param name="item">The item in question that is being used</param>
         /// <param name="player">The player using the item in question</param>
         /// <returns>True if the item did something, false if not, null for default (for use timers)</returns>
@@ -901,7 +925,7 @@ namespace OreExcavator /// The Excavator of ores
                 actionType = ActionType.TileReplaced;
                 createType = (short)item.createTile;
             }
-            else if (item.createWall != 0 && item.createTile < item.createWall)
+            else if (item.createWall != 0 && item.createTile < item.createWall) // TODO: Investigate why this is < ?
             {
                 if (localTile.WallType <= 0 || !OreExcavator.ServerConfig.allowReplace || !OreExcavator.ClientConfig.doSpecials)
                     return null;
@@ -947,6 +971,7 @@ namespace OreExcavator /// The Excavator of ores
         /// Called on initial load
         /// Used to add control tips to items that are considered for excavation
         /// </summary>
+        /// 
         /// <param name="item">The item in question being modified</param>
         /// <param name="tooltips">Tooltips list of the provided item to append to or alter</param>
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
@@ -1030,8 +1055,9 @@ namespace OreExcavator /// The Excavator of ores
 
         /// <summary>
         /// Called when the game wants to know if we can right-click with a given item.
-        /// Used to call our async handler so we can manually add auto-swing to picks without caring about if they can be used
+        /// Used to call our async handler so we can manually add auto-swing to picks without caring about if they can be used.
         /// </summary>
+        /// 
         /// <param name="item">The item in question that is trying to be used</param>
         /// <param name="player">The player using the item in question</param>
         /// <returns></returns>
@@ -1047,10 +1073,11 @@ namespace OreExcavator /// The Excavator of ores
 
         /// <summary>
         /// Called manually to determine if we should be continually swinging.
-        /// This is here so we can use async tasks easily
+        /// This is here so we can use async tasks easily.
         /// This checks if the correct inputs are being held and whitelisting is approved,
-        /// and issues the actions to take if so, it also sets a followup task after the item's defined cooldown timer expires
+        /// and issues the actions to take if so, it also sets a followup task after the item's defined cooldown timer expires.
         /// </summary>
+        /// 
         /// <param name="item">The item in question</param>
         /// <param name="player">The player using the item in question</param>
         public void RepeatHandler(Item item, Player player)
@@ -1087,7 +1114,7 @@ namespace OreExcavator /// The Excavator of ores
 
     public class ExcavatorPlayer : ModPlayer
     {
-        public override void OnEnterWorld(Player player)
+        public override void OnEnterWorld(Player player) // Startup message
         {
             if (OreExcavator.ClientConfig.showWelcome063)
                 new Task(delegate

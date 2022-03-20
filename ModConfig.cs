@@ -17,7 +17,7 @@ namespace OreExcavator
         [Tooltip("Determines the maximum number of tiles" +
             "\nalterable per excavation for ALL clients!" +
             "\nThe smallest limit between the client and server will be used per client." +
-            "\nSet to 0 to disable the mod??" +
+            "\nSet to 0 to disable the mod, or max to let clients decide their own limits." +
             "\n\nLarger numbers WILL negatively affect performance!")]
         [Range(0, 10000)]
         [DefaultValue(10000)]
