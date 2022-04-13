@@ -203,7 +203,12 @@ namespace OreExcavator
                     if ((item.Name ?? "") != "" && item.pick + item.axe + item.hammer != 0)
                         Player.cursorItemIconText = "Excavating";
                     else if ((item.Name ?? "") != "" && (item.createTile >= 0.0 || item.createWall > 0))
-                        Player.cursorItemIconText = "Replacing";
+                        if (item.Name.ToLower().Contains("seed"))
+                            Player.cursorItemIconText = "Planting";
+                        else if (item.Name.ToLower().Contains("paint"))
+                            Player.cursorItemIconText = "Painting";
+                        else
+                            Player.cursorItemIconText = "Replacing";
 
             item = Main.HoverItem;
             if (OreExcavator.ServerConfig.allowQuickWhitelisting)

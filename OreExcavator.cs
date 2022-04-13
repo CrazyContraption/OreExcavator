@@ -26,7 +26,7 @@ namespace OreExcavator /// The Excavator of ores
 
         internal static OreExcavatorConfig_Client ClientConfig = ModContent.GetInstance<OreExcavatorConfig_Client>();
         internal static OreExcavatorConfig_Server ServerConfig = ModContent.GetInstance<OreExcavatorConfig_Server>();
-        internal static readonly string ModConfigPath = Path.Combine(Main.SavePath, "Mod Configs");
+        internal static readonly string ModConfigPath = Path.Combine(Main.SavePath, "ModConfigs");
 
         internal static ConcurrentDictionary<Point16, bool> masterTiles = new();
         public static OreExcavator myMod = ModContent.GetInstance<OreExcavator>();
@@ -414,7 +414,8 @@ namespace OreExcavator /// The Excavator of ores
                     else
                         limit = hardlimit;
 
-            Log($"(ID:{playerID} - P:{puppeting}) {actionType}, OX:{originX}, OY:{originY}, L:{limit}, D:{delay}, DD:{doDiagonals}, TT:{targetType}, TP:{itemToTeleport}, RT:{relpaceItemType}", default, LogType.Debug);
+            Log($"(ID:{playerID} - P:{puppeting}) {actionType}, OX:{originX}, OY:{originY}, L:{limit}, D:{delay}, DD:{doDiagonals}, TT:{targetType}, TP:{itemToTeleport}, RT:{relpaceItemType}", Color.Yellow, LogType.Debug);
+
 
             for (int tileCount = 0; queue.Count > 0 && tileCount < limit && !Main.gameMenu; tileCount++)
             {
@@ -422,6 +423,7 @@ namespace OreExcavator /// The Excavator of ores
 
                 if (masterTiles.TryAdd(new Point16(currentPoint.X, currentPoint.Y), false))
                 {
+
                     if (originX != currentPoint.X || originY != currentPoint.Y) // Ensure we're not spawning dirt for the initial break
                     {
                         killCalled = true;
@@ -440,7 +442,7 @@ namespace OreExcavator /// The Excavator of ores
                 //if (!falling || replacing)
                 Thread.Sleep(delay);
 
-                for (byte index = 0; index < (doDiagonals ? (falling ? 5 : 8) : (falling ? 3 : 4)); index++) // Looks fancy, but really just adds 4 if diagonals should be included
+                for (byte index = 0; index < (doDiagonals && actionType != ActionType.SeedPlanted && !isReplacing ? (falling ? 5 : 8) : (falling ? 3 : 4)); index++) // Looks fancy, but really just adds 4 if diagonals should be included
                 {
                     Point16 nextPoint = new(currentPoint.X + ch_x[index], currentPoint.Y + ch_y[index]);
 
@@ -512,69 +514,98 @@ namespace OreExcavator /// The Excavator of ores
          */
         public static bool AlterHandler(ActionType actionType, int x, int y, byte playerID, int teleportsItemType = -1, int consumesItemType = -1)
         {
+            Log($"AlterHandler ({x},{y}) - {actionType}", default, LogType.Debug);
             if (x < 0 || y < 0)
                 return false;
 
             switch (actionType)
             {
                 case ActionType.WallKilled:
-                    if (Main.tile[x, y].HasTile)
-                        return false;
-                    goto case ActionType.TileKilled;
-                case ActionType.TileKilled:
-                    if (actionType == ActionType.TileKilled)
                     {
-                        WorldGen.KillTile(x, y, false, false, ServerConfig.creativeMode);
-                        if (ServerConfig.teleportItems && teleportsItemType > 0)
-                            _ = teleportLastOfTypeToPlayer(teleportsItemType, playerID);
+                        if (Main.tile[x, y].HasTile)
+                            return false;
                     }
-                    else
-                        WorldGen.KillWall(x, y, false);
+                    goto case ActionType.TileKilled;
+
+                case ActionType.TileKilled:
+                    {
+                        if (actionType == ActionType.TileKilled)
+                        {
+                            WorldGen.KillTile(x, y, false, false, ServerConfig.creativeMode);
+                            if (ServerConfig.teleportItems && teleportsItemType > 0)
+                                _ = teleportLastOfTypeToPlayer(teleportsItemType, playerID);
+                        }
+                        else
+                            WorldGen.KillWall(x, y, false);
+                    }
                     break;
 
                 case ActionType.WallReplaced:
-                    if (Main.tile[x, y].HasTile)
-                        return false;
-                    goto case ActionType.TileReplaced;
-                case ActionType.TileReplaced:
-                    OreExcavator.Log("1", default, LogType.Debug);
-                    if (consumesItemType <= 0) // Invalid item type?
-                        goto case ActionType.TileKilled;
-                    OreExcavator.Log("2", default, LogType.Debug);
-                    int placeType;
-                    if (actionType == ActionType.TileReplaced)
-                        placeType = new Item(consumesItemType).createTile;
-                    else
-                        placeType = new Item(consumesItemType).createWall;
-                    OreExcavator.Log("TRETGRDGD " + placeType, default, LogType.Debug);
-                    if (placeType < 0) // Places invalid thing?
-                        return false;
-                    OreExcavator.Log("3", default, LogType.Debug);
-                    if (!ServerConfig.creativeMode && !puppeting)
                     {
-                        bool consumed = Main.player[playerID].ConsumeItem(consumesItemType);
-                        if (!consumed) // Does the player have items to place?
+                        if (Main.tile[x, y].HasTile)
                             return false;
                     }
-                    OreExcavator.Log("4", default, LogType.Debug);
-                    if (actionType == ActionType.TileReplaced)
+                    goto case ActionType.TileReplaced;
+
+                case ActionType.TileReplaced:
                     {
-                        WorldGen.ReplaceTile(x, y, (ushort)placeType, (int)Main.tile[x, y].Slope);
-                        if (ServerConfig.teleportItems && teleportsItemType > 0)
-                            _ = teleportLastOfTypeToPlayer(teleportsItemType, playerID);
+                        if (consumesItemType <= 0) // Invalid item type?
+                            return false; //goto case ActionType.TileKilled;
+                        int placeType;
+                        if (actionType == ActionType.TileReplaced)
+                            placeType = new Item(consumesItemType).createTile;
+                        else
+                            placeType = new Item(consumesItemType).createWall;
+                        if (placeType < 0) // Places invalid thing?
+                            return false;
+                        if (!ServerConfig.creativeMode && !puppeting)
+                        {
+                            bool consumed = Main.player[playerID].ConsumeItem(consumesItemType);
+                            if (!consumed) // Does the player have items to place?
+                                return false;
+                        }
+                        if (actionType == ActionType.TileReplaced)
+                        {
+                            WorldGen.ReplaceTile(x, y, (ushort)placeType, (int)Main.tile[x, y].Slope);
+                            if (ServerConfig.teleportItems && teleportsItemType > 0)
+                                _ = teleportLastOfTypeToPlayer(teleportsItemType, playerID);
+                        }
+                        else
+                        {
+                            WorldGen.ReplaceWall(x, y, (ushort)placeType);
+                            // Broken because we don't know the ids that walls drop :(
+                            /* if (ServerConfig.teleportItems && teleportsItemType > 0)
+                                _ = teleportLastOfTypeToPlayer(teleportsItemType, playerID); */
+                        }
                     }
-                    else
-                        WorldGen.ReplaceWall(x, y, (ushort)placeType);
-                    OreExcavator.Log("5", default, LogType.Debug);
                     break;
 
 
                 case ActionType.SeedPlanted:
+                    {
+                        
+                        if (consumesItemType <= 0) // Invalid item type?
+                            return false; //goto case ActionType.TileKilled;
+
+                        int placeType = new Item(consumesItemType).createTile;
+                        if (placeType < 0) // Places invalid thing?
+                            return false;
+
+                        if (!ServerConfig.creativeMode && !puppeting)
+                        {
+                            bool consumed = Main.player[playerID].ConsumeItem(consumesItemType);
+                            if (!consumed) // Does the player have items to place?
+                                return false;
+                        }
+
+                        WorldGen.SpreadGrass(x, y, Main.tile[x, y].TileType, placeType, false, Main.tile[x, y].TileColor);
+                    }
                     break;
 
-
                 case ActionType.ItemPainted:
-                    WorldGen.paintTile(x, y, PaintID.RedPaint, true);
+                    {
+                        WorldGen.paintTile(x, y, PaintID.RedPaint, true);
+                    }
                     break;
 
 
@@ -650,6 +681,7 @@ namespace OreExcavator /// The Excavator of ores
                 case ActionType.ItemBlackListed:
                 case ActionType.TileReplaced:
                 case ActionType.WallReplaced:
+                case ActionType.SeedPlanted:
                     var modItem = ItemLoader.GetItem(id);
                     if (modItem is not null)
                         return $"{modItem.Mod}:{modItem.Name}";
@@ -925,7 +957,7 @@ namespace OreExcavator /// The Excavator of ores
             if (WorldGen.gen || Main.netMode == NetmodeID.Server || Main.gameMenu || item.pick + item.axe + item.hammer != 0)
                 return null;
 
-            if (OreExcavator.ExcavateHotkey.GetAssignedKeys().Count <= 0 || item.Name.Contains("Seed") || item.Name.Contains("Paint"))
+            if (OreExcavator.ExcavateHotkey.GetAssignedKeys().Count <= 0)// || item.Name.ToLower().Contains("seed") || item.Name.ToLower().Contains("paint"))
                 return null;
 
             if (OreExcavator.ClientConfig.toggleExcavations ? !OreExcavator.excavationToggled : !OreExcavatorKeybinds.excavatorHeld)
@@ -946,18 +978,32 @@ namespace OreExcavator /// The Excavator of ores
 
             int x = Player.tileTargetX, y = Player.tileTargetY;
 
-            ActionType actionType = ActionType.HaltExcavations;
+            ActionType actionType = ActionType.None;
             short createType = -1;
             Tile localTile = OreExcavator.lookingAtTile;
 
-            if (item.createTile != 0 && item.createTile >= item.createWall)
+            if (item.createTile >= 0 && item.createTile >= item.createWall) // Replacing and planting
             {
-                if (localTile.TileType < 0 || !OreExcavator.ServerConfig.allowReplace || !OreExcavator.ClientConfig.doSpecials)
+                if (localTile.TileType < 0 || !OreExcavator.ClientConfig.doSpecials)
                     return null;
-                actionType = ActionType.TileReplaced;
-                createType = (short)item.createTile;
+
+                if (item.Name.ToLower().Contains("seed"))
+                {
+                    if (!OreExcavator.ServerConfig.chainPlanting)
+                        return null;
+
+                    actionType = ActionType.SeedPlanted;
+                    createType = (short)item.createTile;
+                }
+                else
+                {
+                    if (!OreExcavator.ServerConfig.allowReplace)
+                        return null;
+                    actionType = ActionType.TileReplaced;
+                    createType = (short)item.createTile;
+                }
             }
-            else if (item.createWall != 0 && item.createTile < item.createWall) // TODO: Investigate why this is < ?
+            else if (item.createWall > 0 && item.createTile < item.createWall)
             {
                 if (localTile.WallType <= 0 || !OreExcavator.ServerConfig.allowReplace || !OreExcavator.ClientConfig.doSpecials)
                     return null;
@@ -966,26 +1012,31 @@ namespace OreExcavator /// The Excavator of ores
             }
             else
             {
-                //OreExcavator.Log($"{item.paint}", Color.Aqua);
+                /// item.Name.ToLower().Contains("paint")
+                /// OreExcavator.Log($"{item.paint}", Color.Aqua);
                 return null;
             }
 
-            if (createType < 0 || (actionType == ActionType.TileReplaced && createType == localTile.TileType) || (actionType == ActionType.WallReplaced && createType == localTile.WallType)) // is it a valid type, and is what we're looking to replace valid?
+            if (createType < 0 || (actionType == ActionType.TileReplaced && createType == localTile.TileType) // is it a valid type, and is what we're looking to replace valid?
+                || (actionType == ActionType.WallReplaced && createType == localTile.WallType)
+                || (actionType == ActionType.SeedPlanted && createType == localTile.TileType))
                 return null;
 
             if (OreExcavator.ExcavateHotkey.GetAssignedKeys()[0] == "Mouse1")
                 if (OreExcavator.ServerConfig.allowReplace && OreExcavator.ClientConfig.doSpecials)
                 {
                     OreExcavator.Log($"\nHey! {OreExcavator.myMod.Name} here!" +
-                        $"\nWe've detected that you're using Left Mouse for excavations. We don't recommend this, but to protect your world, we've disabled all non-veinmine features for you!" +
-                        $"\nAs an alternative, we recommend using Right Mouse for excavations! Go ahead and try it out!" +
-                        $"\n\nYou can turn these features back on in the client configurations at any time after you switch your keybind off of Left Mouse.", Color.Orange, LogType.Warn);
+                         "\nWe've detected that you're using Left Mouse for excavations. We don't recommend this, but to protect your world, we've disabled all non-veinmine related features for you!" +
+                        $"\nAs an alternative, we recommend using {"Right Mouse"} for excavations! Go ahead and try it out!" +
+                         "\n\nYou can turn these features back on in the client configurations at any time after you switch your keybind off of Left Mouse.", Color.Orange, LogType.Warn);
                     OreExcavator.ClientConfig.doSpecials = false;
                     OreExcavator.SaveConfig(OreExcavator.ClientConfig);
                     return null;
                 }
 
+
             string itemName = OreExcavator.GetFullNameById(item.type, actionType);
+
             if (!OreExcavator.ClientConfig.itemWhitelist.Contains(itemName) || (OreExcavator.ServerConfig.itemBlacklistToggled && OreExcavator.ServerConfig.itemBlacklist.Contains(itemName)))
                 return null;
 
@@ -994,7 +1045,7 @@ namespace OreExcavator /// The Excavator of ores
                 WorldGen.KillTile_GetItemDrops(x, y, localTile, out itemDropType, out _, out _, out _);
 
             OreExcavator.ModifySpooler(actionType, x, y, OreExcavator.ClientConfig.recursionLimit, OreExcavator.ClientConfig.recursionDelay, OreExcavator.ClientConfig.doDiagonals, (actionType == ActionType.TileReplaced ? localTile.TileType : localTile.WallType), itemDropType, (byte)Main.myPlayer, false, item.type);
-            OreExcavator.lookingAtTile = Main.tile[x, y];
+            OreExcavator.lookingAtTile.CopyFrom(Main.tile[x, y]);
 
             return true;
         }
@@ -1038,9 +1089,9 @@ namespace OreExcavator /// The Excavator of ores
                     else if (name != "")
                     {
                         if (OreExcavator.ServerConfig.itemBlacklistToggled && OreExcavator.ServerConfig.itemBlacklist.Contains(OreExcavator.GetFullNameById(item.type, ActionType.ItemBlackListed)))
-                            tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", "Server host has blacklisted this item for chain-replacing"));
+                            tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", $"Server host has blacklisted this item for chain-{(item.Name.ToLower().Contains("seed") ? "planting" : "swapping")}"));
                         else if (OreExcavator.ClientConfig.itemWhitelist.Contains(OreExcavator.GetFullNameById(item.type, ActionType.ItemWhiteListed)))
-                            tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", $"Hold '{keybind}' while placing to veinswap!"));
+                            tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", $"Hold '{keybind}' while placing to chain-{(item.Name.ToLower().Contains("seed") ? "plant" : "swap")}!"));
                         else if (OreExcavator.WhitelistHotkey.GetAssignedKeys().Count > 0)
                         {
                             string whitelistKey = OreExcavator.WhitelistHotkey.GetAssignedKeys()[0];
@@ -1050,7 +1101,7 @@ namespace OreExcavator /// The Excavator of ores
                                 whitelistKey = "Right Click";
                             else if (whitelistKey == "Mouse1")
                                 whitelistKey = "Left Click";
-                            tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", $"Hover and press '{whitelistKey}' to whitelist for chain-swapping!"));
+                            tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", $"Hover and press '{whitelistKey}' to whitelist for chain-{(item.Name.ToLower().Contains("seed") ? "planting" : "swapping")}!"));
                         }
                     }
                         
@@ -1060,7 +1111,7 @@ namespace OreExcavator /// The Excavator of ores
                     if ((item.pick > 0 && OreExcavator.ServerConfig.allowPickaxing) || (item.hammer > 0 && OreExcavator.ServerConfig.allowHammering))
                         tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", "No keybind set, please set one in your control settings to start Excavating!"));
                     else if (name != "")
-                        tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", "No keybind set, please set one in your control settings to start chain-swapping!"));
+                        tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", $"No keybind set, please set one in your control settings to start chain-{(item.Name.ToLower().Contains("seed") ? "planting" : "swapping")}!"));
                 }
             }
         }
@@ -1073,7 +1124,7 @@ namespace OreExcavator /// The Excavator of ores
                 return true;
 
             if (OreExcavator.lookingCoordX != x || OreExcavator.lookingCoordY != y)
-                OreExcavator.lookingAtTile = Main.tile[x, y];
+                OreExcavator.lookingAtTile.CopyFrom(Main.tile[x, y]);
 
             if (OreExcavator.lookingCoordX != x)
                 OreExcavator.lookingCoordX = (ushort)x;
@@ -1148,16 +1199,16 @@ namespace OreExcavator /// The Excavator of ores
     {
         public override void OnEnterWorld(Player player) // Startup message
         {
-            if (OreExcavator.ClientConfig.showWelcome063)
+            if (OreExcavator.ClientConfig.showWelcome064)
                 new Task(delegate
                 {
                     Thread.Sleep(1500);
                     OreExcavator.Log($"[{OreExcavator.myMod.DisplayName}] - v{OreExcavator.myMod.Version}", Color.Yellow, LogType.Debug);
                     OreExcavator.Log($"\t  Hey, thanks for using {OreExcavator.myMod.Name}!", Color.Orange, LogType.Debug);
-                     OreExcavator.Log("\t  We recently updated, so your configurations are most likely gone; But fear not!", Color.Orange, LogType.Debug);
-                     OreExcavator.Log("\t  New and improved configs have taken their place, both serverside and clientside.", Color.Orange, LogType.Debug);
-                     OreExcavator.Log("\t  Be sure to check them out before playing again if you haven't already!", Color.Orange, LogType.Debug);
-                     OreExcavator.Log("\t  Oh yeah, you can also disable this in the Client configs~", Color.Yellow, LogType.Debug);
+                     OreExcavator.Log("\t  We recently updated to fix a few outstanding issues, and add better controller support.", Color.Orange, LogType.Debug);
+                     OreExcavator.Log("\t  Chain-swapping should be back to normal for tiles, and walls should be fully fixed.", Color.Orange, LogType.Debug);
+                     OreExcavator.Log("\t  We've also added new features for chain planting and painting!", Color.Orange, LogType.Debug);
+                     OreExcavator.Log("\t  Oh yeah, you can also disable this popup in your Client configs~", Color.Yellow, LogType.Debug);
                 }).Start();
         }
     }

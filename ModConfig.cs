@@ -30,6 +30,18 @@ namespace OreExcavator
         [DefaultValue(false)]
         public bool allowDiagonals;
 
+        [Label("Allow Chain Planting")]
+        [Tooltip("When enabled, clients will be allowed to chain-plant seeds." +
+            "\nDoes NOT work with saplings (yet!), only grass." +
+            "\n\nDoes NOT impact performance!")]
+        [DefaultValue(true)]
+        public bool chainPlanting;
+
+        [Label("Allow Chain Painting")]
+        [Tooltip("COMING SOON!")]
+        [DefaultValue(true)]
+        public bool chainPainting => false;
+
         [Label("Allow Quick Whitelist Keys")]
         [Tooltip("When enabled, using the whitelist keybinds will" +
             "\nadd/remove hovered tiles/walls/items to/from their client whitelist" +
@@ -44,6 +56,11 @@ namespace OreExcavator
             "\n\nDOES NOT WORK ON SERVERS YET!")]
         [DefaultValue(true)]
         public bool teleportItems;
+
+        [Label("Make Loot Lava-Proof")]
+        [Tooltip("COMING SOON!")]
+        [DefaultValue(false)]
+        public bool safeItems => false;
 
         [Label("Creative Mode")]
         [Tooltip("When enabled, items won't drop, items won't" +
@@ -145,19 +162,6 @@ namespace OreExcavator
         public HashSet<string> itemBlacklist = new() {
             //"Terraria:" + ItemID.Search.GetName(WallID.Wood),
         };
-
-
-        [Header("Server Settings - Work in progress")]
-
-        [Label("Allow Chain Planting")]
-        [Tooltip("Coming Soon!")]
-        [DefaultValue(true)]
-        public bool chainPlanting => false;
-
-        [Label("Make Loot Lava-Proof")]
-        [Tooltip("Coming Soon!")]
-        [DefaultValue(false)]
-        public bool safeItems => false;
     }
 
     [Label("Ore Excavator - Client Config")]
@@ -173,7 +177,7 @@ namespace OreExcavator
             "\nbe hidden for this version of the mod." +
             "\n\nNew versions will re-enable this feature.")]
         [DefaultValue(true)]
-        public bool showWelcome063;
+        public bool showWelcome064;
 
         [Label("Show Excavation Tooltip")]
         [Tooltip("When disabled, holding the" +

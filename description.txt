@@ -66,15 +66,24 @@ A:Yes! As of v0.5.2, IL was learned and implemented to better increase the effic
 
 ROADMAP (Order of Priority)
 
- 1 - Chain Planting - UP NEXT
- 2 - Chain Painting - UP NEXT
- 3 - Highlight Blocks/Walls That Will be Excavated Before Excavation
- 4 - Excavation Consumes Mana Toggle (for balanced play)
- 5 - Excavation Restricted to New Modifiers Toggle (for balanced play)
- 6 - Translations
+ 0 - Chain Painting - UP NEXT
+ 1 - Highlight Blocks/Walls That Will be Excavated Before Excavation
+ 2 - Excavation Consumes Mana Toggle (for balanced play)
+ 3 - Excavation Restricted to New Modifiers Toggle (for balanced play)
+ 4 - Translations
 
 
 CHANGELOG
+
+0.6.4
+ * Fixed some packet handling logic oversights. Servers should run slightly faster now.
+ * Fixed wall excavations.
+ * Fixed wall chain-swaps.
+ * Added improved controller support.
+ * Added a feature for setting a server-side excavation iteration limits.
+ * Added chain-planting for grass seeds!
+ * Added a private GitHub Repo, message me if you want to contribute!
+ * Added a startup Terraria forms page.
 
 0.6.3
  * Refactored and removed some unused code/comments. Filesizes should be slightly smaller now.
