@@ -27,7 +27,7 @@ namespace OreExcavator
         [Tooltip("When enabled, clients will be allowed to also" +
             "\ncheck for matches diagonal of the source when searching." +
             "\n\nDisabling this WILL slightly improve performance!")]
-        [DefaultValue(false)]
+        [DefaultValue(true)]
         public bool allowDiagonals;
 
         [Label("Allow Chain Planting")]
@@ -52,7 +52,7 @@ namespace OreExcavator
         [Label("Teleport Loot to Player")]
         [Tooltip("When enabled, excavated drops will be warped to" +
             "\nthe player that commanded the excavation(s)." +
-            "\n\nDisabling this may improve performance" +
+            "\n\nDisabling this may improve performance... or hurt it." +
             "\n\nDOES NOT WORK ON SERVERS YET!")]
         [DefaultValue(true)]
         public bool teleportItems;
@@ -177,7 +177,7 @@ namespace OreExcavator
             "\nbe hidden for this version of the mod." +
             "\n\nNew versions will re-enable this feature.")]
         [DefaultValue(true)]
-        public bool showWelcome064;
+        public bool showWelcome065;
 
         [Label("Show Excavation Tooltip")]
         [Tooltip("When disabled, holding the" +
@@ -220,7 +220,7 @@ namespace OreExcavator
 
         [Label("Do Initial Whitelist Checks")]
         [Tooltip("When enabled, the algorithm checks the whitelists & blacklists BEFORE" +
-            "\nand AFTER hitting attempting an excavation, rather than just AFTER." +
+            "\nand AFTER attempting an excavation, rather than just AFTER." +
             "\n\nDisabling this may improve performance, but" +
             "\ncause potentially unexpected results!")]
         [DefaultValue(false)]

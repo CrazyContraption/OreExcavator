@@ -1,5 +1,5 @@
 
-Welcome to Ore Excavator! - Last Updated 2/09/2022
+Welcome to Ore Excavator! - Last Updated 5/27/2022
 
 
 Ore Excavator has become the offical 1.4 port of VeinMiner, with VeinMiner being discontinued, and merged into Ore Excavator with permission.
@@ -12,7 +12,7 @@ Credit to NanobotZ for the base code and the original concept!
 FEATURES:
  - Mine adjacent tiles/walls from a single block
  - Vein-swap adjacent tiles/walls from a single block
- - Configurable whitelist with block picker controls in-game
+ - Configurable whitelist & blacklist with block picker controls in-game
  - Fully configurable client controls and keybindings
  - Fully configurable client settings to tailor to dynamic performance needs
  - Fully threaded support
@@ -39,6 +39,12 @@ We're also open to suggestions and feedback!
 
 FAQ
 
+Q:"Why doesn't the mod work?"
+A:Common issues include: Not having the mod enabled (enable it); Not having an excavation keybind set (set it in the controls section); having a corrupt version of the mod (redownload it).
+
+Q:"How do I use the mod?"
+A:By default, holding tilde ( ` ) with any pick/hammer will excavate the corresponding elements they target. The key must be set in the controls first! Additional settings and keybinds are available in the mod's configurations, take a peek!
+
 Q:"Is this VeinMiner for 1.4?"
 A:Technically, yes it is! I have been given permission and the original source code to adapt and expand the mod for Terraria 1.4.
 
@@ -50,9 +56,6 @@ A:At this time, due to the mix of licensed code and the daily reworks, we've dec
 
 Q:"What's happening to VeinMiner?"
 A:Nothing! 1.3 VeinMiner will remain as it always was, and we're simply upgrading it, and renaming it for 1.4 Terraria. The old name is still reserved however.
-
-Q:"How do I use the mod?"
-A:By default, holding tilde ( ` ) with any pick/hammer will excavate the corresponding elements they target. Additional settings and keybinds are available in the mod's configurations, take a peek!
 
 Q:"Does this work in multiplayer?"
 A:Yes! Yes! Yes! This is a huge priority for us, and we plan on implementing a full permissions system and expanding on the original multiplayer complexity of VeinMiner.
@@ -75,13 +78,23 @@ ROADMAP (Order of Priority)
 
 CHANGELOG
 
+0.6.5
+ * New icon!
+ * Added a warning if keybinds are unbound, and steps to resolve in-game.
+ * Removed IL soundfix, it's no longer needed.
+ * Resolved tML issue with ModConfigs crashing or displaying incorrectly.
+ * Resolved issue with welcome messages not working correctly.
+ * Resolved issue with multiplayer players being able to trigger remote excavations as another player.
+ * Resolved issue with bombs being able to trigger excavations, or any tile-killing block.
+
 0.6.4
+ * Fixed a critical issue with saving configs, whitelist keys will now properly save changes to your whitelists! - Thanks @Polaritz#5571 on Discord for this report!
  * Fixed some packet handling logic oversights. Servers should run slightly faster now.
  * Fixed wall excavations.
  * Fixed wall chain-swaps.
  * Added improved controller support.
+ * Some keen eyed folks may notice some additions to chain-planting, still not complete yet!
  * Added a feature for setting a server-side excavation iteration limits.
- * Added chain-planting for grass seeds!
  * Added a private GitHub Repo, message me if you want to contribute!
  * Added a startup Terraria forms page.
 
@@ -92,30 +105,7 @@ CHANGELOG
  * Added some more logic to the paint and seed excavation features, still not ready yet, sorry!
  * Added a client config to disable excavation tooltips (does not affect toggle text notifications).
  * Added a client config to enable debug logging information (used to be always on, off by default now).
- * Added a double-tap blacklist override for singleplayer worlds. - Thanks @Rappy#6729 on Discord for this diea!
-
-0.6.2
- * Added a secret Frog.
- * Fixed a bug that would consume seeds and paint, despite these features not being implemented yet. - Thanks @Nokutori on Steam for this report!
-
-0.6.1
- * Added a toggle to disable the mod's version welcome message - Thanks to @Phaeton on Steam for this suggestion!
-
-0.6.0
- * We've moved from ID whitelists to internal names instead. This means we're also sporting full mod support!
- * Changed whitelists from server-side to client-side. You can now have personal whitelists!
- * Changed block limits from server-side to client-side as well.
- * Refactored the default whitelists. Goodbye living logs. Sorry Chippy!
- * Completely revamped multiplayer, so we shouldn't have any more crashes... like ever.
- * Added multiple server BLACKLISTS to determine tiles that should not be allowed for client whitelisting, mainly used for Dirt/Stone/other basics.
- * Added server toggles for blacklists, in case people find them annoying.
- * Added some failsafes/warnings to chat to better protect players, and their worlds from harm. Information is key!
- * Added an ore dictionary that should auto-detect and whitelist modded ores.
- * Added config saving! When you whitelist something, it now actually saves. Ooops.
- * Added a server configuration to cap how many tiles the client is allowed to set their limit to, this takes priority.
- * Added some hooks for future item features~! ;P
- * Fixed some of the teleportation hooks. Wall drops are still broken, sorry!
- * Fixed wall excavations. Someone hurt worldgen badly. I hurt them back.
+ * Added a double-tap blacklist override for singleplayer worlds. - Thanks @Rappy#6729 on Discord for this idea!
 
 
 ...See all previous updates on the Steam Workshop page!

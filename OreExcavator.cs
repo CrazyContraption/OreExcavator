@@ -6,7 +6,7 @@ using OreExcavator.Enumerations;     // Enums
 using System;                        // IndexOf
 using System.Collections.Concurrent; // ConcurrentDictionary
 using System.Collections.Generic;    // Lists & Dictionaries
-using System.IO;                     // Binary Reader
+using System.IO;                     // Binary Reader, Path
 using System.Threading;              // Threading
 using System.Threading.Tasks;        // Threading
 
@@ -31,6 +31,15 @@ namespace OreExcavator /// The Excavator of ores
         internal static ConcurrentDictionary<Point16, bool> masterTiles = new();
         public static OreExcavator myMod = ModContent.GetInstance<OreExcavator>();
 
+
+        /////////////////////////////////////
+        ///                               ///
+        ///     !!!THE DANGER ZONE!!!     ///
+        ///                               ///
+        internal static bool devmode = false;
+        ///                               ///
+        /////////////////////////////////////
+
         /// <summary>
         /// Per-thread boolean that signifies if an excavation-related actions are taking place on that thread.
         /// </summary>
@@ -54,11 +63,11 @@ namespace OreExcavator /// The Excavator of ores
             BlacklistHotkey = KeybindLoader.RegisterKeybind(this, "Un-whitelist hovered", "Delete");
             
             // IL edits
-            if (true || ServerConfig.agressiveCompatibility)
+            /*if (true || ServerConfig.agressiveCompatibility)
             {
                 IL.Terraria.WorldGen.KillTile_PlaySounds += SoundFixIL;
                 IL.Terraria.WorldGen.KillWall_PlaySounds += SoundFixIL;
-            }
+            }*/
         }
 
         /// <summary>
@@ -67,7 +76,7 @@ namespace OreExcavator /// The Excavator of ores
         /// </summary>
         /// 
         /// <param name="il"></param>
-        private static void SoundFixIL(ILContext il)
+        /*private static void SoundFixIL(ILContext il)
         {
             var cursor = new ILCursor(il); // The current "instruction"
             var label = il.DefineLabel();
@@ -76,7 +85,7 @@ namespace OreExcavator /// The Excavator of ores
             cursor.Emit(Mono.Cecil.Cil.OpCodes.Brfalse, label); // If kill was not manually called, goto label
             cursor.Emit(Mono.Cecil.Cil.OpCodes.Ret); // If kill was called, return immediately, don't play any audio
             cursor.MarkLabel(label); // Label
-        }
+        }*/
 
         /// <summary>
         /// Executes once most -if not all- modded content is loaded by tML.
@@ -770,31 +779,6 @@ namespace OreExcavator /// The Excavator of ores
             }
         }
 
-        /// OUTDATED CODE - REMOVE?
-        /* internal static void Load(ModConfig config)
-        {
-            string filename = config.Mod.Name + "_" + config.Name + ".json";
-            string path = Path.Combine(ModConfigPath, filename);
-            if (config.Mode == ConfigScope.ServerSide && ModNet.NetReloadActive) // #999: Main.netMode isn't 1 at this point due to #770 fix.
-            {
-                string netJson = ModNet.pendingConfigs.Single(x => x.modname == config.Mod.Name && x.configname == config.Name).json;
-                JsonConvert.PopulateObject(netJson, config, serializerSettingsCompact);
-                return;
-            }
-            bool jsonFileExists = File.Exists(path);
-            string json = jsonFileExists ? File.ReadAllText(path) : "{}";
-            try
-            {
-                JsonConvert.PopulateObject(json, config, serializerSettings);
-            }
-            catch (Exception e) when (jsonFileExists && (e is JsonReaderException || e is JsonSerializationException))
-            {
-                Log($"Then config file {config.Name} from the mod {config.Mod.Name} located at {path} failed to load. The file was likely corrupted somehow, so the defaults will be loaded and the file deleted.");
-                File.Delete(path);
-                JsonConvert.PopulateObject("{}", config, serializerSettings);
-            }
-        }*/
-
         /// <summary>
         /// For whatever reason, ModConfig has no native way of saving runtime changes to a config.
         /// So here I am, writing a file system to manually save changes, usually just whitelist changes.
@@ -822,7 +806,7 @@ namespace OreExcavator /// The Excavator of ores
                         break;
 
                     case LogType.Debug:
-                        if (ClientConfig.doDebugStuff)
+                        if (ClientConfig.doDebugStuff || devmode)
                             myMod.Logger.Debug(msg);
                         break;
 
@@ -863,6 +847,9 @@ namespace OreExcavator /// The Excavator of ores
                 return;
 
             if (OreExcavator.ExcavateHotkey.GetAssignedKeys().Count <= 0 || !OreExcavator.ServerConfig.allowPickaxing)
+                return;
+
+            if (x != Player.tileTargetX || y != Player.tileTargetY)
                 return;
 
             // Not essential, but helps reset the player during inactive phases
@@ -912,6 +899,9 @@ namespace OreExcavator /// The Excavator of ores
                 return;
 
             if (OreExcavator.ExcavateHotkey.GetAssignedKeys().Count <= 0 || !OreExcavator.ServerConfig.allowHammering)
+                return;
+
+            if (x != Player.tileTargetX || y != Player.tileTargetY)
                 return;
 
             // Not essential, but helps reset the player during inactive phases
@@ -987,7 +977,7 @@ namespace OreExcavator /// The Excavator of ores
                 if (localTile.TileType < 0 || !OreExcavator.ClientConfig.doSpecials)
                     return null;
 
-                if (item.Name.ToLower().Contains("seed"))
+                if (item.Name.ToLower().Contains("seed") && OreExcavator.devmode)
                 {
                     if (!OreExcavator.ServerConfig.chainPlanting)
                         return null;
@@ -1199,16 +1189,24 @@ namespace OreExcavator /// The Excavator of ores
     {
         public override void OnEnterWorld(Player player) // Startup message
         {
-            if (OreExcavator.ClientConfig.showWelcome064)
+            if (OreExcavator.ClientConfig.showWelcome065)
                 new Task(delegate
                 {
-                    Thread.Sleep(1500);
-                    OreExcavator.Log($"[{OreExcavator.myMod.DisplayName}] - v{OreExcavator.myMod.Version}", Color.Yellow, LogType.Debug);
-                    OreExcavator.Log($"\t  Hey, thanks for using {OreExcavator.myMod.Name}!", Color.Orange, LogType.Debug);
-                     OreExcavator.Log("\t  We recently updated to fix a few outstanding issues, and add better controller support.", Color.Orange, LogType.Debug);
-                     OreExcavator.Log("\t  Chain-swapping should be back to normal for tiles, and walls should be fully fixed.", Color.Orange, LogType.Debug);
-                     OreExcavator.Log("\t  We've also added new features for chain planting and painting!", Color.Orange, LogType.Debug);
-                     OreExcavator.Log("\t  Oh yeah, you can also disable this popup in your Client configs~", Color.Yellow, LogType.Debug);
+                    Thread.Sleep(2000);
+                    OreExcavator.Log($"[{OreExcavator.myMod.DisplayName}] - v{OreExcavator.myMod.Version}", Color.Yellow, LogType.Info);
+                    OreExcavator.Log($"\t  Hey, thanks for using {OreExcavator.myMod.Name}!", Color.Orange, LogType.Info);
+                    OreExcavator.Log("\t  We recently updated to fix a few outstanding issues, and add increase stability.", Color.Orange, LogType.Info);
+                    OreExcavator.Log("\t  We've also removed a few sound fixes, so if crashes happen again - LET US KNOW!!", Color.Orange, LogType.Info);
+                    OreExcavator.Log("\t  Oh yeah, you can also disable this popup in your Client configs~", Color.Yellow, LogType.Info);
+                }).Start();
+            if (OreExcavator.ExcavateHotkey.GetAssignedKeys().Count <= 0)
+                new Task(delegate
+                {
+                    Thread.Sleep(2500);
+                    OreExcavator.Log($"[{OreExcavator.myMod.DisplayName}] - v{OreExcavator.myMod.Version}", Color.Red, LogType.Warn);
+                    OreExcavator.Log("\t  We noticed you don't have a keybind set for the mod!", Color.Red, LogType.Warn);
+                    OreExcavator.Log("\t  The mod won't work without one, so be sure it's bound before reporting bugs.", Color.Red, LogType.Warn);
+                    OreExcavator.Log("\t  You can find bindings for mods @ Settings > Controls > Mod Controls (at the bottom) > OreExcavator: Excavate", Color.Red, LogType.Warn);
                 }).Start();
         }
     }

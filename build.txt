@@ -1,6 +1,6 @@
 displayName = Ore Excavator - The 1.4 Successor to Vein Miner 
 author = CrazyContraption
-version = 0.6.4
+version = 0.6.5
 hideCode = true
 hideResources = true
 includeSource = false
