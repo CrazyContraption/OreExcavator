@@ -104,6 +104,8 @@ namespace OreExcavator /// The Excavator of ores
                 else
                     name = tile.Name;
                 
+                // Strip Tile and T from modded ores (common naming convention)
+                // This is done to use EndsWith in next if statement (faster than IndexOf). 
                 if (name.EndsWith("Tile"))
                     name = name.Substring(0, name.Length - 4);
                 else if (name.EndsWith("T"))
@@ -111,14 +113,16 @@ namespace OreExcavator /// The Excavator of ores
 
                 string newName = name;
 
+                // If modded tile is ore, gem, or chunk, replace with upper case (formatting).
+                // This if is used for auto-whitelist adding modded tiles later.
                 if (name.EndsWith("Ore"))
                     newName = newName.Replace("Ore", "'ORE'");
                 else if (name.EndsWith("Gem"))
                     newName = newName.Replace("Ore", "'GEM'");
                 else if (name.EndsWith("Chunk"))
                     newName = newName.Replace("Ore", "'CHUNK'");
-                else
-                {
+                else // Final else checks if the item dropped contains a matching check (to catch stragglers).
+                { 
                     if (tile is not null)
                     {
                         ModItem item = ItemLoader.GetItem(tile.ItemDrop);
@@ -367,7 +371,7 @@ namespace OreExcavator /// The Excavator of ores
             new Task(delegate
             {
                 OreExcavator.puppeting = puppeting;
-                ModifyAdjacentOfType(actionType, x, y, limit, delay, doDiagonals, targetType, itemToTeleport, playerId, replacementType);
+                ModifyAdjacentFloodfill(actionType, x, y, limit, delay, doDiagonals, targetType, itemToTeleport, playerId, replacementType);
             }).Start();
         }
 
@@ -386,8 +390,8 @@ namespace OreExcavator /// The Excavator of ores
         /// <param name="targetType">ID of the entity that is being searched for, and modified</param>
         /// <param name="itemToTeleport">ID of the item type to teleport to the player, if needed</param>
         /// <param name="playerID">The player index to teleport items to, if needed</param>
-        /// <param name="relpaceItemType">If the action is replacing, what are we replacing the entity with</param>
-        public static void ModifyAdjacentOfType(ActionType actionType, int originX, int originY, int limit, int delay, bool doDiagonals, int targetType, int itemToTeleport, byte playerID, int relpaceItemType = -1)
+        /// <param name="replaceItemType">If the action is replacing, what are we replacing the entity with</param>
+        internal static void ModifyAdjacentFloodfill(ActionType actionType, int originX, int originY, int limit, int delay, bool doDiagonals, int targetType, int itemToTeleport, byte playerID, int replaceItemType = -1)
         {
             bool isWall = false;
             if (actionType == ActionType.WallKilled || actionType == ActionType.WallReplaced)
@@ -416,14 +420,14 @@ namespace OreExcavator /// The Excavator of ores
 
             // Untested
             int hardlimit = Math.Min(ClientConfig.recursionLimit, ServerConfig.recursionLimit);
-            if (limit < 1)
-                if (Main.netMode == NetmodeID.MultiplayerClient)
-                    if (isReplacing && hardlimit > Main.player[playerID].CountItem(relpaceItemType))
-                        limit = Main.player[playerID].CountItem(relpaceItemType);
+            if (limit > 0)
+                if (Main.netMode == NetmodeID.MultiplayerClient) // Dupe check, ensures that if player count of item is less than world limit, set local limit to item count.
+                    if (isReplacing && hardlimit > Main.player[playerID].CountItem(replaceItemType))
+                        limit = Main.player[playerID].CountItem(replaceItemType);
                     else
                         limit = hardlimit;
 
-            Log($"(ID:{playerID} - P:{puppeting}) {actionType}, OX:{originX}, OY:{originY}, L:{limit}, D:{delay}, DD:{doDiagonals}, TT:{targetType}, TP:{itemToTeleport}, RT:{relpaceItemType}", Color.Yellow, LogType.Debug);
+            Log($"(ID:{playerID} - P:{puppeting}) {actionType}, OX:{originX}, OY:{originY}, L:{limit}, D:{delay}, DD:{doDiagonals}, TT:{targetType}, TP:{itemToTeleport}, RT:{replaceItemType}", Color.Yellow, LogType.Debug);
 
 
             for (int tileCount = 0; queue.Count > 0 && tileCount < limit && !Main.gameMenu; tileCount++)
@@ -436,7 +440,7 @@ namespace OreExcavator /// The Excavator of ores
                     if (originX != currentPoint.X || originY != currentPoint.Y) // Ensure we're not spawning dirt for the initial break
                     {
                         killCalled = true;
-                        bool success = AlterHandler(actionType, currentPoint.X, currentPoint.Y, playerID, itemToTeleport, (isReplacing ? relpaceItemType : -1));
+                        bool success = AlterHandler(actionType, currentPoint.X, currentPoint.Y, playerID, itemToTeleport, (isReplacing ? replaceItemType : -1));
                         _ = masterTiles.TryRemove(new Point16(currentPoint.X, currentPoint.Y), out _);
                         killCalled = false;
                         if (!success)
@@ -488,7 +492,7 @@ namespace OreExcavator /// The Excavator of ores
                     packet.Send();
                 }
 
-                Thread.Sleep(delay + (delay / 2));
+                Thread.Sleep(delay + (Math.Max(delay, 2) / 2));
 
                 while (queue.Count > 0)
                     _ = masterTiles.TryRemove(queue.Dequeue(), out _);
@@ -533,8 +537,9 @@ namespace OreExcavator /// The Excavator of ores
                     {
                         if (Main.tile[x, y].HasTile)
                             return false;
+                        WorldGen.KillWall(x, y, false);
                     }
-                    goto case ActionType.TileKilled;
+                    break;
 
                 case ActionType.TileKilled:
                     {
@@ -544,8 +549,6 @@ namespace OreExcavator /// The Excavator of ores
                             if (ServerConfig.teleportItems && teleportsItemType > 0)
                                 _ = teleportLastOfTypeToPlayer(teleportsItemType, playerID);
                         }
-                        else
-                            WorldGen.KillWall(x, y, false);
                     }
                     break;
 
@@ -1016,8 +1019,8 @@ namespace OreExcavator /// The Excavator of ores
                 if (OreExcavator.ServerConfig.allowReplace && OreExcavator.ClientConfig.doSpecials)
                 {
                     OreExcavator.Log($"\nHey! {OreExcavator.myMod.Name} here!" +
-                         "\nWe've detected that you're using Left Mouse for excavations. We don't recommend this, but to protect your world, we've disabled all non-veinmine related features for you!" +
-                        $"\nAs an alternative, we recommend using {"Right Mouse"} for excavations! Go ahead and try it out!" +
+                         "\nWe've detected that you're using Left Mouse for excavations. We don't recommend this, but to protect your world, we've disabled non-veinmining features! (chain-swap, etc.)" +
+                        $"\nAs an alternative, we recommend using {"Right Click"} for excavations! Go ahead and try it out!" +
                          "\n\nYou can turn these features back on in the client configurations at any time after you switch your keybind off of Left Mouse.", Color.Orange, LogType.Warn);
                     OreExcavator.ClientConfig.doSpecials = false;
                     OreExcavator.SaveConfig(OreExcavator.ClientConfig);
