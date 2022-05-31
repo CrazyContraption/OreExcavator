@@ -1189,25 +1189,25 @@ namespace OreExcavator /// The Excavator of ores
     {
         public override void OnEnterWorld(Player player) // Startup message
         {
-            if (OreExcavator.ClientConfig.showWelcome065)
-                new Task(delegate
-                {
-                    Thread.Sleep(2000);
-                    OreExcavator.Log($"[{OreExcavator.myMod.DisplayName}] - v{OreExcavator.myMod.Version}", Color.Yellow, LogType.Info);
-                    OreExcavator.Log($"\t  Hey, thanks for using {OreExcavator.myMod.Name}!", Color.Orange, LogType.Info);
-                    OreExcavator.Log("\t  We recently updated to fix a few outstanding issues, and add increase stability.", Color.Orange, LogType.Info);
-                    OreExcavator.Log("\t  We've also removed a few sound fixes, so if crashes happen again - LET US KNOW!!", Color.Orange, LogType.Info);
-                    OreExcavator.Log("\t  Oh yeah, you can also disable this popup in your Client configs~", Color.Yellow, LogType.Info);
-                }).Start();
             if (OreExcavator.ExcavateHotkey.GetAssignedKeys().Count <= 0)
-                new Task(delegate
-                {
-                    Thread.Sleep(2500);
-                    OreExcavator.Log($"[{OreExcavator.myMod.DisplayName}] - v{OreExcavator.myMod.Version}", Color.Red, LogType.Warn);
-                    OreExcavator.Log("\t  We noticed you don't have a keybind set for the mod!", Color.Red, LogType.Warn);
-                    OreExcavator.Log("\t  The mod won't work without one, so be sure it's bound before reporting bugs.", Color.Red, LogType.Warn);
-                    OreExcavator.Log("\t  You can find bindings for mods @ Settings > Controls > Mod Controls (at the bottom) > OreExcavator: Excavate", Color.Red, LogType.Warn);
-                }).Start();
+                    new Task(delegate
+                    {
+                        Thread.Sleep(2000);
+                        OreExcavator.Log($"[{OreExcavator.myMod.DisplayName}] - v{OreExcavator.myMod.Version}" +
+                                         "\n\t  We noticed you don't have a keybind set for the mod! " +
+                                         "\n\t  The mod won't work without one, so be sure it's bound before reporting bugs." +
+                                         "\n\t  You can find bindings for mods @ Settings > Controls > Mod Controls (at the bottom) > OreExcavator: Excavate", Color.Red, LogType.Warn);
+                    }).Start();
+            else if (OreExcavator.ClientConfig.showWelcome065)
+                    new Task(delegate
+                    {
+                        Thread.Sleep(2000);
+                        OreExcavator.Log($"[{OreExcavator.myMod.DisplayName}] - v{OreExcavator.myMod.Version}" +
+                                         $"\n\t  Hey, thanks for using {OreExcavator.myMod.Name}!" +
+                                         "\n\t  We recently updated to fix a few outstanding issues, and add increase stability." +
+                                         "\n\t  We've also removed a few sound fixes, so if crashes happen again - LET US KNOW!!" +
+                                         "\n\t  Oh yeah, you can also disable this popup in your Client configs~", Color.Yellow, LogType.Info);
+                    }).Start();
         }
     }
 }
