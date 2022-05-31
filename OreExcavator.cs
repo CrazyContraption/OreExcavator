@@ -1162,7 +1162,6 @@ namespace OreExcavator /// The Excavator of ores
             _ = Task.Run(async delegate // Create a new thread
             {
                 /// TODO: We should do the whitelisting checks here, so you can't even start hitting something if it's not whitelisted
-                /// I can see the hordes of angry steam comments from here. Ready the battlements
                 if ((OreExcavator.ServerConfig.allowPickaxing && item.pick > 0.0) ||
                     (OreExcavator.ServerConfig.allowHammering && item.hammer > 0.0) ||
                     (OreExcavator.ServerConfig.allowReplace && item.createTile >= 0.0) ||
