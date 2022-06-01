@@ -79,6 +79,10 @@ ROADMAP (Order of Priority)
 CHANGELOG
 
 0.6.5
+ * Minor fixes to lots of code, things should be faster and more stable now.
+ * Fixed some issues that cropped up during the port from preview to stable.
+
+0.6.5
  * New icon!
  * Added a warning if keybinds are unbound, and steps to resolve in-game.
  * Removed IL soundfix, it's no longer needed.

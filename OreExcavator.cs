@@ -1,5 +1,5 @@
 using Microsoft.Xna.Framework;
-using MonoMod.Cil;                   // IL
+//using MonoMod.Cil;                   // IL
 using Newtonsoft.Json;
 using OreExcavator.Enumerations;     // Enums
 
@@ -44,6 +44,10 @@ namespace OreExcavator /// The Excavator of ores
         /// Per-thread boolean that signifies if an excavation-related actions are taking place on that thread.
         /// </summary>
         [ThreadStatic] public static bool killCalled = false;
+
+        /// <summary>
+        /// Per-thread boolean that signifies if an excavation puppeting is taking place on that thread.
+        /// </summary>
         [ThreadStatic] public static bool puppeting = false;
 
         internal static Tile lookingAtTile;
@@ -629,7 +633,7 @@ namespace OreExcavator /// The Excavator of ores
 
         //private static int findTopmost(int startX, int startY, int targetType)
 
-        public static bool teleportLastOfTypeToPlayer(int itemType, byte playerID)
+        internal static bool teleportLastOfTypeToPlayer(int itemType, byte playerID)
         {
             if (Main.netMode == NetmodeID.Server || itemType < 0)
                 return false;
@@ -799,7 +803,7 @@ namespace OreExcavator /// The Excavator of ores
             Log($"Config '{config.Name}' saved, and updated!", default, LogType.Debug);
         }
 
-        public static void Log(string msg, Color color = default, LogType type = LogType.None)
+        internal static void Log(string msg, Color color = default, LogType type = LogType.None)
         {
             if (type != LogType.None)
                 switch (type)
@@ -831,7 +835,7 @@ namespace OreExcavator /// The Excavator of ores
         }
     }
 
-    public class ExcavatorBlock : GlobalTile
+    internal class ExcavatorBlock : GlobalTile
     {
         /// <summary>
         /// Called when the player hits a block.
@@ -884,7 +888,7 @@ namespace OreExcavator /// The Excavator of ores
         }
     }
 
-    public class ExcavatorWall : GlobalWall
+    internal class ExcavatorWall : GlobalWall
     {
 
         /// <summary>
@@ -935,7 +939,7 @@ namespace OreExcavator /// The Excavator of ores
         }
     }
 
-    public class ExcavatorItem : GlobalItem
+    internal class ExcavatorItem : GlobalItem
     {
         /// <summary>
         /// Called whenever a player uses an item.
@@ -1156,7 +1160,7 @@ namespace OreExcavator /// The Excavator of ores
         /// 
         /// <param name="item">The item in question</param>
         /// <param name="player">The player using the item in question</param>
-        public void RepeatHandler(Item item, Player player)
+        internal void RepeatHandler(Item item, Player player)
         {
             // Get the player's traget tile
             int x = Player.tileTargetX;
@@ -1189,7 +1193,7 @@ namespace OreExcavator /// The Excavator of ores
         }
     }
 
-    public class ExcavatorPlayer : ModPlayer
+    internal class ExcavatorPlayer : ModPlayer
     {
         public override void OnEnterWorld(Player player) // Startup message
         {
@@ -1210,7 +1214,7 @@ namespace OreExcavator /// The Excavator of ores
                                          $"\n\t  Hey, thanks for using {OreExcavator.myMod.Name}!" +
                                          "\n\t  We recently updated to fix a few outstanding issues, and add increase stability." +
                                          "\n\t  We've also removed a few sound fixes, so if crashes happen again - LET US KNOW!!" +
-                                         "\n\t  Oh yeah, you can also disable this popup in your Client configs~", Color.Yellow, LogType.Info);
+                                         "\n\t  Oh yeah, you can also disable this popup in your Client configs~", Color.Green, LogType.Info);
                     }).Start();
         }
     }
