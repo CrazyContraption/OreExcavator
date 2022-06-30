@@ -1,0 +1,122 @@
+﻿
+[b]Welcome to Ore Excavator! - Last Updated 6/26/2022[/b]
+
+
+Ore Excavator has become the offical 1.4 port of VeinMiner, with VeinMiner being discontinued, and merged into Ore Excavator with permission.
+
+Just like with Minecraft's Ore Excavator, Ore Excavator aims to improve, expand, and adapt with the future of the modding community for the ultimate quality of life experience. Ore Excavator allows you to effortlessly mine groups of ores, walls, and perform many other tile manipulation features effortlessly at once, with plenty more to come before 1.0!
+
+Credit to NanobotZ for the base code and the original concept!
+
+
+[h1] !!! FEATURES !!! [/h1]
+[list]
+    [*]Mine adjacent tiles/walls from a single block
+    [*]Chain-swap adjacent tiles/walls from a single block
+    [*]Configurable whitelist & blacklist with block picker controls in-game
+    [*]Fully configurable client controls and keybindings
+    [*]Fully configurable client settings to tailor to dynamic performance needs
+    [*]Fully threaded support
+    [*]Autoswing compatible
+    [*]Progression friendly
+    [*]Powerful server management configurations
+    [*]Full multiplayer support
+    [*]Full modded support
+[/list]
+
+[h1] !!! THIS IS AN ALPHA VERSION !!! [/h1]
+This is intended for early access users wishing to play on 1.4, and is likely to be broken several times!
+
+I will do my best to ensure that the mod stays for compatible and issue updates as needed, especially for multiplayer.
+
+Due to the nature of the mod, bugs involving deleting massive amounts of blocks, walls, and similar issues are to be expected.
+Please report any issues -no matter how small- to the Steam workshop page, or reach out to me on the tModloader Discord (@CrazyContraption#0666)
+
+PLEASE REPORT ANY ISSUES, EVEN IF YOU THINK IT MAY ALREADY BE REPORTED!!
+It helps us deduce how common the issue is, and to better gather data on who, and how it happens.
+
+We're also open to suggestions and feedback!
+
+
+[h1] !!! FAQ !!! [/h1]
+Q:"Why doesn't the mod work?"
+A:Common issues include: Not having the mod enabled (enable it); Not having an excavation keybind set (set it in the controls section); having a corrupt version of the mod (redownload it).
+
+Q:"How do I use the mod?"
+A:By default, holding tilde ( ` ) with any pick/hammer will excavate the corresponding elements they target. The key must be set in the controls first! Additional settings and keybinds are available in the mod's configurations, take a peek!
+
+Q:"Is this VeinMiner for 1.4?"
+A:Technically, yes it is! I have been given permission and the original source code to adapt and expand the mod for Terraria 1.4.
+
+Q:"Why is the name different?"
+A:The original author and I have agreed that 1.3 Terraria and earlier will be known for VeinMiner, and Ore Excavator will earn its name in 1.4, building off of the existing community and support. 
+
+Q:"Is this mod open source?"
+A:At this time, due to the mix of licensed code and the daily reworks, we've decided to keep the mod and its content private. However, in the future we plan to open source it once we feel the mod is complete, and we want the community to take over keeping it alive!
+
+Q:"What's happening to VeinMiner?"
+A:Nothing! 1.3 VeinMiner will remain as it always was, and we're simply upgrading it, and renaming it for 1.4 Terraria. The old name is still reserved however - so no funny ideas!
+
+Q:"Does this work in multiplayer?"
+A:Yes! Yes! Yes! This is a huge priority for us, and we plan on implementing a full permissions system and expanding on the original multiplayer complexity of VeinMiner.
+
+Q:"Does this work with modded content?"
+A:Yes! But also no... we don't know. Every mod is different and unique, however most modded tiles, tools, and walls should work seamlessly without issue! Please let us know if you encounter any major issues, and we'll be sure to add some failsafes to include them forcefully!
+
+Q:"Do you use any IL edits?"
+A:No, not anymore. Once upon a time we did, now things are much easier for us, and we can use vanilla tML for everything we do.
+
+[h1] Roadmap (Order of Priority) [/h1]
+[olist]
+    [*]Fixing duplication exploits
+    [*]Fixing server desync issues
+    [*]Chain Planting
+    [*]Chain Painting
+    [*]Highlight Blocks/Walls That Will be Excavated Before Excavation
+    [*]Excavation Consumes Mana Toggle (for balanced play)
+    [*]Excavation Restricted to New Modifiers Toggle (for balanced play)
+    [*]Translations
+[/olist]
+
+
+[h1] Recent Changelog [/h1]
+0.6.9 (Nice)
+ * Added a range to item teleportations, approximately just under the average screen size.
+ * Added new rules to item teleportation, only excavated items (except the first item) will be teleported - working on a fix!
+ * Added a section to client configs directing users to their vanilla controls for keybinds.
+ * Fixed some wall excavation and replacement issues.
+ * Fixed an issue with walls having a higher hover whitelist priority than tiles.
+ * Fixed an issue where chain-swapping on air would consume items without doing anything.
+ * Fixed an issue where chain-plainting could consume items without doing anything.
+ * Fixed issue that corrupted chat messages if there were no messages in the chat already.
+ * Removed item teleportation configuration lockdown.
+ * Renamed a ton of configs to help less techy players understand what things do, and how they interact.
+ * Set item teleportation configuration to false by default.
+ * Set releasing excavation keys stopping excavations configuration to false by default.
+
+
+0.6.8
+ * Hotfix to disable item teleports while we investigate ongoing issues with it.
+
+0.6.7
+ * Added separate tML & Workshop icons/descriptions.
+ * Added a config option for clients to disable whitelists (whitelists everything).
+ * Added a config option for clients to disable whitelisted item tooltips.
+ * Added a config option for servers to excavation item drop immunities to things like lava.
+ * Added more helpful conflict messages, like trying to chain-swap with a non-whitelisted item.
+ * Added a basic version of server configs that give items immunity.
+ * Fixed an issue where whitelisting items had lower priority than tiles or walls behind them while in menus.
+ * Fixed issues with creative mode server config, it should now work much better for all you builders!
+ * Fixed issues with item teleport server config, it should now work reliably, and in multiplayer!
+ * Fixed a duplication issue with multi-tile elements breaking during excavations.
+ * Fixed a duplication issue with the Extractinator.
+ * Updated to new logic to for handling teleportation and lava-proofing drops based on config settings (faster and more reliable).
+ * Removed all default chain-swap items - people were messing up their houses too much!
+ * Audited configs, including removing unused settings, updating wording to be more concise, etc.
+ * Probably did a ton of other stuff I forgot to write down... :(
+
+0.6.6
+ * Minor fixes to lots of code, things should be faster and more stable now.
+ * Fixed some issues that cropped up during the port from preview to stable.
+
+[quote=@a frog#4478]"x is the best keybind 💀"[/quote]

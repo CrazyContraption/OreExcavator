@@ -1,41 +1,41 @@
 using System.Collections.Generic;
 using System.ComponentModel;
-
+using Newtonsoft.Json;
 using Terraria.ID;
 using Terraria.ModLoader.Config;
 
 namespace OreExcavator
 {
-    [Label("Ore Excavator - Server Config")]
+    [Label("World Config")]
     public class OreExcavatorConfig_Server : ModConfig
     {
         public override ConfigScope Mode => ConfigScope.ServerSide;
 
-        [Header("Server Settings - Properties")]
+        [Header("World Settings - Properties")]
 
         [Label("Block Modification Limit")]
         [Tooltip("Determines the maximum number of tiles" +
             "\nalterable per excavation for ALL clients!" +
             "\nThe smallest limit between the client and server will be used per client." +
-            "\nSet to 0 to disable the mod, or max to let clients decide their own limits." +
+            "\nSet to 0 to disable the mod, or max to let players decide their own limits." +
             "\n\nLarger numbers WILL negatively affect performance!")]
         [Range(0, 10000)]
         [DefaultValue(10000)]
         public int recursionLimit;
 
         [Label("Allow Diagonal Searching")]
-        [Tooltip("When enabled, clients will be allowed to also" +
+        [Tooltip("When enabled, players will be allowed to also" +
             "\ncheck for matches diagonal of the source when searching." +
             "\n\nDisabling this WILL slightly improve performance!")]
         [DefaultValue(true)]
         public bool allowDiagonals;
 
         [Label("Allow Chain Planting")]
-        [Tooltip("When enabled, clients will be allowed to chain-plant seeds." +
+        [Tooltip("When enabled, players will be allowed to chain-plant seeds." +
             "\nDoes NOT work with saplings (yet!), only grass." +
             "\n\nDoes NOT impact performance!")]
         [DefaultValue(true)]
-        public bool chainPlanting;
+        public bool chainPlanting => false;
 
         [Label("Allow Chain Painting")]
         [Tooltip("COMING SOON!")]
@@ -44,7 +44,7 @@ namespace OreExcavator
 
         [Label("Allow Quick Whitelist Keys")]
         [Tooltip("When enabled, using the whitelist keybinds will" +
-            "\nadd/remove hovered tiles/walls/items to/from their client whitelist" +
+            "\nadd/remove hovered tiles/walls/items to/from their own whitelist" +
             "\n\nDoes NOT impact performance!")]
         [DefaultValue(true)]
         public bool allowQuickWhitelisting;
@@ -52,15 +52,19 @@ namespace OreExcavator
         [Label("Teleport Loot to Player")]
         [Tooltip("When enabled, excavated drops will be warped to" +
             "\nthe player that commanded the excavation(s)." +
-            "\n\nDisabling this may improve performance... or hurt it." +
-            "\n\nDOES NOT WORK ON SERVERS YET!")]
-        [DefaultValue(true)]
-        public bool teleportItems;
-
-        [Label("Make Loot Lava-Proof")]
-        [Tooltip("COMING SOON!")]
+            "\n\nNOT ADVISED ON MULTIPLAYER SERVERS!!" +
+            "\n\nDisabling this may improve performance... or hurt it.")]
         [DefaultValue(false)]
-        public bool safeItems => false;
+        public bool teleportLoot;
+
+        [Label("Make Loot Invulnerable")]
+        [Tooltip("When enabled, item drops will be immune to hazards," +
+            "\nthis includes things like lava." +
+            "\n\nEnabling this may hurt performance," +
+            "\nand may be considered cheating..." +
+            "\n\nWORK IN PROGRESS!!")]
+        [DefaultValue(false)]
+        public bool safeItems;
 
         [Label("Creative Mode")]
         [Tooltip("When enabled, items won't drop, items won't" +
@@ -80,7 +84,7 @@ namespace OreExcavator
         public bool agressiveCompatibility;
 
 
-        [Header("Server Settings - Blocks")]
+        [Header("World Settings - Blocks")]
 
         [Label("Allow Pickaxe Excavations")]
         [Tooltip("When enabled, the excavation algorithm will" +
@@ -90,15 +94,15 @@ namespace OreExcavator
         public bool allowPickaxing;
 
         [Label("Enable Tile Blacklist")]
-        [Tooltip("When enabled, the server will enforce the Tile blacklist on its clients" +
-            "\nDisable this to give clients free whitelist controls over Tiles" +
+        [Tooltip("When enabled, the world will enforce the Tile blacklist on its players" +
+            "\nDisable this to give players free whitelist controls over Tiles" +
             "\n\nDoes NOT impact performance!")]
         [DefaultValue(true)]
         public bool tileBlacklistToggled;
 
         [Label("Tile Blacklist")]
         [Tooltip("Configure this list to manually set what Tiles CANNOT be chain-excavated" +
-            "\nPrefixed by the mod that owns them. Client whitelists are overruled." +
+            "\nPrefixed by the mod that owns them. Players' whitelists are overruled." +
             "\n\nDoes NOT impact performance!")]
         [DefaultListValue("Terraria:")]
         public HashSet<string> tileBlacklist = new() {
@@ -114,7 +118,7 @@ namespace OreExcavator
         };
 
 
-        [Header("Server Settings - Walls")]
+        [Header("World Settings - Walls")]
 
         [Label("Allow Hammer Excavations")]
         [Tooltip("When enabled, the excavation algorithm will" +
@@ -124,68 +128,76 @@ namespace OreExcavator
         public bool allowHammering;
 
         [Label("Enable Wall Blacklist")]
-        [Tooltip("When enabled, the server will enforce the Wall blacklist on its clients" +
-            "\nDisable this to give clients free whitelist controls over Walls" +
+        [Tooltip("When enabled, the world will enforce the Wall blacklist on its players" +
+            "\nDisable this to give players free whitelist controls over Walls" +
             "\n\nDoes NOT impact performance!")]
         [DefaultValue(true)]
         public bool WallBlacklistToggled;
 
         [Label("Wall Blacklist")]
         [Tooltip("Configure this list to manually set what Walls CANNOT be chain-excavated" +
-            "\nPrefixed by the mod that owns them. Client whitelists are overruled." +
+            "\nPrefixed by the mod that owns them. Players' whitelists are overruled." +
             "\n\nDoes NOT impact performance!")]
         [DefaultListValue("Terraria:")]
         public HashSet<string> wallBlacklist = new() {
-            "Terraria:" + WallID.Search.GetName(WallID.Stone),
+            //"Terraria:" + WallID.Search.GetName(WallID.Stone),
         };
 
 
-        [Header("Server Settings - Blockswap")]
+        [Header("World Settings - Blockswap")]
 
         [Label("Allow Blockswap Excavations")]
         [Tooltip("When enabled, the excavation algorithm will" +
-            "\nbe allowed for veinswaps when replacing a tile/wall." +
+            "\nbe allowed for blockswaps when replacing a tile/wall." +
             "\n\nSlightly impacts performance!")]
         [DefaultValue(true)]
         public bool allowReplace;
 
         [Label("Enable Item Blacklist")]
-        [Tooltip("When enabled, the server will enforce the Item blacklist on its clients" +
-            "\nDisable this to give clients free whitelist controls over Items" +
+        [Tooltip("When enabled, the server will enforce the Item blacklist on its players" +
+            "\nDisable this to give players free whitelist controls over Items" +
             "\n\nDoes NOT impact performance!")]
         [DefaultValue(true)]
         public bool itemBlacklistToggled;
 
         [Label("Item Blacklist")]
-        [Tooltip("If you don't know what this is, you probably shouldn't touch it...\nThis controls what items are forbidden by clients for whitelisting\n\nDoes NOT impact performance!")]
+        [Tooltip("If you don't know what this is, you probably shouldn't touch it..." +
+            "\nThis controls what items are forbidden by players for whitelisting" +
+            "\n\nDoes NOT impact performance!")]
         [DefaultListValue("Terraria:")]
         public HashSet<string> itemBlacklist = new() {
             //"Terraria:" + ItemID.Search.GetName(WallID.Wood),
         };
     }
 
-    [Label("Ore Excavator - Client Config")]
+    [Label("Player Config")]
     public class OreExcavatorConfig_Client : ModConfig
     {
         public override ConfigScope Mode => ConfigScope.ClientSide;
 
 
-        [Header("Client Settings - UI")]
+        [Header("Player Settings - UI")]
 
         [Label("Show Startup Message")]
         [Tooltip("When disabled, welcome messages will" +
             "\nbe hidden for this version of the mod." +
             "\n\nNew versions will re-enable this feature.")]
         [DefaultValue(true)]
-        public bool showWelcome065;
+        public bool showWelcome069;
 
         [Label("Show Excavation Tooltip")]
-        [Tooltip("When disabled, holding the" +
-            "\nexcavation key will no longer provide" +
-            "\na contextual tooltip." +
+        [Tooltip("When disabled, holding the excavation " +
+            "\nkey will no longer provide a contextual tooltip." +
             "\n\nPlease enable this before reporting bugs!")]
         [DefaultValue(true)]
-        public bool showTooltips;
+        public bool showCursorTooltips;
+
+        [Label("Show Item Tooltips")]
+        [Tooltip("When disabled, items, walls, and tiles the" +
+            "\n will no longer provide a contextual tooltip." +
+            "\n\nPlease enable this before reporting bugs!")]
+        [DefaultValue(true)]
+        public bool showItemTooltips;
 
         [Label("Show Debug Logs")]
         [Tooltip("When enabled, debug logs" +
@@ -194,7 +206,7 @@ namespace OreExcavator
         [DefaultValue(false)]
         public bool doDebugStuff;
 
-        [Header("Client Settings - Core")]
+        [Header("Player Settings - Core")]
 
         [Label("Block Modification Limit")]
         [Tooltip("Determines the maximum number of tiles" +
@@ -208,7 +220,7 @@ namespace OreExcavator
         [Tooltip("When enabled, the excavation algorithm will" +
             "\nalso check for matches directly diagonal of themselves." +
             "\n\nDisabling this WILL improve performance!")]
-        [DefaultValue(false)]
+        [DefaultValue(true)]
         public bool doDiagonals;
 
         [Label("Block Breaking Delay")]
@@ -221,37 +233,19 @@ namespace OreExcavator
         [Label("Do Initial Whitelist Checks")]
         [Tooltip("When enabled, the algorithm checks the whitelists & blacklists BEFORE" +
             "\nand AFTER attempting an excavation, rather than just AFTER." +
-            "\n\nDisabling this may improve performance, but" +
-            "\ncause potentially unexpected results!")]
+            "\n\nEnabling this may hurt performance, but" +
+            "\nmight produce more stable behaviour!")]
         [DefaultValue(false)]
         public bool inititalChecks;
 
 
-        [Header("Client Settings - Controls")]
+        [Header("Player Settings - Blocks")]
 
-        [Label("Keybind Toggles Excavations")]
-        [Tooltip("When enabled, tapping the keybind will toggle the" +
-            "\ncontrol will cease all excavation operations." +
-            "\n\nDoes NOT impact performance!")]
-        [DefaultValue(false)]
-        public bool toggleExcavations;
-
-        [Label("Cancel Excavation on Keybind Release")]
-        [Tooltip("When enabled, letting go of the Excavation" +
-            "\ncontrol key will cease all excavation operations." +
-            "\n\nDoes NOT impact performance!")]
+        [Label("Enable Tile Whitelist")]
+        [Tooltip("When enabled, all tiles will be whitelisted by default." +
+            "\n\nSlightly improves performance!")]
         [DefaultValue(true)]
-        public bool releaseCancelsExcavation;
-
-        [Label("Enable Alternative Features")]
-        [Tooltip("When enabled, the client will allow for special non-veinmine actions" +
-            "\nDisable this if you don't plan on using these features, or are binding excavations to Mouse1" +
-            "\n\nModerately impacts performance!")]
-        [DefaultValue(true)]
-        public bool doSpecials;
-
-
-        [Header("Client Settings - Blocks")]
+        public bool tileWhitelistToggled;
 
         [Label("Tile Whitelist")]
         [Tooltip("Configure this list to manually set what Tiles can be chain-excavated" +
@@ -297,7 +291,13 @@ namespace OreExcavator
         };
 
 
-        [Header("Client Settings - Walls")]
+        [Header("Player Settings - Walls")]
+
+        [Label("Enable Wall Whitelist")]
+        [Tooltip("When enabled, all walls will be whitelisted by default." +
+            "\n\nSlightly improves performance!")]
+        [DefaultValue(true)]
+        public bool wallWhitelistToggled;
 
         [Label("Wall Whitelist")]
         [Tooltip("Configure this list to manually set what Walls can be chain-excavated" +
@@ -374,7 +374,13 @@ namespace OreExcavator
         };
 
 
-        [Header("Client Settings - Blockswap")]
+        [Header("Player Settings - Blockswap")]
+
+        [Label("Enable Item Whitelist")]
+        [Tooltip("When enabled, all items will be whitelisted by default." +
+            "\n\nSlightly improves performance!")]
+        [DefaultValue(true)]
+        public bool itemWhitelistToggled;
 
         [Label("Item Whitelist")]
         [Tooltip("Configure this list to manually set what Items can be chain-replaced" +
@@ -383,21 +389,45 @@ namespace OreExcavator
         [DefaultListValue("Terraria:")]
         public HashSet<string> itemWhitelist = new()
         {
-            "Terraria:" + ItemID.Search.GetName(ItemID.DirtBlock),
+            /*"Terraria:" + ItemID.Search.GetName(ItemID.DirtBlock),
             "Terraria:" + ItemID.Search.GetName(ItemID.StoneBlock),
             "Terraria:" + ItemID.Search.GetName(ItemID.Wood),
             "Terraria:" + ItemID.Search.GetName(ItemID.StoneWall),
             "Terraria:" + ItemID.Search.GetName(ItemID.DirtWall),
             "Terraria:" + ItemID.Search.GetName(ItemID.CorruptSeeds),
-            "Terraria:" + ItemID.Search.GetName(ItemID.WoodWall),
+            "Terraria:" + ItemID.Search.GetName(ItemID.WoodWall),*/
         };
 
 
-        [Header("NOTICE")]
+        [Header("Player Settings - Controls")]
 
-        [Label("Join a world to edit Server Settings!")]
-        [Tooltip("tModLoader has broken server settings from this menu for now!")]
+        [Label("Keybind Toggles Excavations")]
+        [Tooltip("When enabled, tapping the keybind will toggle the" +
+            "\nactive state of initiating excavations." +
+            "\n\nDoes NOT impact performance!")]
         [DefaultValue(false)]
-        public bool noticeClient1 => false;
+        public bool toggleExcavations;
+
+        [Label("Cancel Excavations on Keybind Release")]
+        [Tooltip("When enabled, letting go of the Excavation" +
+            "\ncontrol key will cease all excavation operations." +
+            "\n\nNOT ADVISED ON MULTIPLAYER SERVERS!!" +
+            "\n\nDoes NOT impact performance!")]
+        [DefaultValue(false)]
+        public bool releaseCancelsExcavations;
+
+        [Label("Enable Alternative Features")]
+        [Tooltip("When enabled, the client will allow for special non-veinmine actions" +
+            "\nDisable this if you don't plan on using these features, or are binding excavations to Mouse1" +
+            "\n\nModerately impacts performance!")]
+        [DefaultValue(true)]
+        public bool doSpecials;
+
+        [Label("Looking for your keybind?")]
+        [Tooltip("Set your keybind in the vanilla controls area," +
+            "\nThis is just for display purposes and to direct confused users.")]
+        [DefaultValue("Unknown")]
+        [JsonIgnore]
+        public string keybind => (OreExcavator.ExcavateHotkey != null ? (OreExcavator.ExcavateHotkey.GetAssignedKeys().Count > 0 ? OreExcavator.ExcavateHotkey.GetAssignedKeys()[0] : "Not Set") : "Unknown");
     }
 }

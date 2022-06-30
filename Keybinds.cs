@@ -32,12 +32,15 @@ namespace OreExcavator
             switch (actionType)
             {
                 case ActionType.TileWhiteListed:
+                    if (!OreExcavator.ClientConfig.tileWhitelistToggled)
+                        OreExcavator.Log("Y'know your Tile whitelist is off right? We'll add it for you anyways though!", Color.Red, LogType.Warn);
+
                     if (!OreExcavator.ServerConfig.tileBlacklistToggled || !OreExcavator.ServerConfig.tileBlacklist.Contains(name))
                         if (!OreExcavator.ClientConfig.tileWhitelist.Contains(name))
                         {
                             OreExcavator.ClientConfig.tileWhitelist.Add(name);
                             OreExcavator.SaveConfig(OreExcavator.ClientConfig);
-                            OreExcavator.Log($"Added 'TileID.{name} ({typeId})' to the Tile whitelist", Color.Green, LogType.Info);
+                            OreExcavator.Log($"Added 'TileID.{name} ({typeId})' to your Tile whitelist", Color.Green, LogType.Info);
                         }
                         else
                             OreExcavator.Log($"'TileID.{name} ({typeId})' is already whitelisted", Color.Yellow, LogType.Warn);
@@ -46,8 +49,8 @@ namespace OreExcavator
                         if (timeout <= 0)
                         {
                             timeout = byte.MaxValue;
-                            OreExcavator.Log($"Rejected adding 'TileID.{name} ({typeId})' because it is blacklisted", Color.Red, LogType.Error);
-                            OreExcavator.Log($"Since this is a singleplayer world, tap the key twice to override the blacklist", Color.Aqua, LogType.Info);
+                            OreExcavator.Log($"Rejected adding 'TileID.{name} ({typeId})' because it is blacklisted by the server host", Color.Red, LogType.Error);
+                            OreExcavator.Log($"Since this is a singleplayer world, you can tap the key twice to override your host blacklist", Color.Aqua, LogType.Info);
                         }
                         else
                         {
@@ -55,23 +58,26 @@ namespace OreExcavator
                             OreExcavator.ServerConfig.tileBlacklist.Remove(name);
                             OreExcavator.ClientConfig.tileWhitelist.Add(name);
                             OreExcavator.SaveConfig(OreExcavator.ClientConfig);
-                            OreExcavator.Log($"Added 'TileID.{name} ({typeId})' to the Tile whitelist, and ignoring the blacklist for this session", Color.Green, LogType.Info);
+                            OreExcavator.Log($"Added 'TileID.{name} ({typeId})' to your Tile whitelist, and ignoring the blacklist for this session", Color.Green, LogType.Info);
                         }
                     }
                     else
                     {
-                        OreExcavator.Log($"Rejected adding 'TileID.{name} ({typeId})' because it is blacklisted by the host", Color.Red, LogType.Error);
+                        OreExcavator.Log($"Rejected adding 'TileID.{name} ({typeId})' because it is blacklisted by the server host", Color.Red, LogType.Error);
                         OreExcavator.Log($"If you think this is an error, ask the host to remove this Tile from their server's blacklist configuration", Color.Aqua, LogType.Info);
                     }
                     break;
 
                 case ActionType.WallWhiteListed:
+                    if (!OreExcavator.ClientConfig.wallWhitelistToggled)
+                        OreExcavator.Log("Y'know your Wall whitelist is off right? We'll add it for you anyways though!", Color.Red, LogType.Warn);
+
                     if (!OreExcavator.ServerConfig.WallBlacklistToggled || !OreExcavator.ServerConfig.wallBlacklist.Contains(name))
                         if (!OreExcavator.ClientConfig.wallWhitelist.Contains(name))
                         {
                             OreExcavator.ClientConfig.wallWhitelist.Add(name);
                             OreExcavator.SaveConfig(OreExcavator.ClientConfig);
-                            OreExcavator.Log($"Added `WallID.{name} ({typeId})' to the Wall whitelist", Color.Green, LogType.Info);
+                            OreExcavator.Log($"Added `WallID.{name} ({typeId})' to your Wall whitelist", Color.Green, LogType.Info);
                         }
                         else
                             OreExcavator.Log($"'WallID.{name} ({typeId})' is already whitelisted", Color.Yellow, LogType.Warn);
@@ -80,8 +86,8 @@ namespace OreExcavator
                         if (timeout <= 0)
                         {
                             timeout = byte.MaxValue;
-                            OreExcavator.Log($"Rejected adding 'WallID.{name} ({typeId})' because it is blacklisted", Color.Red, LogType.Error);
-                            OreExcavator.Log($"Since this is a singleplayer world, tap the key twice to override the blacklist", Color.Aqua, LogType.Info);
+                            OreExcavator.Log($"Rejected adding 'WallID.{name} ({typeId})' because it is blacklisted by the server host", Color.Red, LogType.Error);
+                            OreExcavator.Log($"Since this is a singleplayer world, you can tap the key twice to override your host blacklist", Color.Aqua, LogType.Info);
                         }
                         else
                         {
@@ -89,17 +95,20 @@ namespace OreExcavator
                             OreExcavator.ServerConfig.wallBlacklist.Remove(name);
                             OreExcavator.ClientConfig.wallWhitelist.Add(name);
                             OreExcavator.SaveConfig(OreExcavator.ClientConfig);
-                            OreExcavator.Log($"Added 'TileID.{name} ({typeId})' to the Tile whitelist, and ignoring the blacklist for this session", Color.Green, LogType.Info);
+                            OreExcavator.Log($"Added 'TileID.{name} ({typeId})' to your Tile whitelist, and ignoring the blacklist for this session", Color.Green, LogType.Info);
                         }
                     }
                     else
                     {
-                        OreExcavator.Log($"Rejected adding 'WallID.{name} ({typeId})' because it is blacklisted by the host", Color.Red, LogType.Error);
+                        OreExcavator.Log($"Rejected adding 'WallID.{name} ({typeId})' because it is blacklisted by the server host", Color.Red, LogType.Error);
                         OreExcavator.Log($"If you think this is an error, ask the host to remove this Wall from their server's blacklist configuration", Color.Aqua, LogType.Info);
                     }
                     break;
 
                 case ActionType.ItemWhiteListed:
+                    if (!OreExcavator.ClientConfig.itemWhitelistToggled)
+                        OreExcavator.Log("Y'know your Item whitelist is off right? We'll add it for you anyways though!", Color.Red, LogType.Warn);
+
                     if (!OreExcavator.ServerConfig.itemBlacklistToggled || !OreExcavator.ServerConfig.itemBlacklist.Contains(name))
                     {
                         if ((item.Name ?? "") != "" && !OreExcavator.ClientConfig.itemWhitelist.Contains(name))
@@ -114,49 +123,58 @@ namespace OreExcavator
                         else if ((item.Name ?? "") != "")
                             OreExcavator.Log($"'ItemID.{name} ({typeId})' is already whitelisted", Color.Yellow, LogType.Warn);
                         else if (typeId <= 0)
-                            OreExcavator.Log($"You can't whitelist nothing!", Color.Red, LogType.Error);
+                            OreExcavator.Log($"You can't whitelist nothing! Hover over a tile, wall or item and try again.", Color.Red, LogType.Error);
                     }
                     else
                     {
-                        OreExcavator.Log($"Rejected adding 'ItemID.{name} ({typeId})' because it is blacklisted by the host", Color.Red, LogType.Error);
+                        OreExcavator.Log($"Rejected adding 'ItemID.{name} ({typeId})' because it is blacklisted by the server host", Color.Red, LogType.Error);
                         OreExcavator.Log($"If you think this is an error, ask the host to remove this Item from their server's blacklist configuration", Color.Aqua, LogType.Info);
                     }
                     break;
 
                 case ActionType.TileBlackListed:
+                    if (!OreExcavator.ClientConfig.tileWhitelistToggled)
+                        OreExcavator.Log("Y'know your Tile whitelist is off right? We'll remove it for you anyways though!", Color.Red, LogType.Warn);
+
                     if (OreExcavator.ClientConfig.tileWhitelist.Contains(name))
                     {
                         OreExcavator.ClientConfig.tileWhitelist.Remove(name);
                         OreExcavator.SaveConfig(OreExcavator.ClientConfig);
-                        OreExcavator.Log($"Removed 'TileID.{name} ({typeId})' from the Tile whitelist", Color.Orange, LogType.Info);
+                        OreExcavator.Log($"Removed 'TileID.{name} ({typeId})' from your Tile whitelist", Color.Orange, LogType.Info);
                     }
                     else
                         OreExcavator.Log($"'TileID.{name} ({typeId})' isn't whitelisted, cannot remove", Color.Yellow, LogType.Warn);
                     break;
 
                 case ActionType.WallBlackListed:
+                    if (!OreExcavator.ClientConfig.wallWhitelistToggled)
+                        OreExcavator.Log("Y'know your Wall whitelist is off right? We'll remove it for you anyways though!", Color.Red, LogType.Warn);
+
                     if (OreExcavator.ClientConfig.wallWhitelist.Contains(name))
                     {
 
                         OreExcavator.ClientConfig.wallWhitelist.Remove(name);
                         OreExcavator.SaveConfig(OreExcavator.ClientConfig);
-                        OreExcavator.Log($"Removed 'WallID.{name} ({typeId})' from the Wall whitelist", Color.Orange, LogType.Info);
+                        OreExcavator.Log($"Removed 'WallID.{name} ({typeId})' from your Wall whitelist", Color.Orange, LogType.Info);
                     }
                     else
                         OreExcavator.Log($"'WallID.{name} ({typeId})' isn't whitelisted, cannot remove", Color.Yellow, LogType.Warn);
                     break;
 
                 case ActionType.ItemBlackListed:
+                    if (!OreExcavator.ClientConfig.itemWhitelistToggled)
+                        OreExcavator.Log("Y'know your Item whitelist is off right? We'll remove it for you anyways though!", Color.Red, LogType.Warn);
+
                     if ((item.Name ?? "") != "" && OreExcavator.ClientConfig.itemWhitelist.Contains(name))
                     {
                         OreExcavator.ClientConfig.itemWhitelist.Remove(name);
                         OreExcavator.SaveConfig(OreExcavator.ClientConfig);
-                        OreExcavator.Log($"Removed 'ItemID.{name} ({typeId})' from the Item vein-swap whitelist", Color.Orange, LogType.Info);
+                        OreExcavator.Log($"Removed 'ItemID.{name} ({typeId})' from your Item chain-swap whitelist", Color.Orange, LogType.Info);
                     }
                     else if ((item.Name ?? "") != "")
                         OreExcavator.Log($"'ItemID.{name} ({typeId})' isn't whitelisted, cannot remove", Color.Yellow, LogType.Warn);
                     else if (typeId <= 0)
-                        OreExcavator.Log($"You can't remove nothing from the whitelist!", Color.Red, LogType.Error);
+                        OreExcavator.Log($"You can't remove nothing from the whitelist! Hover over a tile, wall or item and try again.", Color.Red, LogType.Error);
                     break;
             }
 
@@ -197,9 +215,13 @@ namespace OreExcavator
                     OreExcavator.Log("Excavations disabled", Color.Orange, LogType.Info);
             }
 
+            int x = Player.tileTargetX;
+            int y = Player.tileTargetY;
+
             // Tooltips when excavating
-            if (OreExcavator.ClientConfig.showTooltips)
+            if (OreExcavator.ClientConfig.showCursorTooltips)
                 if (OreExcavator.ClientConfig.toggleExcavations ? OreExcavator.excavationToggled : excavatorHeld)
+                    // TODO: Add verbose info of hovered tile?
                     if ((item.Name ?? "") != "" && item.pick + item.axe + item.hammer != 0)
                         Player.cursorItemIconText = "Excavating";
                     else if ((item.Name ?? "") != "" && (item.createTile >= 0.0 || item.createWall > 0))
@@ -212,26 +234,21 @@ namespace OreExcavator
 
             item = Main.HoverItem;
             if (OreExcavator.ServerConfig.allowQuickWhitelisting)
-            {
-                int x = Player.tileTargetX;
-                int y = Player.tileTargetY;
-
-                if (OreExcavator.WhitelistHotkey.JustPressed && Main.tile[x, y].HasTile) // Tile Add
-                    setListUpdates(ActionType.TileWhiteListed, Main.tile[x, y].TileType, OreExcavator.GetFullNameById(Main.tile[x, y].TileType, ActionType.TileWhiteListed));
-                else if (OreExcavator.WhitelistHotkey.JustPressed) // Wall Add
-                    if (Main.tile[x, y].WallType <= 0) // Hover Add
+                if (OreExcavator.WhitelistHotkey.JustPressed) {
+                    if (item.Name != "") // Item ADD
                         setListUpdates(ActionType.ItemWhiteListed, item.type, OreExcavator.GetFullNameById(item.type, ActionType.ItemWhiteListed));
-                    else
+                    else if (Main.tile[x, y].HasTile) // Tile ADD
+                        setListUpdates(ActionType.TileWhiteListed, Main.tile[x, y].TileType, OreExcavator.GetFullNameById(Main.tile[x, y].TileType, ActionType.TileWhiteListed));
+                    else if (Main.tile[x, y].WallType > 0) // Wall ADD
                         setListUpdates(ActionType.WallWhiteListed, Main.tile[x, y].WallType, OreExcavator.GetFullNameById(Main.tile[x, y].WallType, ActionType.WallWhiteListed));
-
-                if (OreExcavator.BlacklistHotkey.JustPressed && Main.tile[x, y].HasTile) // Tile Remove
-                    setListUpdates(ActionType.TileBlackListed, Main.tile[x, y].TileType, OreExcavator.GetFullNameById(Main.tile[x, y].TileType, ActionType.TileBlackListed));
-                else if (OreExcavator.BlacklistHotkey.JustPressed) // Wall Remove
-                    if (Main.tile[x, y].WallType <= 0) // Hover Remove
+                } else if (OreExcavator.BlacklistHotkey.JustPressed) {
+                    if (item.Name != "") // Item REMOVE
                         setListUpdates(ActionType.ItemBlackListed, item.type, OreExcavator.GetFullNameById(item.type, ActionType.ItemBlackListed));
-                    else
+                    else if (Main.tile[x, y].HasTile) // Tile REMOVE
+                        setListUpdates(ActionType.TileBlackListed, Main.tile[x, y].TileType, OreExcavator.GetFullNameById(Main.tile[x, y].TileType, ActionType.TileBlackListed));
+                    else if (Main.tile[x, y].WallType > 0) // Wall REMOVE
                         setListUpdates(ActionType.WallBlackListed, Main.tile[x, y].WallType, OreExcavator.GetFullNameById(Main.tile[x, y].WallType, ActionType.WallBlackListed));
-            }
+                }
         }
     }
 }
