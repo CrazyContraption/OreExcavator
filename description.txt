@@ -1,5 +1,8 @@
 ﻿
-Welcome to Ore Excavator! - Last Updated 6/26/2022
+Welcome to Ore Excavator! - Last Updated 7/19/2022
+
+
+Found an issue? Join our Discord and help report it: https://discord.gg/FtrsRtPe6h
 
 
 Ore Excavator has become the offical 1.4 port of VeinMiner, with VeinMiner being discontinued, and merged into Ore Excavator with permission.

@@ -228,7 +228,7 @@ namespace OreExcavator /// The Excavator of ores
                         ushort x = reader.ReadUInt16(), y = reader.ReadUInt16(), limit = reader.ReadUInt16(), delay = reader.ReadUInt16();
                         bool doDiagonals = reader.ReadBoolean();
                         ushort targetType = reader.ReadUInt16(), itemToTeleport = reader.ReadUInt16();
-                        ModifySpooler(msgType, x, y, limit, delay, doDiagonals, targetType, itemToTeleport, origin, true);
+                        ModifySpooler(msgType, x, y, limit, delay, doDiagonals, targetType, origin, true);
                     }
                     break;
 
@@ -238,7 +238,7 @@ namespace OreExcavator /// The Excavator of ores
                         ushort x = reader.ReadUInt16(), y = reader.ReadUInt16(), limit = reader.ReadUInt16(), delay = reader.ReadUInt16();
                         bool doDiagonals = reader.ReadBoolean();
                         ushort targetType = reader.ReadUInt16();
-                        ModifySpooler(msgType, x, y, limit, delay, doDiagonals, targetType, -1, origin, true);
+                        ModifySpooler(msgType, x, y, limit, delay, doDiagonals, targetType, origin, true);
                     }
                     break;
 
@@ -247,8 +247,9 @@ namespace OreExcavator /// The Excavator of ores
                         playerHalted[origin] = false;
                         ushort x = reader.ReadUInt16(), y = reader.ReadUInt16(), limit = reader.ReadUInt16(), delay = reader.ReadUInt16();
                         bool doDiagonals = reader.ReadBoolean();
-                        ushort targetType = reader.ReadUInt16(), itemToTeleport = reader.ReadUInt16(), createItem = reader.ReadUInt16();
-                        ModifySpooler(msgType, x, y, limit, delay, doDiagonals, targetType, itemToTeleport, origin, true, createItem);
+                        ushort targetType = reader.ReadUInt16();
+                        int targetSubtype = reader.ReadInt16(), createItem = reader.ReadInt16(), itemSubtype = reader.ReadInt16();
+                        ModifySpooler(msgType, x, y, limit, delay, doDiagonals, targetType, origin, true, targetSubtype, createItem, itemSubtype);
                     }
                     break;
 
@@ -257,17 +258,31 @@ namespace OreExcavator /// The Excavator of ores
                         playerHalted[origin] = false;
                         ushort x = reader.ReadUInt16(), y = reader.ReadUInt16(), limit = reader.ReadUInt16(), delay = reader.ReadUInt16();
                         bool doDiagonals = reader.ReadBoolean();
-                        ushort targetType = reader.ReadUInt16(), createItem = reader.ReadUInt16();
-                        ModifySpooler(msgType, x, y, limit, delay, doDiagonals, targetType, -1, origin, true, createItem);
+                        ushort targetType = reader.ReadUInt16();
+                        int targetSubtype = reader.ReadInt16(), createItem = reader.ReadInt16(), itemSubtype = reader.ReadInt16();
+                        ModifySpooler(msgType, x, y, limit, delay, doDiagonals, targetType, origin, true, targetSubtype, createItem, itemSubtype);
                     }
                     break;
 
-                case ActionType.SeedPlanted:
+                case ActionType.TurfPlanted:
                     {
                         playerHalted[origin] = false;
                         ushort x = reader.ReadUInt16(), y = reader.ReadUInt16(), limit = reader.ReadUInt16(), delay = reader.ReadUInt16();
-                        ushort targetType = reader.ReadUInt16(), newPlant = reader.ReadUInt16();
-                        // TODO: ADD SEED LOGIC AND CALL SPOOLER
+                        bool doDiagonals = reader.ReadBoolean();
+                        ushort targetType = reader.ReadUInt16();
+                        int targetSubtype = reader.ReadInt16(), createItem = reader.ReadInt16(), itemSubtype = reader.ReadInt16();
+                        ModifySpooler(msgType, x, y, limit, delay, doDiagonals, targetType, origin, true, targetSubtype, createItem, itemSubtype);
+                    }
+                    break;
+
+                case ActionType.TurfHarvested:
+                    {
+                        playerHalted[origin] = false;
+                        ushort x = reader.ReadUInt16(), y = reader.ReadUInt16(), limit = reader.ReadUInt16(), delay = reader.ReadUInt16();
+                        bool doDiagonals = reader.ReadBoolean();
+                        ushort targetType = reader.ReadUInt16();
+                        int newDirt = reader.ReadInt16();
+                        ModifySpooler(msgType, x, y, limit, delay, doDiagonals, targetType, origin, true, -1, newDirt, -1);
                     }
                     break;
 
@@ -275,8 +290,10 @@ namespace OreExcavator /// The Excavator of ores
                     {
                         playerHalted[origin] = false;
                         ushort x = reader.ReadUInt16(), y = reader.ReadUInt16(), limit = reader.ReadUInt16(), delay = reader.ReadUInt16();
-                        ushort targetType = reader.ReadUInt16(), newPaint = reader.ReadUInt16();
-                        // TODO: ADD PAINT LOGIC AND CALL SPOOLER
+                        bool doDiagonals = reader.ReadBoolean();
+                        ushort targetType = reader.ReadUInt16();
+                        int newPaint = reader.ReadInt16();
+                        ModifySpooler(msgType, x, y, limit, delay, doDiagonals, targetType, origin, true, -1, newPaint, -1);
                     }
                     break;
 
@@ -344,11 +361,12 @@ namespace OreExcavator /// The Excavator of ores
         /// <param name="delay"></param>
         /// <param name="doDiagonals"></param>
         /// <param name="targetType"></param>
-        /// <param name="itemToTeleport"></param>
         /// <param name="playerId"></param>
         /// <param name="puppeting"></param>
+        /// <param name="targetSubtype"></param>
         /// <param name="replacementType"></param>
-        internal static void ModifySpooler(ActionType actionType, int x, int y, int limit, int delay, bool doDiagonals, int targetType, int itemToTeleport, byte playerId, bool puppeting = false, int replacementType = -1)
+        /// <param name="itemSubtype"></param>
+        internal static void ModifySpooler(ActionType actionType, int x, int y, int limit, int delay, bool doDiagonals, int targetType, byte playerId, bool puppeting = false, int targetSubtype = -1, int replacementType = -1, int itemSubtype = -1)
         {
             var checkPoint = new Point16(x, y);
 
@@ -370,19 +388,22 @@ namespace OreExcavator /// The Excavator of ores
                 packet.Write((ushort)y);
                 packet.Write((ushort)limit);
                 packet.Write((ushort)delay);
-                if (actionType != ActionType.SeedPlanted && actionType != ActionType.ItemPainted)
-                    packet.Write(doDiagonals);
+                packet.Write(doDiagonals);
                 packet.Write((ushort)targetType);
-                if (actionType != ActionType.WallKilled && actionType != ActionType.WallReplaced) // TODO: Remove when walls can tele
-                    packet.Write((ushort)itemToTeleport);
-                if (actionType == ActionType.TileReplaced || actionType == ActionType.WallReplaced)
+                if (actionType == ActionType.TileReplaced || actionType == ActionType.WallReplaced || actionType == ActionType.TurfPlanted || actionType == ActionType.ItemPainted)
+                {
+                    packet.Write((int)targetSubtype);
+                    packet.Write((int)replacementType);
+                    packet.Write((int)itemSubtype);
+                }
+                else if (actionType == ActionType.TurfHarvested)
                     packet.Write((ushort)replacementType);
                 packet.Send(-1, playerId);
             }
             new Task(delegate
             {
                 OreExcavator.puppeting = puppeting;
-                ModifyAdjacentFloodfill(actionType, x, y, limit, delay, doDiagonals, targetType, itemToTeleport, playerId, replacementType);
+                ModifyAdjacentFloodfill(actionType, x, y, limit, delay, doDiagonals, targetType, playerId, targetSubtype, replacementType, itemSubtype);
             }).Start();
         }
 
@@ -399,17 +420,18 @@ namespace OreExcavator /// The Excavator of ores
         /// <param name="delay"></param>
         /// <param name="doDiagonals"></param>
         /// <param name="targetType">ID of the entity that is being searched for, and modified</param>
-        /// <param name="itemToTeleport">ID of the item type to teleport to the player, if needed</param>
         /// <param name="playerID">The player index to teleport items to, if needed</param>
+        /// <param name="targetSubtype">Frame Y of the targeted type to destroy</param>
         /// <param name="replaceItemType">If the action is replacing, what are we replacing the entity with</param>
-        internal static void ModifyAdjacentFloodfill(ActionType actionType, int originX, int originY, int limit, int delay, bool doDiagonals, int targetType, int itemToTeleport, byte playerID, int replaceItemType = -1)
+        /// <param name="itemSubtype">ID of the item style that is being replaced with, if needed</param>
+        internal static void ModifyAdjacentFloodfill(ActionType actionType, int originX, int originY, int limit, int delay, bool doDiagonals, int targetType, byte playerID, int targetSubtype = -1, int replaceItemType = -1, int itemSubtype = -1)
         {
             bool isWall = false;
             if (actionType == ActionType.WallKilled || actionType == ActionType.WallReplaced)
                 isWall = true;
 
             bool isReplacing = false;
-            if (actionType == ActionType.TileReplaced || actionType == ActionType.WallReplaced)
+            if (actionType == ActionType.TileReplaced || actionType == ActionType.WallReplaced || actionType == ActionType.TurfPlanted)
                 isReplacing = true;
 
             Queue<Point16> queue = new();
@@ -438,8 +460,10 @@ namespace OreExcavator /// The Excavator of ores
                     else
                         limit = hardlimit;
 
-            Log($"(ID:{playerID} - P:{puppeting}) {actionType}, OX:{originX}, OY:{originY}, L:{limit}, D:{delay}, DD:{doDiagonals}, TT:{targetType}, TP:{itemToTeleport}, RT:{replaceItemType}", Color.Yellow, LogType.Debug);
+            if (actionType == ActionType.TurfHarvested)
+                isReplacing = true;
 
+            Log($"(ID:{playerID} - P:{puppeting}) {actionType}, OX:{originX}, OY:{originY}, L:{limit}, D:{delay}, DD:{doDiagonals}, TT:{targetType}:{targetSubtype}, RT:{replaceItemType}:{itemSubtype}", Color.Yellow, LogType.Debug);
 
             for (int tileCount = 0; queue.Count > 0 && tileCount < limit && !Main.gameMenu; tileCount++)
             {
@@ -447,11 +471,10 @@ namespace OreExcavator /// The Excavator of ores
 
                 if (masterTiles.TryAdd(new Point16(currentPoint.X, currentPoint.Y), false))
                 {
-
                     if (originX != currentPoint.X || originY != currentPoint.Y) // Ensure we're not spawning dirt for the initial break
                     {
                         killCalled = true;
-                        bool success = AlterHandler(actionType, currentPoint.X, currentPoint.Y, playerID, itemToTeleport, (isReplacing ? replaceItemType : -1));
+                        bool success = AlterHandler(actionType, currentPoint.X, currentPoint.Y, playerID, (isReplacing ? replaceItemType : -1), (isReplacing ? itemSubtype : -1));
                         _ = masterTiles.TryRemove(new Point16(currentPoint.X, currentPoint.Y), out _);
                         killCalled = false;
                         if (!success)
@@ -464,22 +487,46 @@ namespace OreExcavator /// The Excavator of ores
                     continue;
 
                 //if (!falling || replacing)
-                Thread.Sleep(delay);
+                if (delay > 0)
+                    Thread.Sleep(delay);
 
-                for (byte index = 0; index < (doDiagonals && actionType != ActionType.SeedPlanted && !isReplacing ? (falling ? 5 : 8) : (falling ? 3 : 4)); index++) // Looks fancy, but really just adds 4 if diagonals should be included
+                for (byte index = 0; index < (doDiagonals && !isReplacing ? (falling ? 5 : 8) : (falling ? 3 : 4)); index++) // Looks fancy, but really just adds 4 if diagonals should be included
                 {
                     Point16 nextPoint = new(currentPoint.X + ch_x[index], currentPoint.Y + ch_y[index]);
 
                     ushort x = (ushort)nextPoint.X;
                     ushort y = (ushort)nextPoint.Y;
 
-                    if (!isWall && WorldGen.InWorld(x, y) && WorldGen.CanKillTile(x, y) && !queue.Contains(nextPoint) && !masterTiles.ContainsKey(nextPoint) && Framing.GetTileSafely(nextPoint) is Tile checkTile1 && checkTile1.HasTile && checkTile1.TileType == targetType)
-                        queue.Enqueue(nextPoint);
-                    else if (isWall && (!Main.tile[x, y].HasTile || (Main.tile[x, y].HasTile && Main.tile[x, y].Slope != SlopeType.Solid)) && !queue.Contains(nextPoint) && !masterTiles.ContainsKey(nextPoint) && Main.tile[x, y].WallType == targetType)
-                        queue.Enqueue(nextPoint);
+                    if (WorldGen.InWorld(x, y) && !queue.Contains(nextPoint) && !masterTiles.ContainsKey(nextPoint))
+                    {
+                        if (!isWall && WorldGen.CanKillTile(x, y) && Framing.GetTileSafely(nextPoint) is Tile checkTile && checkTile.HasTile && checkTile.TileType == targetType)
+                        {
+                            switch (actionType)
+                            {
+                                case ActionType.TileReplaced:
+                                    {
+                                        if (targetSubtype < 0) // Should we worry about types for the target?
+                                            goto default;
+                                        WorldGen.KillTile_GetItemDrops(x, y, checkTile, out var itemDropType, out _, out var _, out _); // Get the type of item the tile should drop
+                                        Item drop = new Item(itemDropType); // Make an item from the dropped type
+                                        if (drop.placeStyle == targetSubtype / 18)
+                                            queue.Enqueue(nextPoint);
+                                    }
+                                    continue;
+                                case ActionType.TurfPlanted:
+                                    if (!Main.tile[x, y - 1].HasTile || !Main.tile[x, y + 1].HasTile || !Main.tile[x - 1, y].HasTile || !Main.tile[x + 1, y].HasTile)
+                                        goto default;
+                                    continue;
+                                default:
+                                    if (checkTile.TileType != Main.tile[originX, originY].TileType)
+                                        queue.Enqueue(nextPoint);
+                                    break;
+                            }
+                        }
+                        else if (isWall && (!Main.tile[x, y].HasTile || (Main.tile[x, y].HasTile && Main.tile[x, y].Slope != SlopeType.Solid)) && Main.tile[x, y].WallType == targetType)
+                            queue.Enqueue(nextPoint);
+                    }
                 }
-
-                //Log($"ID: {playerID} Halt:{playerHalted[playerID]} Puppet:{puppeting} || Mode:{Main.netMode} Active:{!(ClientConfig.toggleExcavations ? excavationToggled : OreExcavatorKeybinds.excavatorHeld)}", default, LogType.Debug);
                 if ((playerHalted[playerID] && puppeting) || (Main.netMode != NetmodeID.Server && playerID == Main.myPlayer && ClientConfig.releaseCancelsExcavations && !(ClientConfig.toggleExcavations ? excavationToggled : OreExcavatorKeybinds.excavatorHeld)))
                     break;
             }
@@ -536,9 +583,11 @@ namespace OreExcavator /// The Excavator of ores
          * Called when we want to kill a block/wall.
          * Handles the checks, multiplayer replication, and most of the code deduplication for the breaking process
          */
-        public static bool AlterHandler(ActionType actionType, int x, int y, byte playerID, int teleportsItemType = -1, int consumesItemType = -1)
+        public static bool AlterHandler(ActionType actionType, int x, int y, byte playerID, int consumesItemType = -1, int itemSubtype = -1)
         {
-            Log($"AlterHandler ({x},{y}) - {actionType}", default, LogType.Debug);
+            //if (devmode)
+                Log($"AlterHandler ({x},{y}) - {actionType} = {consumesItemType}:{itemSubtype}", default, LogType.Debug);
+
             if (x < 0 || y < 0)
                 return false;
 
@@ -546,9 +595,8 @@ namespace OreExcavator /// The Excavator of ores
             {
                 case ActionType.WallKilled:
                     {
-                        if (Main.tile[x, y].HasTile)
-                            return false;
-                        WorldGen.KillWall(x, y, false);
+                        if (!Main.tile[x, y].HasTile)
+                            WorldGen.KillWall(x, y, false);
                     }
                     break;
 
@@ -569,15 +617,20 @@ namespace OreExcavator /// The Excavator of ores
 
                 case ActionType.TileReplaced:
                     {
+                        // TODO: Move this outside of modify loop?
+
                         if (consumesItemType <= 0) // Invalid item type?
                             return false; //goto case ActionType.TileKilled;
                         int placeType;
+                        Item item = new Item(consumesItemType);
                         if (actionType == ActionType.TileReplaced)
-                            placeType = new Item(consumesItemType).createTile;
+                            placeType = item.createTile;
                         else
-                            placeType = new Item(consumesItemType).createWall;
+                            placeType = item.createWall;
                         if (placeType < 0) // Places invalid thing?
                             return false;
+
+
                         if (!ServerConfig.creativeMode && !puppeting)
                         {
                             bool consumed = Main.player[playerID].ConsumeItem(consumesItemType);
@@ -585,22 +638,22 @@ namespace OreExcavator /// The Excavator of ores
                                 return false;
                         }
                         if (actionType == ActionType.TileReplaced)
-                            WorldGen.ReplaceTile(x, y, (ushort)placeType, (int)Main.tile[x, y].Slope);
+                            WorldGen.ReplaceTile(x, y, (ushort)placeType, itemSubtype <= 0 ? (int)Main.tile[x, y].Slope : itemSubtype);
                         else
                             WorldGen.ReplaceWall(x, y, (ushort)placeType);
                     }
                     break;
 
 
-                case ActionType.SeedPlanted:
+                case ActionType.TurfPlanted:
                     {
-                        
+                        // TODO: Move this outside of modify loop?
                         if (consumesItemType <= 0) // Invalid item type?
                             return false; //goto case ActionType.TileKilled;
-
                         int placeType = new Item(consumesItemType).createTile;
                         if (placeType < 0) // Places invalid thing?
                             return false;
+
 
                         if (!ServerConfig.creativeMode && !puppeting)
                         {
@@ -608,8 +661,20 @@ namespace OreExcavator /// The Excavator of ores
                             if (!consumed) // Does the player have items to place?
                                 return false;
                         }
+                        // TODO: Retain paint?
+                        WorldGen.SpreadGrass(x, y, 0, 2, false);
+                        //WorldGen.KillTile(x, y, false, false, true);
+                        //WorldGen.PlaceTile(x, y, (ushort)consumesItemType, true, true, playerID, itemSubtype <= 0 ? (int)Main.tile[x, y].Slope : itemSubtype);
+                    }
+                    break;
 
-                        WorldGen.SpreadGrass(x, y, Main.tile[x, y].TileType, placeType, false, Main.tile[x, y].TileColor);
+                case ActionType.TurfHarvested:
+                    {
+                        if (consumesItemType < 0) // Invalid grass type?
+                            return false;
+                        // TODO: Retain paint?
+                        WorldGen.KillTile(x, y, false, false, true);
+                        WorldGen.PlaceTile(x, y, (ushort)consumesItemType, true, true, playerID, itemSubtype <= 0 ? (int)Main.tile[x, y].Slope : itemSubtype);
                     }
                     break;
 
@@ -625,6 +690,7 @@ namespace OreExcavator /// The Excavator of ores
             }
             return true;
         }
+
 
         /// My sad attempt at reflection
         /*internal static void reflect(string assembly, object?[] parameters)
@@ -669,7 +735,7 @@ namespace OreExcavator /// The Excavator of ores
                 case ActionType.ItemBlackListed:
                 case ActionType.TileReplaced:
                 case ActionType.WallReplaced:
-                case ActionType.SeedPlanted:
+                case ActionType.TurfPlanted:
                     var modItem = ItemLoader.GetItem(id);
                     if (modItem is not null)
                         return $"{modItem.Mod}:{modItem.Name}";
@@ -731,12 +797,21 @@ namespace OreExcavator /// The Excavator of ores
         internal static void SaveConfig(ModConfig config)
         {
             Log($"Saving config '{config.Name}' changes...", default, LogType.Debug);
-            Directory.CreateDirectory(ModConfigPath);
             string filename = config.Mod.Name + "_" + config.Name + ".json";
             string path = Path.Combine(ModConfigPath, filename);
             string json = JsonConvert.SerializeObject(config/*, serializerSettings*/);
-            File.WriteAllText(path, json);
-            Log($"Config '{config.Name}' saved, and updated!", default, LogType.Debug);
+            try
+            {
+                Directory.CreateDirectory(ModConfigPath);
+                File.WriteAllText(path, json);
+                Log($"Config '{config.Name}' saved, and updated!", default, LogType.Debug);
+            }catch (Exception e)
+            {
+                throw new Exception($"A file could not be created, or updated at:"
+                    + "\n'{path}'"
+                    + "\n\n If you ARE using Onedrive, please reinstall tModloader in a different location."
+                    + "\n If you ARE NOT using Onedrive, please disable Windows Real-Time protection.");
+            }
         }
 
         internal static void Log(string msg, Color color = default, LogType type = LogType.None)
@@ -769,21 +844,25 @@ namespace OreExcavator /// The Excavator of ores
                 if (color != default)
                 {
                     // This stuff combines duplicated messages
-                    List<ChatMessageContainer> messages = (List<ChatMessageContainer>)typeof(RemadeChatMonitor).GetField("_messages", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(Main.chatMonitor);
-                    if (messages.Count > 0)
-                    {
-                        List<TextSnippet[]> parsedText = (List<TextSnippet[]>)typeof(ChatMessageContainer).GetField("_parsedText", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(messages[0]);
-                        if (parsedText[^1][0].TextOriginal.Equals(msg))
-                            parsedText[^1][0].Text = parsedText[^1][0].TextOriginal + $" ({++msgReps}x)";
-                        else
+                    try {
+                        List<ChatMessageContainer> messages = (List<ChatMessageContainer>)typeof(RemadeChatMonitor).GetField("_messages", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(Main.chatMonitor);
+                        if (messages != null && messages.Count > 0)
                         {
-                            msgReps = 1;
-                            Main.NewText(msg, color);
+                            List<TextSnippet[]> parsedText = (List<TextSnippet[]>)typeof(ChatMessageContainer).GetField("_parsedText", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(messages[0]);
+                            if (parsedText[^1][0].TextOriginal.Equals(msg))
+                                parsedText[^1][0].Text = parsedText[^1][0].TextOriginal + $" ({++msgReps}x)";
+                            else
+                            {
+                                msgReps = 1;
+                                Main.NewText(msg, color);
+                            }
                         }
-                    }
-                    else
+                        else
+                            Main.NewText(msg, color);
+                    } catch(Exception e) {
+                        myMod.Logger.Error(e);
                         Main.NewText(msg, color);
-
+                    }
                 }
         }
     }
@@ -803,7 +882,7 @@ namespace OreExcavator /// The Excavator of ores
         /// <param name="noItem">Reference of if the tile should drop not item(s)</param>
         public override void KillTile(int x, int y, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
         {
-            if (WorldGen.gen || fail || !Main.tile[x, y].HasTile || type < 0 || OreExcavator.killCalled || Main.netMode == NetmodeID.Server || Main.gameMenu)
+            if (WorldGen.gen || !Main.tile[x, y].HasTile || type < 0 || OreExcavator.killCalled || Main.netMode == NetmodeID.Server || Main.gameMenu)
                 return;
 
             if (OreExcavator.ExcavateHotkey.GetAssignedKeys().Count <= 0 || !OreExcavator.ServerConfig.allowPickaxing)
@@ -839,8 +918,20 @@ namespace OreExcavator /// The Excavator of ores
             if (OreExcavator.ServerConfig.creativeMode)
                 noItem = true;
 
-            WorldGen.KillTile_GetItemDrops(x, y, OreExcavator.lookingAtTile, out var itemDropType, out _, out var _, out _);
-            OreExcavator.ModifySpooler(ActionType.TileKilled, x, y, OreExcavator.ClientConfig.recursionLimit, OreExcavator.ClientConfig.recursionDelay, OreExcavator.ClientConfig.doDiagonals, type, itemDropType, (byte)Main.myPlayer, false);
+            if (fail)
+            {
+                _ = Task.Run(async delegate // Create a new thread
+                {
+                    Thread.Sleep(10);
+                    ushort newType = Main.tile[x, y].TileType;
+                    if (type != newType)
+                        OreExcavator.ModifySpooler(ActionType.TurfHarvested, x, y, OreExcavator.ClientConfig.recursionLimit, OreExcavator.ClientConfig.recursionDelay, false, type, (byte)Main.myPlayer, false, -1, newType);
+                });
+                return;
+            }
+
+            //WorldGen.KillTile_GetItemDrops(x, y, OreExcavator.lookingAtTile, out var itemDropType, out _, out var _, out _);
+            OreExcavator.ModifySpooler(ActionType.TileKilled, x, y, OreExcavator.ClientConfig.recursionLimit, OreExcavator.ClientConfig.recursionDelay, OreExcavator.ClientConfig.doDiagonals, type, (byte)Main.myPlayer, false);
         }
     }
 
@@ -890,8 +981,7 @@ namespace OreExcavator /// The Excavator of ores
             if ((OreExcavator.ClientConfig.wallWhitelistToggled && !OreExcavator.ClientConfig.wallWhitelist.Contains(wallName)) || (OreExcavator.ServerConfig.tileBlacklistToggled && OreExcavator.ServerConfig.wallBlacklist.Contains(wallName)))
                 return;
 
-            //WorldGen.KillTile_GetItemDrops(x, y, new Tile(OreExcavator.lookingAtTile), out var itemDropType, out _, out var _, out _);
-            OreExcavator.ModifySpooler(ActionType.WallKilled, x, y, OreExcavator.ClientConfig.recursionLimit, OreExcavator.ClientConfig.recursionDelay, OreExcavator.ClientConfig.doDiagonals, type, -1, (byte)Main.myPlayer, false);
+            OreExcavator.ModifySpooler(ActionType.WallKilled, x, y, OreExcavator.ClientConfig.recursionLimit, OreExcavator.ClientConfig.recursionDelay, OreExcavator.ClientConfig.doDiagonals, type, (byte)Main.myPlayer, false);
         }
     }
 
@@ -935,44 +1025,61 @@ namespace OreExcavator /// The Excavator of ores
             short createType = -1;
             Tile localTile = OreExcavator.lookingAtTile;
 
-            if (item.createTile >= 0 && item.createTile >= item.createWall) // Replacing and planting
+            if (item.createTile >= TileID.Dirt && item.createTile >= item.createWall) // Replacing and planting
             {
-                if (localTile.TileType < 0 || !OreExcavator.ClientConfig.doSpecials)
+                if (localTile.TileType < TileID.Dirt || !OreExcavator.ClientConfig.doSpecials)
                     return null;
 
                 if (item.Name.ToLower().Contains("seed"))
                 {
-                    if (!OreExcavator.devmode)
-                        return null;
-
                     if (!OreExcavator.ServerConfig.chainPlanting)
+                    {
+                        OreExcavator.Log("Excavation Halted: Server has disabled Chain-Planting.", Color.Red, LogType.Debug);
                         return null;
+                    }
 
-                    actionType = ActionType.SeedPlanted;
+                    actionType = ActionType.TurfPlanted;
                     createType = (short)item.createTile;
                 }
                 else
                 {
                     if (!OreExcavator.ServerConfig.allowReplace)
+                    {
+                        OreExcavator.Log("Excavation Halted: Server has disabled Chain-Swapping.", Color.Red, LogType.Debug);
                         return null;
+                    }
+                    if (!localTile.HasTile || !Main.tile[x, y].HasTile)
+                    {
+                        OreExcavator.Log("Excavation Halted: Tile does not exist.", Color.Red, LogType.Debug);
+                        return null;
+                    }
                     actionType = ActionType.TileReplaced;
                     createType = (short)item.createTile;
                 }
             }
-            else if (item.createWall > 0 && item.createTile < item.createWall)
+            else if (item.createWall > TileID.Dirt && item.createTile < item.createWall)
             {
-                if (localTile.WallType <= 0 || !OreExcavator.ServerConfig.allowReplace || !OreExcavator.ClientConfig.doSpecials)
+                if (localTile.WallType <= TileID.Dirt || !OreExcavator.ServerConfig.allowReplace || !OreExcavator.ClientConfig.doSpecials)
+                {
+                    OreExcavator.Log("Excavation Halted: Wall is invalid, or the server has disabled Chain-Swapping, or the client has alternative features disabled.", Color.Red, LogType.Debug);
                     return null;
+                }
                 actionType = ActionType.WallReplaced;
                 createType = (short)item.createWall;
             }
             else
             {
                 if (!OreExcavator.devmode)
+                {
+                    OreExcavator.Log("Excavation Halted: Devmode is disabled.", Color.Red, LogType.Debug);
                     return null;
+                }
 
                 if (!OreExcavator.ServerConfig.chainPainting)
+                {
+                    OreExcavator.Log("Excavation Halted: Server has disabled Chain-Painting.", Color.Red, LogType.Debug);
                     return null;
+                }
 
                 actionType = ActionType.ItemPainted;
                 //createType = (short)item.createTile;
@@ -980,17 +1087,9 @@ namespace OreExcavator /// The Excavator of ores
                 /// OreExcavator.Log($"{item.paint}", Color.Aqua);
             }
 
-            if (actionType == ActionType.SeedPlanted || actionType == ActionType.TileReplaced)
-                if (Main.tile[x, y].HasTile == false)
-                    return null;
-
-            if (actionType == ActionType.TileReplaced)
-                if (Main.tile[x + 1, y].HasTile == false && Main.tile[x, y + 1].HasTile == false && Main.tile[x - 1, y].HasTile == false && Main.tile[x, y - 1].HasTile == false)
-                    return null;
-
-            if (createType < 0 || (actionType == ActionType.TileReplaced && createType == localTile.TileType) // is it a valid type, and is what we're looking to replace valid?
+            if (createType < 0 || (actionType == ActionType.TileReplaced && createType == localTile.TileType && localTile.TileFrameY == Main.tile[x , y].TileFrameY) // is it a valid type, and is what we're looking to replace valid?
                 || (actionType == ActionType.WallReplaced && createType == localTile.WallType)
-                || (actionType == ActionType.SeedPlanted && createType == localTile.TileType))
+                || (actionType == ActionType.TurfPlanted && createType == localTile.TileType))
                 return null;
 
             if (OreExcavator.ExcavateHotkey.GetAssignedKeys()[0] == "Mouse1")
@@ -1005,6 +1104,16 @@ namespace OreExcavator /// The Excavator of ores
                     return null;
                 }
 
+            if (Main.tile[x, y].TileType == localTile.TileType && localTile.TileFrameY == Main.tile[x, y].TileFrameY)
+            {
+                OreExcavator.Log("Excavation Halted: Tile was not altered by item usage.", Color.Red, LogType.Debug);
+                return null;
+            }
+            if (Main.tile[x + 1, y].HasTile == false && Main.tile[x, y + 1].HasTile == false && Main.tile[x - 1, y].HasTile == false && Main.tile[x, y - 1].HasTile == false)
+            {
+                OreExcavator.Log("Excavation Halted: Tile is unanchored, nowhere to flood to.", Color.Red, LogType.Debug);
+                return null;
+            }
 
             string itemName = OreExcavator.GetFullNameById(item.type, actionType);
 
@@ -1019,11 +1128,20 @@ namespace OreExcavator /// The Excavator of ores
                 return null;
             }
 
-            int itemDropType = -1;
-            if (actionType != ActionType.WallReplaced)
-                WorldGen.KillTile_GetItemDrops(x, y, localTile, out itemDropType, out _, out _, out _);
+            WorldGen.KillTile_GetItemDrops(x, y, localTile, out var itemDropType, out _, out var _, out _); // Get the type of item the tile should drop
+            Item drop = new Item(itemDropType); // Make an item from the dropped type
 
-            OreExcavator.ModifySpooler(actionType, x, y, OreExcavator.ClientConfig.recursionLimit, OreExcavator.ClientConfig.recursionDelay, OreExcavator.ClientConfig.doDiagonals, (actionType == ActionType.TileReplaced ? localTile.TileType : localTile.WallType), itemDropType, (byte)Main.myPlayer, false, item.type);
+            OreExcavator.ModifySpooler(actionType, x, y,
+                OreExcavator.ClientConfig.recursionLimit,
+                OreExcavator.ClientConfig.recursionDelay,
+                OreExcavator.ClientConfig.doDiagonals,
+                (actionType == ActionType.TileReplaced ? localTile.TileType : localTile.WallType),
+                (byte)Main.myPlayer,
+                (actionType == ActionType.TurfPlanted ? true : false),
+                drop.placeStyle == (localTile.TileFrameY / 18) ? localTile.TileFrameY : -1, // Might need revision, could still be not equal in rare cases
+                item.type,
+                item.placeStyle
+            );
             OreExcavator.lookingAtTile.CopyFrom(Main.tile[x, y]);
 
             return true;
@@ -1045,7 +1163,9 @@ namespace OreExcavator /// The Excavator of ores
         /// <param name="source">Source of the spawned item</param>
         public override void OnSpawn(Item item, IEntitySource source)
         {
-            OreExcavator.Log($"OnSpawn('{item.Name}', '{(source != null ? source.Context : "")}') Places: {item.createTile}, {item.createWall}", Color.Red, LogType.Debug);
+            if (WorldGen.gen)
+                return;
+            //OreExcavator.Log($"OnSpawn('{item.Name}', '{(source != null ? source.Context : "")}') Places: {item.createTile}, {item.createWall}", Color.Red, LogType.Debug);
             if (item != null && item.active && (source == null || source.Context == null || source.Context == "") && (item.createTile != -1 || item.createWall != -1))
             {
                 if (OreExcavator.ServerConfig.teleportLoot && (OreExcavator.killCalled)) // Add check for initial drop from excavations
@@ -1197,7 +1317,7 @@ namespace OreExcavator /// The Excavator of ores
             // Get the player's traget tile
             int x = Player.tileTargetX;
             int y = Player.tileTargetY;
-
+            
             _ = Task.Run(async delegate // Create a new thread
             {
                 /// TODO: We should do the whitelisting checks here, so you can't even start hitting something if it's not whitelisted
@@ -1213,6 +1333,7 @@ namespace OreExcavator /// The Excavator of ores
                         {
                             player.controlUseItem = true; // Yes, we're using the item normally, even though we're really not
                             player.ItemCheck(player.selectedItem); // Run the item's normal actions on whatever we're holding
+                            player.controlUseItem = false; // Yes, we're using the item normally, even though we're really not
                             //await Task.Delay(item.useTime * 13);
                             Thread.Sleep(item.useTime * 10);
                             RepeatHandler(item, player); // Start the next check
@@ -1225,8 +1346,6 @@ namespace OreExcavator /// The Excavator of ores
     {
         public override void OnEnterWorld(Player player) // Startup message
         {
-            // Add new update available logger?
-
             if (OreExcavator.ExcavateHotkey.GetAssignedKeys().Count <= 0)
             {
                 new Task(delegate
@@ -1238,18 +1357,24 @@ namespace OreExcavator /// The Excavator of ores
                                      "\n\t  You can find bindings for mods @ Settings > Controls > Mod Controls (at the bottom) > OreExcavator: Excavate", Color.Red, LogType.Warn);
                 }).Start();
             }
-            else if (OreExcavator.ClientConfig.showWelcome069)
+            else if (OreExcavator.ClientConfig.showWelcome070)
             {
                 new Task(delegate
                 {
                     Thread.Sleep(2000);
                     OreExcavator.Log($"[{OreExcavator.myMod.DisplayName}] - v{OreExcavator.myMod.Version}" +
                                     $"\n\t  Hey, thanks for using {OreExcavator.myMod.Name}!" +
-                                     "\n\t  We released an update to combat some of the major issues people have been experiencing." +
-                                     "\n\t  We've also set releasing keybinds stopping excavations to be false by default to combat" +
-                                     "\n\t  server desync issues - Feel free to turn it back on if you don't care or are playing alone." +
+                                     "\n\n\t  We now have a discord for bug reporting:" +
+                                     "\n\t  https://discord.gg/FtrsRtPe6h" +
+                                     "\n\n\t  We released an update to combat some of the major dupes." +
+                                     "\n\t  We've also finally released chain painting, planting, and harvesting!" +
+                                     "\n\t  We've hit version 0.7.0, which means we're 70% of the way to being fully released." +
                                      "\n\t  Oh yeah, you can also disable this popup in your Client configs.", Color.SteelBlue, LogType.Info);
                 }).Start();
+            }
+            else
+            {
+                // Add new update available logger?
             }
         }
     }

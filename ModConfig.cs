@@ -19,8 +19,9 @@ namespace OreExcavator
             "\nThe smallest limit between the client and server will be used per client." +
             "\nSet to 0 to disable the mod, or max to let players decide their own limits." +
             "\n\nLarger numbers WILL negatively affect performance!")]
-        [Range(0, 10000)]
+        [Range(0, 10000000)]
         [DefaultValue(10000)]
+        [ReloadRequired]
         public int recursionLimit;
 
         [Label("Allow Diagonal Searching")]
@@ -28,25 +29,31 @@ namespace OreExcavator
             "\ncheck for matches diagonal of the source when searching." +
             "\n\nDisabling this WILL slightly improve performance!")]
         [DefaultValue(true)]
+        [ReloadRequired]
         public bool allowDiagonals;
 
         [Label("Allow Chain Planting")]
         [Tooltip("When enabled, players will be allowed to chain-plant seeds." +
+            "\nDoes NOT work with saplings (yet!), only grasses." +
+            "\n\nDoes NOT impact performance!")]
+        [DefaultValue(true)]
+        [ReloadRequired]
+        public bool chainPlanting;
+
+        [Label("Allow Chain Painting")]
+        [Tooltip("When enabled, players will be allowed to chain-paint large areas." +
             "\nDoes NOT work with saplings (yet!), only grass." +
             "\n\nDoes NOT impact performance!")]
         [DefaultValue(true)]
-        public bool chainPlanting => false;
-
-        [Label("Allow Chain Painting")]
-        [Tooltip("COMING SOON!")]
-        [DefaultValue(true)]
-        public bool chainPainting => false;
+        [ReloadRequired]
+        public bool chainPainting;
 
         [Label("Allow Quick Whitelist Keys")]
         [Tooltip("When enabled, using the whitelist keybinds will" +
             "\nadd/remove hovered tiles/walls/items to/from their own whitelist" +
             "\n\nDoes NOT impact performance!")]
         [DefaultValue(true)]
+        [ReloadRequired]
         public bool allowQuickWhitelisting;
 
         [Label("Teleport Loot to Player")]
@@ -55,6 +62,7 @@ namespace OreExcavator
             "\n\nNOT ADVISED ON MULTIPLAYER SERVERS!!" +
             "\n\nDisabling this may improve performance... or hurt it.")]
         [DefaultValue(false)]
+        [ReloadRequired]
         public bool teleportLoot;
 
         [Label("Make Loot Invulnerable")]
@@ -64,6 +72,7 @@ namespace OreExcavator
             "\nand may be considered cheating..." +
             "\n\nWORK IN PROGRESS!!")]
         [DefaultValue(false)]
+        [ReloadRequired]
         public bool safeItems;
 
         [Label("Creative Mode")]
@@ -73,6 +82,7 @@ namespace OreExcavator
             "\nbut may be considered cheating..." +
             "\n\nWORK IN PROGRESS!!")]
         [DefaultValue(false)]
+        [ReloadRequired]
         public bool creativeMode;
 
         [Label("Use Agressive Mod Compatibility")]
@@ -81,6 +91,7 @@ namespace OreExcavator
             "\n\nDisabling this may improve performance, at the cost of instabilities!" +
             "\n\nWORK IN PROGRESS!!")]
         [DefaultValue(true)]
+        [ReloadRequired]
         public bool agressiveCompatibility;
 
 
@@ -91,6 +102,7 @@ namespace OreExcavator
             "\nbe allowed for blocks when using a sufficient pickaxe." +
             "\n\nDoes NOT impact performance!")]
         [DefaultValue(true)]
+        [ReloadRequired]
         public bool allowPickaxing;
 
         [Label("Enable Tile Blacklist")]
@@ -98,6 +110,7 @@ namespace OreExcavator
             "\nDisable this to give players free whitelist controls over Tiles" +
             "\n\nDoes NOT impact performance!")]
         [DefaultValue(true)]
+        [ReloadRequired]
         public bool tileBlacklistToggled;
 
         [Label("Tile Blacklist")]
@@ -105,9 +118,11 @@ namespace OreExcavator
             "\nPrefixed by the mod that owns them. Players' whitelists are overruled." +
             "\n\nDoes NOT impact performance!")]
         [DefaultListValue("Terraria:")]
+        [ReloadRequired]
         public HashSet<string> tileBlacklist = new() {
             "Terraria:" + TileID.Search.GetName(TileID.Dirt),
             "Terraria:" + TileID.Search.GetName(TileID.Stone),
+            "Terraria:" + TileID.Search.GetName(TileID.Sand),
             "Terraria:" + TileID.Search.GetName(TileID.Mud),
             "Terraria:" + TileID.Search.GetName(TileID.Ebonstone),
             "Terraria:" + TileID.Search.GetName(TileID.Crimstone),
@@ -125,6 +140,7 @@ namespace OreExcavator
             "\nbe allowed for walls when using a sufficient hammer." +
             "\n\nDoes NOT impact performance!")]
         [DefaultValue(true)]
+        [ReloadRequired]
         public bool allowHammering;
 
         [Label("Enable Wall Blacklist")]
@@ -132,6 +148,7 @@ namespace OreExcavator
             "\nDisable this to give players free whitelist controls over Walls" +
             "\n\nDoes NOT impact performance!")]
         [DefaultValue(true)]
+        [ReloadRequired]
         public bool WallBlacklistToggled;
 
         [Label("Wall Blacklist")]
@@ -139,6 +156,7 @@ namespace OreExcavator
             "\nPrefixed by the mod that owns them. Players' whitelists are overruled." +
             "\n\nDoes NOT impact performance!")]
         [DefaultListValue("Terraria:")]
+        [ReloadRequired]
         public HashSet<string> wallBlacklist = new() {
             //"Terraria:" + WallID.Search.GetName(WallID.Stone),
         };
@@ -151,6 +169,7 @@ namespace OreExcavator
             "\nbe allowed for blockswaps when replacing a tile/wall." +
             "\n\nSlightly impacts performance!")]
         [DefaultValue(true)]
+        [ReloadRequired]
         public bool allowReplace;
 
         [Label("Enable Item Blacklist")]
@@ -158,6 +177,7 @@ namespace OreExcavator
             "\nDisable this to give players free whitelist controls over Items" +
             "\n\nDoes NOT impact performance!")]
         [DefaultValue(true)]
+        [ReloadRequired]
         public bool itemBlacklistToggled;
 
         [Label("Item Blacklist")]
@@ -165,8 +185,35 @@ namespace OreExcavator
             "\nThis controls what items are forbidden by players for whitelisting" +
             "\n\nDoes NOT impact performance!")]
         [DefaultListValue("Terraria:")]
+        [ReloadRequired]
         public HashSet<string> itemBlacklist = new() {
-            //"Terraria:" + ItemID.Search.GetName(WallID.Wood),
+            "Terraria:" + ItemID.Search.GetName(ItemID.CopperCoin),
+            "Terraria:" + ItemID.Search.GetName(ItemID.SilverCoin),
+            "Terraria:" + ItemID.Search.GetName(ItemID.GoldCoin),
+            "Terraria:" + ItemID.Search.GetName(ItemID.PlatinumCoin),
+            "Terraria:" + ItemID.Search.GetName(ItemID.AdamantiteBar),
+            "Terraria:" + ItemID.Search.GetName(ItemID.ChlorophyteBar),
+            "Terraria:" + ItemID.Search.GetName(ItemID.CobaltBar),
+            "Terraria:" + ItemID.Search.GetName(ItemID.CopperBar),
+            "Terraria:" + ItemID.Search.GetName(ItemID.CrimtaneBar),
+            "Terraria:" + ItemID.Search.GetName(ItemID.DemoniteBar),
+            "Terraria:" + ItemID.Search.GetName(ItemID.GoldBar),
+            "Terraria:" + ItemID.Search.GetName(ItemID.HallowedBar),
+            "Terraria:" + ItemID.Search.GetName(ItemID.HellstoneBar),
+            "Terraria:" + ItemID.Search.GetName(ItemID.IronBar),
+            "Terraria:" + ItemID.Search.GetName(ItemID.LeadBar),
+            "Terraria:" + ItemID.Search.GetName(ItemID.LunarBar),
+            "Terraria:" + ItemID.Search.GetName(ItemID.MeteoriteBar),
+            "Terraria:" + ItemID.Search.GetName(ItemID.MythrilBar),
+            "Terraria:" + ItemID.Search.GetName(ItemID.OrichalcumBar),
+            "Terraria:" + ItemID.Search.GetName(ItemID.PalladiumBar),
+            "Terraria:" + ItemID.Search.GetName(ItemID.PlatinumBar),
+            "Terraria:" + ItemID.Search.GetName(ItemID.ShroomiteBar),
+            "Terraria:" + ItemID.Search.GetName(ItemID.SilverBar),
+            "Terraria:" + ItemID.Search.GetName(ItemID.SpectreBar),
+            "Terraria:" + ItemID.Search.GetName(ItemID.TinBar),
+            "Terraria:" + ItemID.Search.GetName(ItemID.TitaniumBar),
+            "Terraria:" + ItemID.Search.GetName(ItemID.TungstenBar)
         };
     }
 
@@ -183,7 +230,7 @@ namespace OreExcavator
             "\nbe hidden for this version of the mod." +
             "\n\nNew versions will re-enable this feature.")]
         [DefaultValue(true)]
-        public bool showWelcome069;
+        public bool showWelcome070;
 
         [Label("Show Excavation Tooltip")]
         [Tooltip("When disabled, holding the excavation " +
@@ -212,7 +259,7 @@ namespace OreExcavator
         [Tooltip("Determines the maximum number of tiles" +
             "\nalterable per excavation" +
             "\n\nLarger numbers WILL negatively affect performance!")]
-        [Range(0, 10000)]
+        [Range(0, 10000000)]
         [DefaultValue(600)]
         public int recursionLimit;
 

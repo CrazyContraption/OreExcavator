@@ -1,5 +1,8 @@
 ﻿
-[b]Welcome to Ore Excavator! - Last Updated 6/26/2022[/b]
+[b]Welcome to Ore Excavator! - Last Updated 7/19/2022[/b]
+
+
+Found an issue? Join our Discord and help report it: https://discord.gg/FtrsRtPe6h
 
 
 Ore Excavator has become the offical 1.4 port of VeinMiner, with VeinMiner being discontinued, and merged into Ore Excavator with permission.
@@ -70,8 +73,6 @@ A:No, not anymore. Once upon a time we did, now things are much easier for us, a
 [olist]
     [*]Fixing duplication exploits
     [*]Fixing server desync issues
-    [*]Chain Planting
-    [*]Chain Painting
     [*]Highlight Blocks/Walls That Will be Excavated Before Excavation
     [*]Excavation Consumes Mana Toggle (for balanced play)
     [*]Excavation Restricted to New Modifiers Toggle (for balanced play)
@@ -80,6 +81,20 @@ A:No, not anymore. Once upon a time we did, now things are much easier for us, a
 
 
 [h1] Recent Changelog [/h1]
+0.7.0
+ * Added chain-planting.
+ * Added chain-harvesting (both plants and turfs).
+ * Added chain-painting.
+ * Added the ability to override item blacklists on singleplayer as well.
+ * Added some fatal loading crash feedback due to missing file permissions.
+ * Fixed some fatal worldgen freezes.
+ * Fixed a ton more duplication exploits.
+ * Fixed some item consumption cases that should not consume items.
+ * Fixed default blacklists with more genaric and "abusable items" like sand and coins/bars.
+ * Fixed an issue where non-host players could update server configs. Configs now require a reload to take effect.
+ * Fixed some tiles like platforms always defaulting to their normal type - you can now whitelist and swap them uniquely.
+
+
 0.6.9 (Nice)
  * Added a range to item teleportations, approximately just under the average screen size.
  * Added new rules to item teleportation, only excavated items (except the first item) will be teleported - working on a fix!
@@ -98,25 +113,8 @@ A:No, not anymore. Once upon a time we did, now things are much easier for us, a
 0.6.8
  * Hotfix to disable item teleports while we investigate ongoing issues with it.
 
-0.6.7
- * Added separate tML & Workshop icons/descriptions.
- * Added a config option for clients to disable whitelists (whitelists everything).
- * Added a config option for clients to disable whitelisted item tooltips.
- * Added a config option for servers to excavation item drop immunities to things like lava.
- * Added more helpful conflict messages, like trying to chain-swap with a non-whitelisted item.
- * Added a basic version of server configs that give items immunity.
- * Fixed an issue where whitelisting items had lower priority than tiles or walls behind them while in menus.
- * Fixed issues with creative mode server config, it should now work much better for all you builders!
- * Fixed issues with item teleport server config, it should now work reliably, and in multiplayer!
- * Fixed a duplication issue with multi-tile elements breaking during excavations.
- * Fixed a duplication issue with the Extractinator.
- * Updated to new logic to for handling teleportation and lava-proofing drops based on config settings (faster and more reliable).
- * Removed all default chain-swap items - people were messing up their houses too much!
- * Audited configs, including removing unused settings, updating wording to be more concise, etc.
- * Probably did a ton of other stuff I forgot to write down... :(
+See all changelogs here: https://steamcommunity.com/sharedfiles/filedetails/changelog/2565639705
 
-0.6.6
- * Minor fixes to lots of code, things should be faster and more stable now.
- * Fixed some issues that cropped up during the port from preview to stable.
+Found an issue? Join our Discord and help report it: https://discord.gg/FtrsRtPe6h
 
 [quote=@a frog#4478]"x is the best keybind 💀"[/quote]
