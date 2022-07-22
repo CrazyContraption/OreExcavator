@@ -87,6 +87,7 @@ A:No, not anymore. Once upon a time we did, now things are much easier for us, a
  * Added chain-painting.
  * Added the ability to override item blacklists on singleplayer as well.
  * Added some fatal loading crash feedback due to missing file permissions.
+ * Updated gravity block alroithms ;)
  * Fixed some fatal worldgen freezes.
  * Fixed a ton more duplication exploits.
  * Fixed some item consumption cases that should not consume items.

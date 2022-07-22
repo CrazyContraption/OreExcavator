@@ -32,17 +32,17 @@ namespace OreExcavator
         [ReloadRequired]
         public bool allowDiagonals;
 
-        [Label("Allow Chain Planting")]
+        [Label("Allow Chain Seeding")]
         [Tooltip("When enabled, players will be allowed to chain-plant seeds." +
             "\nDoes NOT work with saplings (yet!), only grasses." +
             "\n\nDoes NOT impact performance!")]
         [DefaultValue(true)]
         [ReloadRequired]
-        public bool chainPlanting;
+        public bool chainSeeding;
 
         [Label("Allow Chain Painting")]
         [Tooltip("When enabled, players will be allowed to chain-paint large areas." +
-            "\nDoes NOT work with saplings (yet!), only grass." +
+            "\nConsumes paints as normal - ignores paint sprayer." +
             "\n\nDoes NOT impact performance!")]
         [DefaultValue(true)]
         [ReloadRequired]
@@ -85,14 +85,14 @@ namespace OreExcavator
         [ReloadRequired]
         public bool creativeMode;
 
-        [Label("Use Agressive Mod Compatibility")]
+        [Label("Use Aggressive Mod Compatibility")]
         [Tooltip("When enabled, extra checks will be enforced in attempt" +
             "\nto properly bind modded tiles, tools, walls, and items" +
             "\n\nDisabling this may improve performance, at the cost of instabilities!" +
             "\n\nWORK IN PROGRESS!!")]
         [DefaultValue(true)]
         [ReloadRequired]
-        public bool agressiveCompatibility;
+        public bool aggressiveCompatibility;
 
 
         [Header("World Settings - Blocks")]
@@ -187,6 +187,7 @@ namespace OreExcavator
         [DefaultListValue("Terraria:")]
         [ReloadRequired]
         public HashSet<string> itemBlacklist = new() {
+            /*
             "Terraria:" + ItemID.Search.GetName(ItemID.CopperCoin),
             "Terraria:" + ItemID.Search.GetName(ItemID.SilverCoin),
             "Terraria:" + ItemID.Search.GetName(ItemID.GoldCoin),
@@ -214,6 +215,7 @@ namespace OreExcavator
             "Terraria:" + ItemID.Search.GetName(ItemID.TinBar),
             "Terraria:" + ItemID.Search.GetName(ItemID.TitaniumBar),
             "Terraria:" + ItemID.Search.GetName(ItemID.TungstenBar)
+            */
         };
     }
 
@@ -267,7 +269,7 @@ namespace OreExcavator
         [Tooltip("When enabled, the excavation algorithm will" +
             "\nalso check for matches directly diagonal of themselves." +
             "\n\nDisabling this WILL improve performance!")]
-        [DefaultValue(true)]
+        [DefaultValue(false)]
         public bool doDiagonals;
 
         [Label("Block Breaking Delay")]
@@ -279,7 +281,7 @@ namespace OreExcavator
 
         [Label("Do Initial Whitelist Checks")]
         [Tooltip("When enabled, the algorithm checks the whitelists & blacklists BEFORE" +
-            "\nand AFTER attempting an excavation, rather than just AFTER." +
+            "\nattempting an excavation, when bound to a right mouse." +
             "\n\nEnabling this may hurt performance, but" +
             "\nmight produce more stable behaviour!")]
         [DefaultValue(false)]
@@ -334,7 +336,11 @@ namespace OreExcavator
             "Terraria:" + TileID.Search.GetName(TileID.Slush),
             "Terraria:" + TileID.Search.GetName(TileID.DesertFossil),
             "Terraria:" + TileID.Search.GetName(TileID.FossilOre),
-            "Terraria:" + TileID.Search.GetName(TileID.LunarOre)
+            "Terraria:" + TileID.Search.GetName(TileID.LunarOre),
+            "Terraria:" + TileID.Search.GetName(TileID.CrackedBlueDungeonBrick),
+            "Terraria:" + TileID.Search.GetName(TileID.CrackedGreenDungeonBrick),
+            "Terraria:" + TileID.Search.GetName(TileID.CrackedPinkDungeonBrick),
+            "Terraria:" + TileID.Search.GetName(TileID.Spikes)
         };
 
 
