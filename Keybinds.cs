@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.GameInput;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
+using Terraria.ObjectData;
 
 namespace OreExcavator
 {
@@ -72,7 +73,7 @@ namespace OreExcavator
                     if (!OreExcavator.ClientConfig.wallWhitelistToggled)
                         OreExcavator.Log("Y'know your Wall whitelist is off right? We'll add it for you anyways though!", Color.Red, LogType.Warn);
 
-                    if (!OreExcavator.ServerConfig.WallBlacklistToggled || !OreExcavator.ServerConfig.wallBlacklist.Contains(name))
+                    if (!OreExcavator.ServerConfig.wallBlacklistToggled || !OreExcavator.ServerConfig.wallBlacklist.Contains(name))
                         if (!OreExcavator.ClientConfig.wallWhitelist.Contains(name))
                         {
                             OreExcavator.ClientConfig.wallWhitelist.Add(name);
@@ -268,11 +269,7 @@ namespace OreExcavator
                     if (item.Name != "") // Item ADD
                         setListUpdates(ActionType.ItemWhiteListed, item.type, OreExcavator.GetFullNameById(item.type, ActionType.ItemWhiteListed));
                     else if (localTile.HasTile) // Tile ADD
-                    {
-                        WorldGen.KillTile_GetItemDrops(x, y, localTile, out var itemDropType, out _, out var _, out _); // Get the type of item the tile should drop
-                        Item drop = new Item(itemDropType); // Make an item from the dropped type
-                        setListUpdates(ActionType.TileWhiteListed, localTile.TileType, OreExcavator.GetFullNameById(localTile.TileType, ActionType.TileWhiteListed, drop.placeStyle == (localTile.TileFrameY / 18) ? localTile.TileFrameY : -1));
-                    }
+                        setListUpdates(ActionType.TileWhiteListed, localTile.TileType, OreExcavator.GetFullNameById(localTile.TileType, ActionType.TileWhiteListed, TileObjectData.GetTileStyle(localTile)));
                     else if (localTile.WallType > 0) // Wall ADD
                         setListUpdates(ActionType.WallWhiteListed, localTile.WallType, OreExcavator.GetFullNameById(localTile.WallType, ActionType.WallWhiteListed));
 
@@ -282,11 +279,7 @@ namespace OreExcavator
                     if (item.Name != "") // Item REMOVE
                         setListUpdates(ActionType.ItemBlackListed, item.type, OreExcavator.GetFullNameById(item.type, ActionType.ItemBlackListed));
                     else if (localTile.HasTile) // Tile REMOVE
-                    {
-                        WorldGen.KillTile_GetItemDrops(x, y, localTile, out var itemDropType, out _, out var _, out _); // Get the type of item the tile should drop
-                        Item drop = new Item(itemDropType); // Make an item from the dropped type
-                        setListUpdates(ActionType.TileBlackListed, localTile.TileType, OreExcavator.GetFullNameById(localTile.TileType, ActionType.TileBlackListed, drop.placeStyle == (localTile.TileFrameY / 18) ? localTile.TileFrameY : -1));
-                    }
+                        setListUpdates(ActionType.TileBlackListed, localTile.TileType, OreExcavator.GetFullNameById(localTile.TileType, ActionType.TileBlackListed, TileObjectData.GetTileStyle(localTile)));
                     else if (localTile.WallType > 0) // Wall REMOVE
                         setListUpdates(ActionType.WallBlackListed, localTile.WallType, OreExcavator.GetFullNameById(localTile.WallType, ActionType.WallBlackListed));
                 }

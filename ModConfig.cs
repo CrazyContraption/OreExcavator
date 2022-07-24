@@ -149,7 +149,7 @@ namespace OreExcavator
             "\n\nDoes NOT impact performance!")]
         [DefaultValue(true)]
         [ReloadRequired]
-        public bool WallBlacklistToggled;
+        public bool wallBlacklistToggled;
 
         [Label("Wall Blacklist")]
         [Tooltip("Configure this list to manually set what Walls CANNOT be chain-excavated" +
