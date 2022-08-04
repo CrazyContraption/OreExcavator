@@ -22,7 +22,7 @@ namespace OreExcavator
         /// <param name="actionType">What was the action being performed, usually whilelisting/removing the various types</param>
         /// <param name="name">The game-name of the object that is being modified with the list</param>
         /// <param name="typeId">The game-ID of the object that is being modified with the list</param>
-        internal static void setListUpdates(ActionType actionType, int typeId, string name)
+        internal static void setListUpdates(ActionType actionType, int typeId, string name, int style = -1)
         {
             Item item = Main.HoverItem;
             int count =
@@ -215,6 +215,7 @@ namespace OreExcavator
                 ModPacket packet = OreExcavator.myMod.GetPacket();
                 packet.Write((byte)actionType);
                 packet.Write((ushort)typeId);
+                packet.Write((int)style);
                 packet.Send();
             }
         }
@@ -250,36 +251,65 @@ namespace OreExcavator
             // Tooltips when excavating
             if (OreExcavator.ClientConfig.showCursorTooltips)
                 if (OreExcavator.ClientConfig.toggleExcavations ? OreExcavator.excavationToggled : excavatorHeld)
-                    // TODO: Add verbose info of hovered tile?
-                    if ((item.Name ?? "") != "" && item.pick + item.axe + item.hammer != 0)
-                        Player.cursorItemIconText = "Excavating";
-                    else if ((item.Name ?? "") != "" && (item.createTile >= 0.0 || item.createWall > 0))
-                        if (item.Name.ToLower().Contains("seed"))
-                            Player.cursorItemIconText = "Planting";
+                    if ((item.Name ?? "") != "")
+                        if (Main.tile[x, y].HasTile)
+                        {
+                            if (item.pick != 0)
+                                Player.cursorItemIconText = "Excavating";
+                            else if (item.createTile >= TileID.Dirt || item.createWall > WallID.None)
+                            {
+                                if (item.Name.ToLower().Contains("seed"))
+                                    Player.cursorItemIconText = "Planting";
+                                else if (Main.tile[x, y].HasTile)
+                                    Player.cursorItemIconText = "Replacing";
+                            }
+                            else if (item.Name.Contains("Paint") && item.paint == PaintID.None)
+                                Player.cursorItemIconText = "Painting";
+                        }
                         else
-                            Player.cursorItemIconText = "Replacing";
-                    else if (item.Name.ToLower().Contains("paint"))
-                        Player.cursorItemIconText = "Painting";
+                        {
+                            if (item.createTile >= TileID.Dirt || item.createWall > WallID.None)
+                                switch (item.createTile)
+                                {
+                                    case TileID.Platforms:
+                                    case TileID.MinecartTrack:
+                                    case TileID.Rope:
+                                    case TileID.VineRope:
+                                    case TileID.WebRope:
+                                    case TileID.PlanterBox:
+                                        Player.cursorItemIconText = "Placing";
+                                        break;
+                                }
+                            else if (Main.tile[x, y].WallType > WallID.None)
+                            {
+                                if (item.hammer != 0)
+                                    Player.cursorItemIconText = "Excavating";
+                                else if (item.Name.Contains("Paint") && item.paint == PaintID.None)
+                                    Player.cursorItemIconText = "Painting";
+                            }
+                        }
 
             item = Main.HoverItem;
             if (OreExcavator.ServerConfig.allowQuickWhitelisting)
                 if (OreExcavator.WhitelistHotkey.JustPressed) {
 
                     Tile localTile = Main.tile[x, y];
+                    int style = TileObjectData.GetTileStyle(localTile);
                     if (item.Name != "") // Item ADD
                         setListUpdates(ActionType.ItemWhiteListed, item.type, OreExcavator.GetFullNameById(item.type, ActionType.ItemWhiteListed));
                     else if (localTile.HasTile) // Tile ADD
-                        setListUpdates(ActionType.TileWhiteListed, localTile.TileType, OreExcavator.GetFullNameById(localTile.TileType, ActionType.TileWhiteListed, TileObjectData.GetTileStyle(localTile)));
+                        setListUpdates(ActionType.TileWhiteListed, localTile.TileType, OreExcavator.GetFullNameById(localTile.TileType, ActionType.TileWhiteListed, style), style);
                     else if (localTile.WallType > 0) // Wall ADD
                         setListUpdates(ActionType.WallWhiteListed, localTile.WallType, OreExcavator.GetFullNameById(localTile.WallType, ActionType.WallWhiteListed));
 
                 } else if (OreExcavator.BlacklistHotkey.JustPressed) {
 
                     Tile localTile = Main.tile[x, y];
+                    int style = TileObjectData.GetTileStyle(localTile);
                     if (item.Name != "") // Item REMOVE
                         setListUpdates(ActionType.ItemBlackListed, item.type, OreExcavator.GetFullNameById(item.type, ActionType.ItemBlackListed));
                     else if (localTile.HasTile) // Tile REMOVE
-                        setListUpdates(ActionType.TileBlackListed, localTile.TileType, OreExcavator.GetFullNameById(localTile.TileType, ActionType.TileBlackListed, TileObjectData.GetTileStyle(localTile)));
+                        setListUpdates(ActionType.TileBlackListed, localTile.TileType, OreExcavator.GetFullNameById(localTile.TileType, ActionType.TileBlackListed, style), style);
                     else if (localTile.WallType > 0) // Wall REMOVE
                         setListUpdates(ActionType.WallBlackListed, localTile.WallType, OreExcavator.GetFullNameById(localTile.WallType, ActionType.WallBlackListed));
                 }

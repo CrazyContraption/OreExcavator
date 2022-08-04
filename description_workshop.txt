@@ -1,5 +1,5 @@
 ﻿
-[b]Welcome to Ore Excavator! - Last Updated 7/19/2022[/b]
+[b]Welcome to Ore Excavator! - Last Updated 8/04/2022[/b]
 
 
 Found an issue? Join our Discord and help report it: https://discord.gg/FtrsRtPe6h
@@ -14,8 +14,9 @@ Credit to NanobotZ for the base code and the original concept!
 
 [h1] !!! FEATURES !!! [/h1]
 [list]
-    [*]Mine adjacent tiles/walls from a single block
+    [*]Chain-mine adjacent tiles/walls from a single block
     [*]Chain-swap adjacent tiles/walls from a single block
+    [*]Chain-place platforms, ropes, tracks, planters, and more
     [*]Configurable whitelist & blacklist with block picker controls in-game
     [*]Fully configurable client controls and keybindings
     [*]Fully configurable client settings to tailor to dynamic performance needs
@@ -24,7 +25,7 @@ Credit to NanobotZ for the base code and the original concept!
     [*]Progression friendly
     [*]Powerful server management configurations
     [*]Full multiplayer support
-    [*]Full modded support
+    [*]Full modded compatibility support
 [/list]
 
 [h1] !!! THIS IS AN ALPHA VERSION !!! [/h1]
@@ -74,6 +75,7 @@ A:No, not anymore. Once upon a time we did, now things are much easier for us, a
     [*]Fixing duplication exploits
     [*]Fixing server desync issues
     [*]Highlight Blocks/Walls That Will be Excavated Before Excavation
+    [*]Secret content addition??? ;)
     [*]Excavation Consumes Mana Toggle (for balanced play)
     [*]Excavation Restricted to New Modifiers Toggle (for balanced play)
     [*]Translations
@@ -82,37 +84,42 @@ A:No, not anymore. Once upon a time we did, now things are much easier for us, a
 
 [h1] Recent Changelog [/h1]
 0.7.0
- * Added chain-planting.
- * Added chain-harvesting (both plants and turfs).
- * Added chain-painting.
- * Added the ability to override item blacklists on singleplayer as well.
- * Added some fatal loading crash feedback due to missing file permissions.
- * Updated gravity block alroithms ;)
+ + Added chain-planting.
+ + Added chain-harvesting (both plants and turfs).
+ + Added chain-painting.
+ + Added insta-platforms, insta-ropes, and insta-tracks. Try holding your key while placing these!
+ + Added the ability to override item blacklists on singleplayer as well.
+ + Added some fatal loading crash feedback due to missing file permissions.
+ + Added a pretty particle effects along with a new low-performance config.
+ + Added a bunch of feedback to players under the debug config - use this to figure out what the mod is 'thinking'.
+ ~ Updated gravity block algorithms ;)
+ ~ Updated tooltips to appear more contextually.
+ ~ Updated default blacklists with more genaric and "abusable items" like sand and non-obtainable natural walls.
  * Fixed some fatal worldgen freezes.
  * Fixed a ton more duplication exploits.
  * Fixed some item consumption cases that should not consume items.
- * Fixed default blacklists with more genaric and "abusable items" like sand and coins/bars.
- * Fixed an issue where non-host players could update server configs. Configs now require a reload to take effect.
+ * Fixed an issue where non-host players could update server configs.
  * Fixed some tiles like platforms always defaulting to their normal type - you can now whitelist and swap them uniquely.
+ * A whole metric ton of other things. If I've forgotten anything important, you'll see it in the next changelog.
 
 
 0.6.9 (Nice)
- * Added a range to item teleportations, approximately just under the average screen size.
- * Added new rules to item teleportation, only excavated items (except the first item) will be teleported - working on a fix!
- * Added a section to client configs directing users to their vanilla controls for keybinds.
+ + Added a range to item teleportations, approximately just under the average screen size.
+ + Added new rules to item teleportation, only excavated items (except the first item) will be teleported - working on a fix!
+ + Added a section to client configs directing users to their vanilla controls for keybinds.
+ - Removed item teleportation configuration lockdown.
+ - Renamed a ton of configs to help less techy players understand what things do, and how they interact.
+ ~ Set item teleportation configuration to false by default.
+ ~ Set releasing excavation keys stopping excavations configuration to false by default.
  * Fixed some wall excavation and replacement issues.
  * Fixed an issue with walls having a higher hover whitelist priority than tiles.
  * Fixed an issue where chain-swapping on air would consume items without doing anything.
  * Fixed an issue where chain-plainting could consume items without doing anything.
  * Fixed issue that corrupted chat messages if there were no messages in the chat already.
- * Removed item teleportation configuration lockdown.
- * Renamed a ton of configs to help less techy players understand what things do, and how they interact.
- * Set item teleportation configuration to false by default.
- * Set releasing excavation keys stopping excavations configuration to false by default.
 
 
 0.6.8
- * Hotfix to disable item teleports while we investigate ongoing issues with it.
+ ! Hotfix to disable item teleports while we investigate ongoing issues with it.
 
 See all changelogs here: https://steamcommunity.com/sharedfiles/filedetails/changelog/2565639705
 

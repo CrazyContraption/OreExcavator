@@ -6,7 +6,9 @@
         HaltExcavations,
         ResetExcavations,
         TileKilled,
+        TilePlaced,
         WallKilled,
+        WallPlaced,
         TileReplaced,
         WallReplaced,
         TurfPlanted,
@@ -21,7 +23,8 @@
         ItemWhiteListed,
         TileBlackListed,
         WallBlackListed,
-        ItemBlackListed
+        ItemBlackListed,
+        ExtendPlacement
     }
 
     public enum LogType : byte

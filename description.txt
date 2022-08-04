@@ -1,5 +1,5 @@
 ﻿
-Welcome to Ore Excavator! - Last Updated 7/19/2022
+Welcome to Ore Excavator! - Last Updated 8/04/2022
 
 
 Found an issue? Join our Discord and help report it: https://discord.gg/FtrsRtPe6h
@@ -13,17 +13,18 @@ Credit to NanobotZ for the base code and the original concept!
 
 
 FEATURES:
- - Mine adjacent tiles/walls from a single block
- - Vein-swap adjacent tiles/walls from a single block
+ - Chain-mine adjacent tiles/walls from a single block
+ - Chain-swap adjacent tiles/walls from a single block
+ - Chain-place platforms, ropes, tracks, planters, and more
  - Configurable whitelist & blacklist with block picker controls in-game
  - Fully configurable client controls and keybindings
  - Fully configurable client settings to tailor to dynamic performance needs
  - Fully threaded support
- - Autoswing enabled
+ - Autoswing compatible
  - Progression friendly
  - Powerful server management configurations
  - Full multiplayer support
- - Full modded support
+ - Full modded compatibility support
 
 
 !!! THIS IS AN ALPHA VERSION !!!
