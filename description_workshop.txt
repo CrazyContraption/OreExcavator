@@ -1,5 +1,5 @@
 ﻿
-[b]Welcome to Ore Excavator! - Last Updated 8/04/2022[/b]
+[b]Welcome to Ore Excavator! - Last Updated 8/05/2022[/b]
 
 
 Found an issue? Join our Discord and help report it: https://discord.gg/FtrsRtPe6h
@@ -83,6 +83,18 @@ A:No, not anymore. Once upon a time we did, now things are much easier for us, a
 
 
 [h1] Recent Changelog [/h1]
+0.7.2
+ + Chain-harvesting has been re-enabled.
+ + Added chat prompt to hover over item in inventory for chain-swapping stuff.
+ ~ Updated the cursor targeting logic to be more... reliable.
+ * Fixed an issue where non-killing attacks on tiles could rarely turn them and their friends into dirt!
+ * Fixed an issue where excavations could rarely target dirt instead of their intended target.
+ * Fixed wall-related tooltips not appearing when they should.
+ * Fixed tile-related tooltips appearing when they should not.
+
+0.7.1
+ ! Disabled turf harvesting while we investigate an ongoing issue.
+
 0.7.0
  + Added chain-planting.
  + Added chain-harvesting (both plants and turfs).
@@ -91,7 +103,7 @@ A:No, not anymore. Once upon a time we did, now things are much easier for us, a
  + Added the ability to override item blacklists on singleplayer as well.
  + Added some fatal loading crash feedback due to missing file permissions.
  + Added a pretty particle effects along with a new low-performance config.
- + Added a bunch of feedback to players under the debug config - use this to figure out what the mod is 'thinking'.
+ + Added a bunch of feedback for players under the debug config - use this to figure out what the mod is 'thinking'.
  ~ Updated gravity block algorithms ;)
  ~ Updated tooltips to appear more contextually.
  ~ Updated default blacklists with more genaric and "abusable items" like sand and non-obtainable natural walls.

@@ -260,7 +260,7 @@ namespace OreExcavator
                             {
                                 if (item.Name.ToLower().Contains("seed"))
                                     Player.cursorItemIconText = "Planting";
-                                else if (Main.tile[x, y].HasTile)
+                                else
                                     Player.cursorItemIconText = "Replacing";
                             }
                             else if (item.Name.Contains("Paint") && item.paint == PaintID.None)
@@ -268,7 +268,7 @@ namespace OreExcavator
                         }
                         else
                         {
-                            if (item.createTile >= TileID.Dirt || item.createWall > WallID.None)
+                            if (item.createTile >= TileID.Dirt)
                                 switch (item.createTile)
                                 {
                                     case TileID.Platforms:
@@ -280,6 +280,8 @@ namespace OreExcavator
                                         Player.cursorItemIconText = "Placing";
                                         break;
                                 }
+                            else if (item.createWall > WallID.None)
+                                Player.cursorItemIconText = "Replacing";
                             else if (Main.tile[x, y].WallType > WallID.None)
                             {
                                 if (item.hammer != 0)

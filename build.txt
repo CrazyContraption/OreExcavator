@@ -1,6 +1,6 @@
 displayName = Ore Excavator - The Platform Update!
 author = CrazyContraption
-version = 0.7.0
+version = 0.7.2
 hideCode = true
 hideResources = true
 includeSource = false
