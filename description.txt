@@ -1,5 +1,5 @@
 ﻿
-Welcome to Ore Excavator! - Last Updated 8/05/2022
+Welcome to Ore Excavator! - Last Updated 10/12/2022
 
 
 Found an issue? Join our Discord and help report it: https://discord.gg/FtrsRtPe6h
@@ -33,7 +33,7 @@ This is intended for early access users wishing to play on 1.4, and is likely to
 I will do my best to ensure that the mod stays for compatible and issue updates as needed, especially for multiplayer.
 
 Due to the nature of the mod, bugs involving deleting massive amounts of blocks, walls, and similar issues are to be expected.
-Please report any issues -no matter how small- to the Steam workshop page, or reach out to me on the tModloader Discord (@CrazyContraption#0666)
+Please report any issues -no matter how small- to me on the tModloader Discord (@CrazyContraption#0666)
 
 PLEASE REPORT ANY ISSUES, EVEN IF YOU THINK IT MAY ALREADY BE REPORTED!!
 It helps us deduce how common the issue is, and to better gather data on who, and how it happens.

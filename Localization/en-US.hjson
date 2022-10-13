@@ -1,0 +1,401 @@
+﻿Mods: {
+	OreExcavator: {
+		KeyBinds: {
+			Excavate:
+			"Excavate (while mining)"
+
+			Whitelist:
+			"Whitelist hovered tile/wall/item"
+
+			UnWhitelist:
+			"Un-whitelist tile/wall/item"
+		}
+
+		UI:
+		{
+			Activated:
+			"Excavations activated"
+
+			Deactivated:
+			"Excavations disabled"
+
+			Mode:
+			{
+				Excavating:
+				"Excavating"
+				
+				Placing:
+				"Placing"
+
+				Planting:
+				"Planting"
+
+				Replacing:
+				"Replacing"
+
+				Painting:
+				"Painting"
+			}
+		}
+
+		Whitelisting: {
+			Tile:
+			"Tile"
+
+			Wall:
+			"Wall"
+
+			Item:
+			"Item"
+
+			NoPlace:
+			"You sly dog, '{0}{1}' doesn't place anything, why are you trying to whitelist it?"
+
+			Nothing:
+			"You can't add/remove nothing! Hover over a tile, wall or item and try again."
+
+			Override:
+			"Since this is a singleplayer world, you can tap the key twice to override your {0} blacklist"
+
+			ContactHost:
+			"If you think this is an error, ask the host to remove this {0} from the server's blacklist configuration"
+
+			AddOff:
+			"Y'know your {0} whitelist is off right? We'll add it for you anyways though!"
+
+			RemoveOff:
+			"Y'know your {0} whitelist is off right? We'll remove it for you anyways though!"
+
+			Added:
+			"Added '{0}{1}' to your {0} whitelist"
+
+			Ignore:
+			", and ignoring its blacklist for this session"
+
+			Removed:
+			"Removed '{0}{1}' from your {0} whitelist"
+
+			Contains:
+			"Rejected adding '{0}{1}' it's already whitelisted"
+
+			Missing:
+			"Rejected removing '{0}{1}' as it isn't whitelisted"
+
+			Blacklisted:
+			"Rejected adding '{0}{1}' because it's blacklisted by the server host"
+		}
+
+		Blacklisting: {
+			NoPlace:
+			"You sly dog, '{0}{1}' doesn't place anything, why are you trying to whitelist it?"
+
+			Nothing:
+			"You can't whitelist nothing! Hover over a tile, wall or item and try again."
+
+			Override:
+			"Since this is a singleplayer world, you can tap the key twice to override your {0} blacklist"
+
+			ContactHost:
+			"If you think this is an error, ask the host to remove this {0} from the server's blacklist configuration"
+
+			Off:
+			"Y'know your {0} whitelist is off right? We'll add it for you anyways though!"
+
+			Added:
+			"Added '{0}{1}' to your {0} whitelist"
+
+			Ignore:
+			", and ignoring its blacklist for this session"
+
+			Contains:
+			"Rejected adding '{0}{1}' it's already whitelisted"
+
+			Blacklisted:
+			"Rejected adding '{0}{1}' because it's blacklisted by the server host"
+		}
+
+		Logging: {
+			OreSearch: {
+				Start:
+				"Looking for modded ores and gems to whitelist..."
+
+				Added:
+				"Found vein TileID.{0}, adding as {1}."
+
+				Found:
+				"Found vein TileID.{0}, but was already whitelisted as {1}."
+
+				Finish:
+				"Done whitelisting modded content."
+			} 
+		}
+
+		Config: {
+			Common: {
+				Properties:
+				"Properties"
+
+				Blocks:
+				"Blocks"
+
+				Walls:
+				"Walls"
+
+				Items:
+				"Items"
+
+				IconBuffer:
+				" :"
+
+				HeaderBuffer:
+				"-"
+
+				Performance: {
+					Prefix:
+					"\n\n"
+
+					NoImpact:
+					"{$Mods.OreExcavator.Config.Common.Performance.Prefix} Does NOT affect performance!"
+
+					SmallImpact:
+					"{$Mods.OreExcavator.Config.Common.Performance.Prefix} sightly affects performance when enabled!"
+
+					CanImpact:
+					"{$Mods.OreExcavator.Config.Common.Performance.Prefix} Extreme values can NEGATIVELY affect performance!"
+
+					DisableImproves:
+					"{$Mods.OreExcavator.Config.Common.Performance.Prefix} Disabling this may improve performance!"
+
+					EnableImproves:
+					"{$Mods.OreExcavator.Config.Common.Performance.Prefix} Enabling this may improve performance!"
+				}
+			}
+
+			Server: {
+				Header:
+				"World Settings"
+
+				Template: {
+					Label:
+					""
+
+					Description:
+					""
+				}
+
+				RecursionLimit: {
+					Label:
+					"[i/p0:18]{$Mods.OreExcavator.Config.Common.IconBuffer} Block Modification Limit"
+
+					Description:
+					"Determines the maximum number of tiles \n alterable per excavation for ALL clients! \n The smallest limit between the client and server will be used per client. \n Set to 0 to disable the mod, or max to let players decide their own limits. {$Mods.OreExcavator.Config.Common.Performance.CanImpact}"
+				}
+
+				AllowDiagonals: {
+					Label:
+					"[i/p0:2799]{$Mods.OreExcavator.Config.Common.IconBuffer} Allow Diagonal Searching"
+
+					Description:
+					"When enabled, players will be allowed to also \n check for matches diagonal of the source when searching. {$Mods.OreExcavator.Config.Common.Performance.DisableImproves}"
+				}
+
+				ChainSeeding: {
+					Label:
+					"[i/p0:62]{$Mods.OreExcavator.Config.Common.IconBuffer} Allow Chain Seeding"
+
+					Description:
+					"When enabled, players will be allowed to chain-plant seeds. \n Does NOT work with saplings (yet!), only grasses.{$Mods.OreExcavator.Config.Common.Performance.SmallImpact}"
+				}
+
+				ChainPainting: {
+					Label:
+					"[i/p0:1071]{$Mods.OreExcavator.Config.Common.IconBuffer} Allow Chain Painting"
+
+					Description:
+					"When enabled, players will be allowed to chain-paint large areas. \n Consumes paints as normal - ignores paint sprayer. {$Mods.OreExcavator.Config.Common.Performance.SmallImpact}"
+				}
+
+				AllowQuickWhitelisting: {
+					Label:
+					"[i/p0:3186]{$Mods.OreExcavator.Config.Common.IconBuffer} Allow Quick Whitelist Keys"
+
+					Description:
+					"When enabled, using the whitelist keybinds will \n add/remove hovered tiles/walls/items to/from their own whitelist. {$Mods.OreExcavator.Config.Common.Performance.NoImpact}"
+				}
+
+				ManaConsumption: {
+					Label:
+					"[i/p0:109]{$Mods.OreExcavator.Config.Common.IconBuffer} Excavation Mana Multiplier"
+
+					Description:
+					"With values above 0, excavation actions will consume mana \n proportional to the action performed. (amount, toughness). \n 1 is normal balancing, 0.5 makes basic action free. {$Mods.OreExcavator.Config.Common.Performance.NoImpact}"
+				}
+
+				TeleportLoot: {
+					Label:
+					"[i/p0:5010]{$Mods.OreExcavator.Config.Common.IconBuffer} Teleport Loot to Player"
+
+					Description:
+					"When enabled, excavated drops will be warped to \n the player that commanded the excavation(s). \n\n NOT ADVISED ON MULTIPLAYER SERVERS!! \n\n Disabling this may improve performance... or hurt it."
+				}
+
+				SafeItems: {
+					Label:
+					"[i/p0:193]{$Mods.OreExcavator.Config.Common.IconBuffer} Make Loot Invulnerable"
+
+					Description:
+					"When enabled, item drops will be immune to hazards, \n this includes things like lava. \n\n Enabling this may hurt performance, \n and may be considered cheating... \n\n WORK IN PROGRESS!!"
+				}
+
+				CreativeMode: {
+					Label:
+					"[i/p0:36]{$Mods.OreExcavator.Config.Common.IconBuffer} Creative Mode"
+
+					Description:
+					"When enabled, items won't drop, items won't \n be consumed, and mining power will be ignored. \n\n Enabling this may improve performance, \n but may be considered cheating... \n\n WORK IN PROGRESS!!"
+				}
+
+				AggressiveCompatibility: {
+					Label:
+					"[i/p0:3000]{$Mods.OreExcavator.Config.Common.IconBuffer} Use Aggressive Mod Compatibility"
+
+					Description:
+					"When enabled, extra checks will be enforced in attempt \n to properly bind modded tiles, tools, walls, and items \n\n Disabling this may improve performance, at the cost of instabilities! \n\n WORK IN PROGRESS!!"
+				}
+
+				AllowPickaxing: {
+					Label:
+					"[i/p0:3509]{$Mods.OreExcavator.Config.Common.IconBuffer} Allow Pickaxe Excavations"
+
+					Description:
+					"When enabled, the excavation algorithm will \n be allowed for blocks when using a sufficient pickaxe. \n\n Does NOT impact performance!"
+				}
+
+				TileBlacklistToggled: {
+				    Label:
+					"[i/p0:3497]{$Mods.OreExcavator.Config.Common.IconBuffer} Enable Tile Blacklist"
+
+					Description:
+					"When enabled, the world will enforce the Tile blacklist on its players \nDisable this to give players free whitelist controls over Tiles \n\n Does NOT impact performance!"
+				}
+
+				TileBlacklist: {
+					Label:
+					"[i/p0:2697]{$Mods.OreExcavator.Config.Common.IconBuffer} Tile Blacklist"
+
+					Description:
+					"Configure this list to manually set what Tiles CANNOT be chain-excavated \n Prefixed by the mod that owns them. Players' whitelists are overruled. \n\n Does NOT impact performance!"
+				}
+
+				AllowHammering: {
+					Label:
+					"[i/p0:196]{$Mods.OreExcavator.Config.Common.IconBuffer} Allow Hammer Excavations"
+
+					Description:
+					"When enabled, the excavation algorithm will \n be allowed for walls when using a sufficient hammer. \n\n Does NOT impact performance!"
+				}
+
+				WallBlacklistToggled: {
+					Label:
+					"[i/p0:654]{$Mods.OreExcavator.Config.Common.IconBuffer} Enable Wall Blacklist"
+
+					Description:
+					"When enabled, the world will enforce the Wall blacklist on its players \n Disable this to give players free whitelist controls over Walls \n\n Does NOT impact performance!"
+				}
+
+				WallBlacklist: {
+					Label:
+					"[i/p0:2698]{$Mods.OreExcavator.Config.Common.IconBuffer} Wall Blacklist"
+
+					Description:
+					"Configure this list to manually set what Walls CANNOT be chain-excavated \n Prefixed by the mod that owns them. Players' whitelists are overruled. \n\n Does NOT impact performance!"
+				}
+
+				AllowReplace: {
+					Label:
+					"[i/p0:9]{$Mods.OreExcavator.Config.Common.IconBuffer} Allow Blockswap Excavations"
+
+					Description:
+					"When enabled, the excavation algorithm will \n be allowed for blockswaps when replacing a tile/wall. \n\n Slightly impacts performance!"
+				}
+
+				ItemBlacklistToggled: {
+					Label:
+					"[i/p0:619]{$Mods.OreExcavator.Config.Common.IconBuffer} Enable Item Blacklist"
+
+					Description:
+					"When enabled, the server will enforce the Item blacklist on its players \n Disable this to give players free whitelist controls over Items \n\n Does NOT impact performance!"
+				}
+
+				ItemBlacklist: {
+					Label:
+					"[i/p0:236]{$Mods.OreExcavator.Config.Common.IconBuffer} Item Blacklist"
+
+					Description:
+					"If you don't know what this is, you probably shouldn't touch it... \n This controls what items are forbidden by players for whitelisting \n\n Does NOT impact performance!"
+				}
+			}
+
+			Client: {
+				Header:
+				"Player Settings"
+
+				Template: {
+					Label:
+					""
+
+					Description:
+					""
+				}
+
+				Template: {
+					Label:
+					""
+
+					Description:
+					""
+				}
+
+				Template: {
+					Label:
+					""
+
+					Description:
+					""
+				}
+
+				Template: {
+					Label:
+					""
+
+					Description:
+					""
+				}
+
+				Template: {
+					Label:
+					""
+
+					Description:
+					""
+				}
+
+				Template: {
+					Label:
+					""
+
+					Description:
+					""
+				}
+
+				Template: {
+					Label:
+					""
+
+					Description:
+					""
+				}
+			}
+		}
+	}
+}
