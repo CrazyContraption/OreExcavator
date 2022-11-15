@@ -1,6 +1,33 @@
 ﻿Mods: {
 	OreExcavator: {
+		Tile:
+		"Tile"
+
+		Tiles:
+		"Tiles"
+
+		Wall:
+		"Wall"
+
+		Walls:
+		"Walls"
+
+		Item:
+		"Item"
+
+		Swapping:
+		"Swapping"
+
+		Planting:
+		"Planting"
+
+		Chain:
+		"Chain-"
+
 		KeyBinds: {
+			None:
+			"No keybind set, please set one in your control settings to start {0}!"
+
 			Excavate:
 			"Excavate (while mining)"
 
@@ -11,6 +38,15 @@
 			"Un-whitelist tile/wall/item"
 		}
 
+		Network:
+		{
+			Added:
+			"{0} added '{1}{2}' to their personal {1} whitelist"
+
+			Removed:
+			"{0} removed '{1}{2}' to their personal {1} whitelist"
+		}
+
 		UI:
 		{
 			Activated:
@@ -18,6 +54,12 @@
 
 			Deactivated:
 			"Excavations disabled"
+
+			Tooltips:
+			{
+				HoldToUse:
+				"Hold '{0}' to Excavate {1}!"
+			}
 
 			Mode:
 			{
@@ -39,15 +81,6 @@
 		}
 
 		Whitelisting: {
-			Tile:
-			"Tile"
-
-			Wall:
-			"Wall"
-
-			Item:
-			"Item"
-
 			NoPlace:
 			"You sly dog, '{0}{1}' doesn't place anything, why are you trying to whitelist it?"
 
@@ -115,6 +148,9 @@
 		}
 
 		Logging: {
+			Halted:
+			"Excavation Halted"
+
 			OreSearch: {
 				Start:
 				"Looking for modded ores and gems to whitelist..."
@@ -148,7 +184,7 @@
 				" :"
 
 				HeaderBuffer:
-				"-"
+				" -"
 
 				Performance: {
 					Prefix:
@@ -169,18 +205,45 @@
 					EnableImproves:
 					"{$Mods.OreExcavator.Config.Common.Performance.Prefix} Enabling this may improve performance!"
 				}
+
+				Changes:
+				{
+					Remote:
+					"Accepting changes (Reason: Changes requested via remote)"
+
+					HostOnly:
+					"Accepting changes (Reason: Verified first/only player online is host)"
+
+					NoHost:
+					"Rejected changes (Reason: Cannot determine host)"
+				}
 			}
 
 			Server: {
-				Header:
-				"World Settings"
+				Headers:
+				{
+					Header:
+					"World Settings"
 
-				Template: {
+					Properties:
+					"{$Mods.OreExcavator.Config.Server.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} Properties"
+				
+					Tiles:
+					"{$Mods.OreExcavator.Config.Server.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} {$Mods.OreExcavator.Tiles}"
+
+					Walls:
+					"{$Mods.OreExcavator.Config.Server.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} {$Mods.OreExcavator.Walls}"
+
+					Items:
+					"{$Mods.OreExcavator.Config.Server.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} {$Mods.OreExcavator.Swapping}"
+				}
+
+				ShowWelcome: {
 					Label:
-					""
+					"[i/p0:4792]{$Mods.OreExcavator.Config.Common.IconBuffer} Show Startup Message - Server Override"
 
 					Description:
-					""
+					"When disabled, welcome messages will \n be forcibly hidden for all server clients \n\n New versions will NOT re-enable this feature."
 				}
 
 				RecursionLimit: {
@@ -337,63 +400,188 @@
 			}
 
 			Client: {
-				Header:
-				"Player Settings"
+				Headers:
+				{
+					Header:
+					"Player Settings"
 
-				Template: {
-					Label:
-					""
+					UI:
+					"{$Mods.OreExcavator.Config.Client.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} UI"
 
-					Description:
-					""
+					Core:
+					"{$Mods.OreExcavator.Config.Client.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} Core"
+
+					Tiles:
+					"{$Mods.OreExcavator.Config.Client.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} {$Mods.OreExcavator.Tiles}"
+
+					Walls:
+					"{$Mods.OreExcavator.Config.Client.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} {$Mods.OreExcavator.Walls}"
+
+					Items:
+					"{$Mods.OreExcavator.Config.Client.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} {$Mods.OreExcavator.Swapping}"
+
+					Controls:
+					"{$Mods.OreExcavator.Config.Client.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} Controls"
 				}
 
-				Template: {
+				ShowWelcome: {
 					Label:
-					""
+					"[i/p0:4792]{$Mods.OreExcavator.Config.Common.IconBuffer} Show Startup Message"
 
 					Description:
-					""
+					"When disabled, welcome messages will \n be hidden for this version of the mod. \n\n New versions will re-enable this feature."
 				}
 
-				Template: {
+				ShowCursorTooltips: {
 					Label:
-					""
+					"[i/p0:5075]{$Mods.OreExcavator.Config.Common.IconBuffer} Show Excavation Tooltip"
 
 					Description:
-					""
+					"When disabled, holding the excavation  \n key will no longer provide a contextual tooltip. \n\n Please enable this before reporting bugs!"
 				}
 
-				Template: {
+				ShowItemTooltips: {
 					Label:
-					""
+					"[i/p0:267]{$Mods.OreExcavator.Config.Common.IconBuffer} Show Item Tooltips"
 
 					Description:
-					""
+					"When disabled, items, walls, and tiles the \n  will no longer provide a contextual tooltip. \n\n Please enable this before reporting bugs!"
 				}
 
-				Template: {
+				ReducedEffects: {
 					Label:
-					""
+					"[i/p0:150]{$Mods.OreExcavator.Config.Common.IconBuffer} Reduced Effects"
 
 					Description:
-					""
+					"Lagging? When disabled, the mod will attempt to run in a \n  reduced state, providing better performance graphically. \n\n Will not change anything functionally outside of cosmetic differences."
 				}
 
-				Template: {
+				RefillMana: {
 					Label:
-					""
+					"[i/p0:555]{$Mods.OreExcavator.Config.Common.IconBuffer} Auto-use Mana Potions for Excavations"
 
 					Description:
-					""
+					"When enabled and the world has mana requirements turned on, \n should the mod attempt to refill your mana if you run out? \n\n Does NOT impact performance!"
 				}
 
-				Template: {
+				DoDebugStuff: {
 					Label:
-					""
+					"[i/p0:37]{$Mods.OreExcavator.Config.Common.IconBuffer} Show Debug Logs"
 
 					Description:
-					""
+					"When disabled, debug logs will be hidden. \n Enable this if you're having issues understanding the mod. \n\n Please enable this before reporting bugs!"
+				}
+
+				RecursionLimit: {
+					Label:
+					"[i/p0:18]{$Mods.OreExcavator.Config.Common.IconBuffer} Block Modification Limit"
+
+					Description:
+					"Determines the maximum number of tiles \n alterable per excavation \n\n Larger numbers WILL negatively affect performance!"
+				}
+
+				DoDiagonals: {
+					Label:
+					"[i/p0:2799]{$Mods.OreExcavator.Config.Common.IconBuffer} Do Diagonal Searching"
+
+					Description:
+					"When enabled, the excavation algorithm will \n also check for matches directly diagonal of themselves. \n\n Disabling this WILL improve performance!"
+				}
+
+				RecursionDelay: {
+					Label:
+					"[i/p0:3099]{$Mods.OreExcavator.Config.Common.IconBuffer} Block Breaking Delay"
+
+					Description:
+					"The ms delay between block breaks. \n\n Higher values may improve performance!"
+				}
+
+				InititalChecks: {
+					Label:
+					"[i/p0:321]{$Mods.OreExcavator.Config.Common.IconBuffer} Do Initial Whitelist Checks"
+
+					Description:
+					"When enabled, the algorithm checks the whitelists & blacklists BEFORE \n attempting an excavation, when bound to a right mouse. \n\n Enabling this may hurt performance, but \n might produce more stable behaviour!"
+				}
+
+				TileWhitelistToggled: {
+					Label:
+					"[i/p0:3509]{$Mods.OreExcavator.Config.Common.IconBuffer} Enable Tile Whitelist"
+
+					Description:
+					"When enabled, all tiles will be whitelisted by default. \n\n Slightly improves performance!"
+				}
+
+				TileWhitelist: {
+					Label:
+					"[i/p0:2695]{$Mods.OreExcavator.Config.Common.IconBuffer} Tile Whitelist"
+
+					Description:
+					"Configure this list to manually set what Tiles can be chain-excavated \n Prefixed by the mod that owns them. Also yields to the host's blacklist. \n\n Does NOT impact performance!"
+				}
+
+				WallWhitelistToggled: {
+					Label:
+					"[i/p0:196]{$Mods.OreExcavator.Config.Common.IconBuffer} Enable Wall Whitelist"
+
+					Description:
+					"When enabled, all walls will be whitelisted by default. \n\n Slightly improves performance!"
+				}
+
+				WallWhitelist: {
+					Label:
+					"[i/p0:2696]{$Mods.OreExcavator.Config.Common.IconBuffer} Wall Whitelist"
+
+					Description:
+					"Configure this list to manually set what Walls can be chain-excavated \n Prefixed by the mod that owns them. Also yields to the hosts's blacklist. \n\n Does NOT impact performance!"
+				}
+
+				ItemWhitelistToggled: {
+					Label:
+					"[i/p0:9]{$Mods.OreExcavator.Config.Common.IconBuffer} Enable Item Whitelist"
+
+					Description:
+					"When enabled, all items will be whitelisted by default. \n\n Slightly improves performance!"
+				}
+
+				ItemWhitelist: {
+					Label:
+					"[i/p0:38]{$Mods.OreExcavator.Config.Common.IconBuffer} Item Whitelist"
+
+					Description:
+					"Configure this list to manually set what Items can be chain-replaced \n Prefixed by the mod that owns them. Also yields to the host's blacklist. \n\n Does NOT impact performance!"
+				}
+
+				ToggleExcavations: {
+					Label:
+					"[i/p0:513]{$Mods.OreExcavator.Config.Common.IconBuffer} Keybind Toggles Excavations"
+
+					Description:
+					"When enabled, tapping the keybind will toggle the \n active state of initiating excavations. \n\n Does NOT impact performance!"
+				}
+
+				ReleaseCancelsExcavations: {
+					Label:
+					"[i/p0:166]{$Mods.OreExcavator.Config.Common.IconBuffer} Cancel Excavations on Keybind Release"
+
+					Description:
+					"When enabled, letting go of the Excavation \n control key will cease all excavation operations. \n\n NOT ADVISED ON MULTIPLAYER SERVERS!! \n\n Does NOT impact performance!"
+				}
+
+				DoSpecials: {
+					Label:
+					"[i/p0:3230]{$Mods.OreExcavator.Config.Common.IconBuffer} Enable Alternative Features"
+
+					Description:
+					"When enabled, the client will allow for special non-veinmine actions \n Disable this if you don't plan on using these features, or are binding excavations to Mouse1 \n\n Moderately impacts performance!"
+				}
+
+				Keybind: {
+					Label:
+					"[g:25]{$Mods.OreExcavator.Config.Common.IconBuffer} Looking for your keybind?"
+
+					Description:
+					"Set your keybind in the vanilla controls area, \n This is just for display purposes and to direct confused users."
 				}
 			}
 		}

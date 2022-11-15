@@ -29,13 +29,13 @@ namespace OreExcavator
             this.itemSubtype = itemSubtype;
         }
 
-        internal static bool HandleMana(float baseValue, int player = -1)
+        internal static bool HasAndConsumeMana(float baseValue, int player = -1)
         {
             if (baseValue <= 0)
                 return true;
             if (player < 0)
                 return false;
-            return Main.player[player].CheckMana((int)(OreExcavator.ServerConfig.manaConsumption * baseValue), true, !OreExcavator.ClientConfig.refillMana);
+            return !Main.player[player].CheckMana((int)(OreExcavator.ServerConfig.manaConsumption * baseValue), true, !OreExcavator.ClientConfig.refillMana);
         }
 
         /// <summary>
@@ -60,20 +60,20 @@ namespace OreExcavator
             switch (alteration.actionType)
             {
                 case ActionType.TileKilled:
-                    if (HandleMana(1.0f, alteration.playerID))
+                    if (HasAndConsumeMana(1.0f, alteration.playerID))
                         return true;
                     WorldGen.KillTile(alteration.x, alteration.y, !Main.tile[alteration.x, alteration.y].HasTile, false, OreExcavator.ServerConfig.creativeMode);
                     return false;
 
                 case ActionType.WallKilled:
-                    if (HandleMana(0.5f, alteration.playerID))
+                    if (HasAndConsumeMana(0.5f, alteration.playerID))
                         return true;
                     //if (!Main.tile[x, y].HasTile || slopechecks)
                     WorldGen.KillWall(alteration.x, alteration.y, false);
                     return false;
 
                 case ActionType.WallReplaced:
-                    if (HandleMana(2.0f, alteration.playerID))
+                    if (HasAndConsumeMana(2.0f, alteration.playerID))
                         return true;
                     if (Main.tile[alteration.x, alteration.y].HasTile)
                         return false;
@@ -82,7 +82,7 @@ namespace OreExcavator
                 case ActionType.ExtendPlacement:
                 case ActionType.TileReplaced:
                     {
-                        if (HandleMana(2.2f, alteration.playerID))
+                        if (HasAndConsumeMana(2.2f, alteration.playerID))
                             return true;
                         // TODO: Move this outside of modify loop?
                         if (alteration.consumesItemType <= ItemID.None) // Invalid item type?
@@ -115,7 +115,7 @@ namespace OreExcavator
 
                 case ActionType.TurfPlanted:
                     {
-                        if (HandleMana(2.5f, alteration.playerID))
+                        if (HasAndConsumeMana(2.5f, alteration.playerID))
                             return true;
                         // TODO: Move this outside of modify loop?
                         if (alteration.consumesItemType <= ItemID.None) // Invalid item type?
@@ -136,7 +136,7 @@ namespace OreExcavator
 
                 case ActionType.TurfHarvested:
                     {
-                        if (HandleMana(2.0f, alteration.playerID))
+                        if (HasAndConsumeMana(2.0f, alteration.playerID))
                             return true;
 
                         if (alteration.consumesItemType < ItemID.None) // Invalid grass type?
@@ -150,7 +150,7 @@ namespace OreExcavator
 
                 case ActionType.TilePainted:
                     {
-                        if (HandleMana(2.5f, alteration.playerID))
+                        if (HasAndConsumeMana(2.5f, alteration.playerID))
                             return true;
 
                         if (alteration.consumesItemType <= ItemID.None) // Invalid item type?
@@ -166,7 +166,7 @@ namespace OreExcavator
 
                 case ActionType.WallPainted:
                     {
-                        if (HandleMana(2.0f, alteration.playerID))
+                        if (HasAndConsumeMana(2.0f, alteration.playerID))
                             return true;
 
                         if (alteration.consumesItemType <= ItemID.None) // Invalid item type?
@@ -181,7 +181,7 @@ namespace OreExcavator
                     return false;
 
                 case ActionType.ClearedPaint:
-                    if (HandleMana(1.5f, alteration.playerID))
+                    if (HasAndConsumeMana(1.5f, alteration.playerID))
                         return true;
 
                     WorldGen.paintTile(alteration.x, alteration.y, PaintID.None, false);

@@ -248,7 +248,7 @@ namespace OreExcavator /// The Excavator of ores
         {
             if (id == null)
             {
-                Log("Attempted lookup for a task that doesn't exist!", Color.Red, LogType.Warn);
+                Log("Attempted lookup for a task that doesn't exist!", default, LogType.Warn);
                 return false;
             }
 
@@ -386,32 +386,33 @@ namespace OreExcavator /// The Excavator of ores
                             switch (msgType)
                             {
                                 case ActionType.TileWhiteListed:
-                                    Log($"{Main.player[origin].name} added 'Tile.{GetFullNameById(id, msgType, subtype)} ({id})' to their personal tile whitelist.",
+                                    
+                                    Log(Language.GetTextValue("Mods.OreExcavator.Network.Added", Main.player[origin].name, "Tile", $"{GetFullNameById(id, msgType, subtype)} ({id})"),
                                         Color.Green, LogType.Info);
                                     break;
 
                                 case ActionType.WallWhiteListed:
-                                    Log($"{Main.player[origin].name} added 'Wall.{GetFullNameById(id, msgType)} ({id})' to their personal wall whitelist.",
+                                    Log(Language.GetTextValue("Mods.OreExcavator.Network.Added", Main.player[origin].name, "Wall", $"{GetFullNameById(id, msgType, subtype)} ({id})"),
                                         Color.Orange, LogType.Info);
                                     break;
 
                                 case ActionType.ItemWhiteListed:
-                                    Log($"{Main.player[origin].name} added 'Item.{GetFullNameById(id, msgType)} ({id})' to their personal swap whitelist.",
+                                    Log(Language.GetTextValue("Mods.OreExcavator.Network.Added", Main.player[origin].name, "Item", $"{GetFullNameById(id, msgType, subtype)} ({id})"),
                                         Color.Green, LogType.Info);
                                     break;
 
                                 case ActionType.TileBlackListed:
-                                    Log($"{Main.player[origin].name} removed 'Tile.{GetFullNameById(id, msgType, subtype)} ({id})' from their personal tile whitelist.",
+                                    Log(Language.GetTextValue("Mods.OreExcavator.Network.Removed", Main.player[origin].name, "Tile", $"{GetFullNameById(id, msgType, subtype)} ({id})"),
                                         Color.Orange, LogType.Info);
                                     break;
 
                                 case ActionType.WallBlackListed:
-                                    Log($"{Main.player[origin].name} removed 'Wall.{GetFullNameById(id, msgType)} ({id})' from their personal wall whitelist.",
+                                    Log(Language.GetTextValue("Mods.OreExcavator.Network.Removed", Main.player[origin].name, "Wall", $"{GetFullNameById(id, msgType, subtype)} ({id})"),
                                         Color.Green, LogType.Info);
                                     break;
 
                                 case ActionType.ItemBlackListed:
-                                    Log($"{Main.player[origin].name} removed 'Item.{GetFullNameById(id, msgType)} ({id})' from their personal swap whitelist.",
+                                    Log(Language.GetTextValue("Mods.OreExcavator.Network.Removed", Main.player[origin].name, "Item", $"{GetFullNameById(id, msgType, subtype)} ({id})"),
                                         Color.Orange, LogType.Info);
                                     break;
                             }
@@ -455,7 +456,7 @@ namespace OreExcavator /// The Excavator of ores
 
             if (Main.netMode == NetmodeID.Server || (Main.netMode == NetmodeID.MultiplayerClient && !puppeting))
             {
-                Log(playerId + " SENDING " + actionType);
+                //Log(playerId + " SENDING " + actionType);
                 ModPacket packet = myMod.GetPacket();
                 if (Main.netMode == NetmodeID.Server)
                     packet.Write((byte)playerId);
@@ -595,7 +596,7 @@ namespace OreExcavator /// The Excavator of ores
             if (actionType == ActionType.ExtendPlacement)
             {
                 Item item = new Item(itemType);
-                if (item.Name.Contains("Rope"))
+                if (item.Name.Contains("Rope")) // TODO: Update for vines
                     isRope = true;
             }
 
@@ -701,13 +702,13 @@ namespace OreExcavator /// The Excavator of ores
 
             if ((playerHalted[playerID] && puppeting) || (Main.netMode != NetmodeID.Server && playerID == Main.myPlayer && ClientConfig.releaseCancelsExcavations && !(ClientConfig.toggleExcavations ? excavationToggled : OreExcavatorKeybinds.excavatorHeld)))
             {
-                Log(playerID + " HALTED");
+                //Log(playerID + " HALTED");
                 if (Main.netMode == NetmodeID.MultiplayerClient && playerID == Main.myPlayer)
                 {
                     ModPacket packet = myMod.GetPacket();
                     packet.Write((byte)ActionType.HaltExcavations);
                     packet.Send();
-                    Log(playerID + " SENDING " + ActionType.HaltExcavations);
+                    //Log(playerID + " SENDING " + ActionType.HaltExcavations);
                 }
 
                 Thread.Sleep(delay + (Math.Max(delay, (ushort)2) / 2));
@@ -723,7 +724,7 @@ namespace OreExcavator /// The Excavator of ores
                     ModPacket packet = myMod.GetPacket();
                     packet.Write((byte)ActionType.ResetExcavations);
                     packet.Send();
-                    Log(playerID + " SENDING " + ActionType.ResetExcavations);
+                    //Log(playerID + " SENDING " + ActionType.ResetExcavations);
                 }
                 playerHalted[playerID] = false;
             }
@@ -732,7 +733,7 @@ namespace OreExcavator /// The Excavator of ores
 
             puppeting = false;
 
-            Log(playerID + " EXCAVATION COMPLETED");
+            //Log(playerID + " EXCAVATION COMPLETED");
         }
 
         /// My sad attempt at reflection
@@ -1277,9 +1278,9 @@ namespace OreExcavator /// The Excavator of ores
                 if (item.createTile >= TileID.Dirt || item.createWall > WallID.None)
                 {
                     if (!OreExcavator.ServerConfig.allowReplace)
-                        OreExcavator.Log("Excavation Halted: Server has disabled Chain-Swapping.", Color.Red, LogType.Warn);
+                        OreExcavator.Log("Excavation Halted: Server has disabled Chain-Swapping.", Color.Red);
                     else if (!OreExcavator.ClientConfig.tileWhitelistToggled)
-                        OreExcavator.Log("Excavation Halted: Client has disabled Chain-Swapping.", Color.Red, LogType.Warn);
+                        OreExcavator.Log("Excavation Halted: Client has disabled Chain-Swapping.", Color.Red);
                     else if (!OreExcavator.ClientConfig.doSpecials)
                         OreExcavator.Log("Excavation Halted: Client has disabled alternative features.", Color.Red);
                 }
@@ -1325,7 +1326,7 @@ namespace OreExcavator /// The Excavator of ores
                 {
                     if (!OreExcavator.ServerConfig.chainSeeding)
                     {
-                        OreExcavator.Log("Excavation Halted: Server has disabled Chain-Planting.", Color.Red, LogType.Warn);
+                        OreExcavator.Log("Excavation Halted: Server has disabled Chain-Planting.", Color.Red);
                         return null;
                     }
 
@@ -1337,7 +1338,7 @@ namespace OreExcavator /// The Excavator of ores
                     createType = (short)item.createTile;
                     if (!OreExcavator.ServerConfig.allowReplace)
                     {
-                        OreExcavator.Log("Excavation Halted: Server has disabled Chain-Swapping.", Color.Red, LogType.Warn);
+                        OreExcavator.Log("Excavation Halted: Server has disabled Chain-Swapping.", Color.Red);
                         return null;
                     }
 
@@ -1390,7 +1391,7 @@ namespace OreExcavator /// The Excavator of ores
 
                 if (!OreExcavator.ServerConfig.allowReplace)
                 {
-                    OreExcavator.Log("Excavation Halted: The world host has disabled Chain-Swapping.", Color.Red, LogType.Warn);
+                    OreExcavator.Log("Excavation Halted: The world host has disabled Chain-Swapping.", Color.Red);
                     return null;
                 }
 
@@ -1406,7 +1407,7 @@ namespace OreExcavator /// The Excavator of ores
             {
                 if (!OreExcavator.ServerConfig.chainPainting)
                 {
-                    OreExcavator.Log("Excavation Halted: Server has disabled Chain-Painting.", Color.Red, LogType.Warn);
+                    OreExcavator.Log("Excavation Halted: Server has disabled Chain-Painting.", Color.Red);
                     return null;
                 }
 
@@ -1437,7 +1438,7 @@ namespace OreExcavator /// The Excavator of ores
                                 return null;
                             }
                     }
-                    OreExcavator.Log("Excavation Halted: No paint in inventory.", Color.Orange, LogType.Warn);
+                    OreExcavator.Log("Excavation Halted: No paint in inventory.", Color.Orange);
                     return null;
                 }
                 else if (item.Name.ToLower().Contains("roller"))
@@ -1467,7 +1468,7 @@ namespace OreExcavator /// The Excavator of ores
                                 return null;
                             }
                     }
-                    OreExcavator.Log("Excavation Halted: No paint in inventory.", Color.Orange, LogType.Warn);
+                    OreExcavator.Log("Excavation Halted: No paint in inventory.", Color.Orange);
                     return null;
                 }
                 else if (item.Name.ToLower().Contains("scraper"))
@@ -1536,12 +1537,12 @@ namespace OreExcavator /// The Excavator of ores
 
             if (OreExcavator.ClientConfig.itemWhitelistToggled && !OreExcavator.ClientConfig.itemWhitelist.Contains(itemName))
             {
-                OreExcavator.Log($"Rejected chain-swapping 'ItemID.{item.Name} ({item.netID})' because it isn't whitelisted by you,\nHover over the item in your inventory and press '{keybind}' to start chain-swapping!", Color.Orange, LogType.Warn);
+                OreExcavator.Log($"Rejected chain-swapping 'ItemID.{item.Name} ({item.netID})' because it isn't whitelisted by you,\nHover over the item in your inventory and press '{keybind}' to start chain-swapping!", Color.Orange);
                 return null;
             }
             if (OreExcavator.ServerConfig.itemBlacklistToggled && OreExcavator.ServerConfig.itemBlacklist.Contains(itemName))
             {
-                OreExcavator.Log($"Rejected chain-swapping 'ItemID.{item.Name} ({item.netID})' because it's blacklisted by the server", Color.Orange, LogType.Warn);
+                OreExcavator.Log($"Rejected chain-swapping 'ItemID.{item.Name} ({item.netID})' because it's blacklisted by the server", Color.Orange);
                 return null;
             }
 
@@ -1651,11 +1652,11 @@ namespace OreExcavator /// The Excavator of ores
                         keybind = "Left Click";
 
                     if ((item.pick != 0 && OreExcavator.ServerConfig.allowPickaxing) && (item.hammer != 0 && OreExcavator.ServerConfig.allowHammering))
-                        tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", $"Hold '{keybind}' to Excavate blocks or walls!"));
+                        tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", Language.GetTextValue("Mods.OreExcavator.UI.Tooltips.HoldToUse", keybind, $"{Language.GetTextValue("Mods.OreExcavator.Tiles")}/{Language.GetTextValue("Mods.OreExcavator.Walls")}")));
                     else if ((item.pick != 0 && OreExcavator.ServerConfig.allowPickaxing))
-                        tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", $"Hold '{keybind}' to Excavate blocks!"));
+                        tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", Language.GetTextValue("Mods.OreExcavator.UI.Tooltips.HoldToUse", keybind, Language.GetTextValue("Mods.OreExcavator.Tiles"))));
                     else if ((item.hammer != 0 && OreExcavator.ServerConfig.allowHammering))
-                        tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", $"Hold '{keybind}' to Excavate walls!"));
+                        tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", Language.GetTextValue("Mods.OreExcavator.UI.Tooltips.HoldToUse", keybind, Language.GetTextValue("Mods.OreExcavator.Walls"))));
                     else if (name != "")
                     {
                         if (OreExcavator.ServerConfig.itemBlacklistToggled && OreExcavator.ServerConfig.itemBlacklist.Contains(OreExcavator.GetFullNameById(item.type, ActionType.ItemBlackListed)))
@@ -1678,9 +1679,9 @@ namespace OreExcavator /// The Excavator of ores
                 }
                 else if (OreExcavator.ExcavateHotkey.GetAssignedKeys().Count <= 0)
                     if ((item.pick > 0 && OreExcavator.ServerConfig.allowPickaxing) || (item.hammer > 0 && OreExcavator.ServerConfig.allowHammering))
-                        tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", "No keybind set, please set one in your control settings to start Excavating!"));
+                        tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", Language.GetTextValue("Mods.OreExcavator.KeyBinds.None", "Excavating")));
                     else if (name != "")
-                        tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", $"No keybind set, please set one in your control settings to start chain-{(item.Name.ToLower().Contains("seed") ? "planting" : "swapping")}!"));
+                        tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", Language.GetTextValue("Mods.OreExcavator.KeyBinds.None", $"Chain-{(item.Name.ToLower().Contains("seed") ? "planting" : "swapping")}!")));
             }
         }
 
@@ -1780,7 +1781,7 @@ namespace OreExcavator /// The Excavator of ores
                                      "\n\t  You can find bindings for mods @ Settings > Controls > Mod Controls (at the bottom) > OreExcavator: Excavate", Color.Red, LogType.Warn);
                 }).Start();
             }
-            else if (OreExcavator.ClientConfig.showWelcome070)
+            else if (OreExcavator.ClientConfig.showWelcome070 && OreExcavator.ServerConfig.showWelcome)
             {
                 new Task(delegate
                 {

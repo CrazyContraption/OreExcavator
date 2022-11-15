@@ -9,15 +9,17 @@ using Terraria.ModLoader.Config;
 
 namespace OreExcavator
 {
-    [Label("$Mods.OreExcavator.Config.Server.Header")]
+    [Label("$Mods.OreExcavator.Config.Server.Headers.Header")]
     public class OreExcavatorConfig_Server : ModConfig
     {
-        internal const string IconBuffer = " : ";
-        internal const string HeaderBuffer = " - ";
-
         public override ConfigScope Mode => ConfigScope.ServerSide;
 
-        [Header("World Settings" + HeaderBuffer + "Properties")]
+        [Header("$Mods.OreExcavator.Config.Server.Headers.Properties")]
+
+        [Label("$Mods.OreExcavator.Config.Server.ShowWelcome.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Server.ShowWelcome.Description")]
+        [DefaultValue(true)]
+        public bool showWelcome;
 
         [Label("$Mods.OreExcavator.Config.Server.RecursionLimit.Label")]
         [Tooltip("$Mods.OreExcavator.Config.Server.RecursionLimit.Description")]
@@ -75,7 +77,7 @@ namespace OreExcavator
         public bool aggressiveCompatibility;
 
 
-        [Header("World Settings" + HeaderBuffer + "Blocks")]
+        [Header("$Mods.OreExcavator.Config.Server.Headers.Tiles")]
 
         [Label("$Mods.OreExcavator.Config.Server.AllowPickaxing.Label")]
         [Tooltip("$Mods.OreExcavator.Config.Server.AllowPickaxing.Description")]
@@ -107,7 +109,7 @@ namespace OreExcavator
         };
 
 
-        [Header("World Settings" + HeaderBuffer + "Walls")]
+        [Header("$Mods.OreExcavator.Config.Server.Headers.Walls")]
 
         [Label("$Mods.OreExcavator.Config.Server.AllowHammering.Label")]
         [Tooltip("$Mods.OreExcavator.Config.Server.AllowHammering.Description")]
@@ -136,7 +138,7 @@ namespace OreExcavator
         };
 
 
-        [Header("World Settings - Blockswap")]
+        [Header("$Mods.OreExcavator.Config.Server.Headers.Items")]
 
         [Label("$Mods.OreExcavator.Config.Server.AllowReplace.Label")]
         [Tooltip("$Mods.OreExcavator.Config.Server.AllowReplace.Description")]
@@ -185,18 +187,18 @@ namespace OreExcavator
         {
             if (OreExcavator.hostOnly && Main.CurrentFrameFlags.ActivePlayersCount <= 0 && whoAmI == 0)
             {
-                message = "Accepting changes (Reason: Changes requested via remote)";
+                message = Language.GetTextValue("Mods.OreExcavator.Config.Common.Changes.Remote");
                 return true;
             }
 
             if (OreExcavator.hostOnly && Main.CurrentFrameFlags.ActivePlayersCount == 1 && whoAmI == 0)
             {
-                message = "Accepting changes (Reason: Verified first/only player online is host)";
+                message = Language.GetTextValue("Mods.OreExcavator.Config.Common.Changes.HostOnly");
                 return true;
             }
 
             OreExcavator.hostOnly = false;
-            message = "Rejected changes (Reason: Cannot determine host)";
+            message = Language.GetTextValue("Mods.OreExcavator.Config.Common.Changes.NoHost");
             return false;
         }
     }
@@ -204,100 +206,75 @@ namespace OreExcavator
     [Label("Player Config")]
     public class OreExcavatorConfig_Client : ModConfig
     {
-        internal const string IconBuffer = OreExcavatorConfig_Server.IconBuffer;
-        internal const string HeaderBuffer = OreExcavatorConfig_Server.HeaderBuffer;
         public override ConfigScope Mode => ConfigScope.ClientSide;
 
 
-        [Header("Player Settings - UI")]
+        [Header("$Mods.OreExcavator.Config.Client.Headers.UI")]
 
-        [Label("[i/p0:4792] | Show Startup Message")]
-        [Tooltip("When disabled, welcome messages will" +
-            "\nbe hidden for this version of the mod." +
-            "\n\nNew versions will re-enable this feature.")]
+        [Label("$Mods.OreExcavator.Config.Client.ShowWelcome.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.ShowWelcome.Description")]
         [DefaultValue(true)]
         public bool showWelcome070;
 
-        [Label("[i/p0:5075] | Show Excavation Tooltip")]
-        [Tooltip("When disabled, holding the excavation " +
-            "\nkey will no longer provide a contextual tooltip." +
-            "\n\nPlease enable this before reporting bugs!")]
+        [Label("$Mods.OreExcavator.Config.Client.ShowCursorTooltips.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.ShowCursorTooltips.Description")]
         [DefaultValue(true)]
         public bool showCursorTooltips;
 
-        [Label("[i/p0:267] | Show Item Tooltips")]
-        [Tooltip("When disabled, items, walls, and tiles the" +
-            "\n will no longer provide a contextual tooltip." +
-            "\n\nPlease enable this before reporting bugs!")]
+        [Label("$Mods.OreExcavator.Config.Client.ShowItemTooltips.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.ShowItemTooltips.Description")]
         [DefaultValue(true)]
         public bool showItemTooltips;
 
-        [Label("[i/p0:150] | Reduced Effects")]
-        [Tooltip("Lagging? When disabled, the mod will attempt to run in a" +
-            "\n reduced state, providing better performance graphically." +
-            "\n\nWill not change anything functionally outside of cosmetic differences.")]
+        [Label("$Mods.OreExcavator.Config.Client.ReducedEffects.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.ReducedEffects.Description")]
         [DefaultValue(false)]
         public bool reducedEffects;
 
-        [Label("[i/p0:555] | Auto-use Mana Potions for Excavations")]
-        [Tooltip("When enabled and the world has mana requirements turned on," +
-            "\nshould the mod attempt to refill your mana if you run out?" +
-            "\n\nDoes NOT impact performance!")]
+        [Label("$Mods.OreExcavator.Config.Client.RefillMana.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.RefillMana.Description")]
         [DefaultValue(false)]
         public bool refillMana;
 
-        [Label("[i/p0:37] | Show Debug Logs")]
-        [Tooltip("When enabled, debug logs" +
-            "\nwill be hidden from the files." +
-            "\n\nPlease enable this before reporting bugs!")]
+        [Label("$Mods.OreExcavator.Config.Client.DoDebugStuff.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.DoDebugStuff.Description")]
         [DefaultValue(false)]
         public bool doDebugStuff;
 
-        [Header("Player Settings - Core")]
+        [Header("$Mods.OreExcavator.Config.Client.Headers.Core")]
 
-        [Label("[i/p0:18] | Block Modification Limit")]
-        [Tooltip("Determines the maximum number of tiles" +
-            "\nalterable per excavation" +
-            "\n\nLarger numbers WILL negatively affect performance!")]
+        [Label("$Mods.OreExcavator.Config.Client.RecursionLimit.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.RecursionLimit.Description")]
         [Range(int.MinValue, int.MaxValue)]
         [DefaultValue(600)]
         public int recursionLimit;
 
-        [Label("[i/p0:2799] | Do Diagonal Searching")]
-        [Tooltip("When enabled, the excavation algorithm will" +
-            "\nalso check for matches directly diagonal of themselves." +
-            "\n\nDisabling this WILL improve performance!")]
+        [Label("$Mods.OreExcavator.Config.Client.DoDiagonals.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.DoDiagonals.Description")]
         [DefaultValue(false)]
         public bool doDiagonals;
 
-        [Label("[i/p0:3099] | Block Breaking Delay")]
-        [Tooltip("The ms delay between block breaks." +
-            "\n\nHigher values may improve performance!")]
+        [Label("$Mods.OreExcavator.Config.Client.RecursionDelay.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.RecursionDelay.Description")]
         [Range(byte.MinValue, byte.MaxValue)]
         [DefaultValue(10)]
         public int recursionDelay;
 
-        [Label("[i/p0:321] | Do Initial Whitelist Checks")]
-        [Tooltip("When enabled, the algorithm checks the whitelists & blacklists BEFORE" +
-            "\nattempting an excavation, when bound to a right mouse." +
-            "\n\nEnabling this may hurt performance, but" +
-            "\nmight produce more stable behaviour!")]
+        [Label("$Mods.OreExcavator.Config.Client.InititalChecks.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.InititalChecks.Description")]
         [DefaultValue(false)]
         public bool inititalChecks;
 
 
-        [Header("Player Settings - Blocks")]
+        [Header("$Mods.OreExcavator.Config.Client.Headers.Tiles")]
 
-        [Label("[i/p0:3509] | Enable Tile Whitelist")]
-        [Tooltip("When enabled, all tiles will be whitelisted by default." +
-            "\n\nSlightly improves performance!")]
+        [Label("$Mods.OreExcavator.Config.Client.TileWhitelistToggled.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.TileWhitelistToggled.Description")]
         [DefaultValue(true)]
         public bool tileWhitelistToggled;
 
-        [Label("[i/p0:2695] | Tile Whitelist")]
-        [Tooltip("Configure this list to manually set what Tiles can be chain-excavated" +
-            "\nPrefixed by the mod that owns them. Also yields to the host's blacklist." +
-            "\n\nDoes NOT impact performance!")]
+        [Label("$Mods.OreExcavator.Config.Client.TileWhitelist.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.TileWhitelist.Description")]
         [DefaultListValue("Terraria:")]
         public HashSet<string> tileWhitelist = new()
         {
@@ -342,18 +319,15 @@ namespace OreExcavator
         };
 
 
-        [Header("Player Settings - Walls")]
+        [Header("$Mods.OreExcavator.Config.Client.Headers.Walls")]
 
-        [Label("[i/p0:196] | Enable Wall Whitelist")]
-        [Tooltip("When enabled, all walls will be whitelisted by default." +
-            "\n\nSlightly improves performance!")]
+        [Label("$Mods.OreExcavator.Config.Client.WallWhitelistToggled.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.WallWhitelistToggled.Description")]
         [DefaultValue(true)]
         public bool wallWhitelistToggled;
 
-        [Label("[i/p0:2696] | Wall Whitelist")]
-        [Tooltip("Configure this list to manually set what Walls can be chain-excavated" +
-            "\nPrefixed by the mod that owns them. Also yields to the hosts's blacklist." +
-            "\n\nDoes NOT impact performance!")]
+        [Label("$Mods.OreExcavator.Config.Client.WallWhitelist.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.WallWhitelist.Description")]
         [DefaultListValue("Terraria:")]
         public HashSet<string> wallWhitelist = new()
         {
@@ -424,18 +398,15 @@ namespace OreExcavator
         };
 
 
-        [Header("Player Settings - Blockswap")]
+        [Header("$Mods.OreExcavator.Config.Client.Headers.Items")]
 
-        [Label("[i/p0:9] | Enable Item Whitelist")]
-        [Tooltip("When enabled, all items will be whitelisted by default." +
-            "\n\nSlightly improves performance!")]
+        [Label("$Mods.OreExcavator.Config.Client.ItemWhitelistToggled.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.ItemWhitelistToggled.Description")]
         [DefaultValue(true)]
         public bool itemWhitelistToggled;
 
-        [Label("[i/p0:38] | Item Whitelist")]
-        [Tooltip("Configure this list to manually set what Items can be chain-replaced" +
-            "\nPrefixed by the mod that owns them. Also yields to the host's blacklist." +
-            "\n\nDoes NOT impact performance!")]
+        [Label("$Mods.OreExcavator.Config.Client.ItemWhitelist.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.ItemWhitelist.Description")]
         [DefaultListValue("Terraria:")]
         public HashSet<string> itemWhitelist = new()
         {
@@ -449,33 +420,25 @@ namespace OreExcavator
         };
 
 
-        [Header("Player Settings - Controls")]
+        [Header("$Mods.OreExcavator.Config.Client.Headers.Controls")]
 
-        [Label("[i/p0:513] | Keybind Toggles Excavations")]
-        [Tooltip("When enabled, tapping the keybind will toggle the" +
-            "\nactive state of initiating excavations." +
-            "\n\nDoes NOT impact performance!")]
+        [Label("$Mods.OreExcavator.Config.Client.ToggleExcavations.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.ToggleExcavations.Description")]
         [DefaultValue(false)]
         public bool toggleExcavations;
 
-        [Label("[i/p0:166] | Cancel Excavations on Keybind Release")]
-        [Tooltip("When enabled, letting go of the Excavation" +
-            "\ncontrol key will cease all excavation operations." +
-            "\n\nNOT ADVISED ON MULTIPLAYER SERVERS!!" +
-            "\n\nDoes NOT impact performance!")]
+        [Label("$Mods.OreExcavator.Config.Client.ReleaseCancelsExcavations.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.ReleaseCancelsExcavations.Description")]
         [DefaultValue(false)]
         public bool releaseCancelsExcavations;
 
-        [Label("[i/p0:3230] | Enable Alternative Features")]
-        [Tooltip("When enabled, the client will allow for special non-veinmine actions" +
-            "\nDisable this if you don't plan on using these features, or are binding excavations to Mouse1" +
-            "\n\nModerately impacts performance!")]
+        [Label("$Mods.OreExcavator.Config.Client.DoSpecials.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.DoSpecials.Description")]
         [DefaultValue(true)]
         public bool doSpecials;
 
-        [Label("[g:25] | Looking for your keybind?")]
-        [Tooltip("Set your keybind in the vanilla controls area," +
-            "\nThis is just for display purposes and to direct confused users.")]
+        [Label("$Mods.OreExcavator.Config.Client.Keybind.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.Keybind.Description")]
         [DefaultValue("Unknown")]
         [ReadOnly(true)]
         [JsonIgnore]

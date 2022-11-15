@@ -1,4 +1,5 @@
-# OreExcavator
+
+# OreExcavator ![](https://img.shields.io/badge/mod%20loader-tModLoader-1976d2?style=for-the-badge&labelColor=0d1117&color=brightgreen) ![](https://img.shields.io/steam/downloads/2565639705?color=darkblue&label=Steam&logo=steam&logoColor=white&style=for-the-badge) 
 Ore Excavator is the 1.4 version of the 1.3 Veinminer mod for Terraria ModLoader, with a shared purpose.
 
 Original concept by [NanobotZ](https://github.com/NanobotZ), all credit where it is due.
