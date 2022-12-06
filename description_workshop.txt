@@ -87,7 +87,8 @@ A:No, not anymore. Once upon a time we did, now things are much easier for us, a
  ~ Updated mana configurations to use a slider for better user control. Turn it back on after this update if you had it on before!
  ~ Updated permission error messages to only display when debug mode is enabled.
  ~ Updated core excavation queue logic - gameplay should be the same, but performance might change.
- + Added a toggle for chain-placing features to the configurations.
+ + Added a toggle for chain-placing features to the server configurations.
+ + Added a config for servers to block the mod's motd forever, can also be used in singleplayer.
  + Added translations! We're working on adding more languages, visit our Discord to help out!
  + Added English translations.
  + Added ??? translations.

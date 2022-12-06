@@ -1037,7 +1037,7 @@ namespace OreExcavator /// The Excavator of ores
 
             if (OreExcavator.ExcavateHotkey.GetAssignedKeys().Count <= 0)
             {
-                OreExcavator.Log("Excavation Halted: No key bound to excavations.", Color.Orange);
+                OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.NoKey"), Color.Orange);
                 return;
             }
 
@@ -1063,26 +1063,26 @@ namespace OreExcavator /// The Excavator of ores
 
             if (!OreExcavator.ServerConfig.allowPickaxing)
             {
-                OreExcavator.Log("Excavation Halted: Server has disabled Excavations.", Color.Red);
+                OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Server.DisabledExcavations"), Color.Red);
                 return;
             }
 
             if (x != Player.tileTargetX || y != Player.tileTargetY)
             {
-                OreExcavator.Log("Excavation Halted: Tile position mismatch - player is moving cursor too fast.", Color.Orange);
+                OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.PositionMismatch"), Color.Orange);
                 return;
             }
 
             if(OreExcavator.masterTiles.ContainsKey(new Point16(x, y)))
             {
-                OreExcavator.Log("Excavation Halted: Tile is already processing!", Color.Red);
+                OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.TilePending"), Color.Red);
                 fail = true;
                 return;
             }
             
             if (!OreExcavator.CheckIfAllowed(oldType, ActionType.TileKilled, oldSubtype))
             {
-                OreExcavator.Log("Excavation Halted: Tile whitelist checks failed.", Color.Orange);
+                OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.WhitelistFailed"), Color.Orange);
                 return;
             }
 
@@ -1093,7 +1093,7 @@ namespace OreExcavator /// The Excavator of ores
                     Thread.Sleep(50);
                     if (x != Player.tileTargetX || y != Player.tileTargetY)
                     {
-                        OreExcavator.Log("Excavation Halted: Tile position mismatch - player is moving cursor too fast.", Color.Orange);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.PositionMismatch"), Color.Orange);
                         return;
                     }
                     if (Main.tile[x, y].HasTile && oldType != Main.tile[x, y].TileType)
@@ -1146,7 +1146,7 @@ namespace OreExcavator /// The Excavator of ores
 
             if (OreExcavator.ExcavateHotkey.GetAssignedKeys().Count <= 0)
             {
-                OreExcavator.Log("Excavation Halted: No key bound to Excavations.", Color.Orange);
+                OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.NoKey"), Color.Orange);
                 return;
             }
 
@@ -1172,38 +1172,38 @@ namespace OreExcavator /// The Excavator of ores
 
             if (oldType <= WallID.None)
             {
-                OreExcavator.Log("Excavation Halted: Wall type is invalid", Color.Orange);
+                OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.InvalidType"), Color.Orange);
                 return;
             }
 
             if (OreExcavator.lookingAtTile.HasTile)
             {
-                OreExcavator.Log("Excavation Halted: Wall is blocked by a tile", Color.Orange);
+                OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Blocked"), Color.Orange);
                 return;
             }
 
             if (!OreExcavator.ServerConfig.allowHammering)
             {
-                OreExcavator.Log("Excavation Halted: Server has disabled Hammer Excavations.", Color.Red);
+                OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Server.DisabledAlternatives"), Color.Red);
                 return;
             }
 
             if (x != Player.tileTargetX || y != Player.tileTargetY)
             {
-                OreExcavator.Log("Excavation Halted: Tile position mismatch - player is moving cursor too fast.", Color.Orange);
+                OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.PositionMismatch"), Color.Orange);
                 return;
             }
 
             if (OreExcavator.masterTiles.ContainsKey(new Point16(x, y)))
             {
-                OreExcavator.Log("Excavation Halted: Wall is already processing!", Color.Red);
+                OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.TilePending"), Color.Red);
                 fail = true;
                 return;
             }
 
             if (!OreExcavator.CheckIfAllowed(oldType, ActionType.WallKilled))
             {
-                OreExcavator.Log("Excavation Halted: Wall whitelist checks failed.", Color.Orange);
+                OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.WhitelistFailed"), Color.Orange);
                 return;
             }
 
@@ -1236,19 +1236,18 @@ namespace OreExcavator /// The Excavator of ores
             if (WorldGen.gen || Main.netMode == NetmodeID.Server || item.pick + item.axe + item.hammer != 0 || Main.gameMenu)
                 return null;
 
-            if (OreExcavator.ExcavateHotkey.GetAssignedKeys().Count <= 0)// || item.Name.ToLower().Contains("seed") || item.Name.ToLower().Contains("paint"))
+            if (OreExcavator.ExcavateHotkey.GetAssignedKeys().Count <= 0) // || item.Name.ToLower().Contains("seed") || item.Name.ToLower().Contains("paint"))
             {
-                OreExcavator.Log("Excavation Halted: No key bound to Excavations.", Color.Red);
+                OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.NoKey"), Color.Red);
                 return null;
             }
 
             if (OreExcavator.ExcavateHotkey.GetAssignedKeys()[0] == "Mouse1")
                 if (OreExcavator.ServerConfig.allowReplace && OreExcavator.ClientConfig.doSpecials)
                 {
-                    OreExcavator.Log($"\nHey! {OreExcavator.myMod.Name} here!" +
-                         "\nWe've detected that you're using Left Mouse for excavations. We don't recommend this, but to protect your world, we've disabled non-veinmining features! (chain-swap, etc.)" +
-                        $"\nAs an alternative, we recommend using {"Right Click"} for excavations! Go ahead and try it out!" +
-                         "\n\nYou can turn these features back on in the client configurations at any time after you switch your keybind off of Left Mouse.", Color.Orange, LogType.Warn);
+                    OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.KeyBinds.MainActionWarning",
+                        OreExcavator.myMod.Name, (Terraria.GameInput.PlayerInput.CurrentInputMode < Terraria.GameInput.InputMode.XBoxGamepad ? "Click" : "Trigger")),
+                        Color.Orange, LogType.Warn);
                     OreExcavator.ClientConfig.doSpecials = false;
                     OreExcavator.ClientConfig.showCursorTooltips = false;
                     OreExcavator.SaveConfig(OreExcavator.ClientConfig);
@@ -1278,14 +1277,14 @@ namespace OreExcavator /// The Excavator of ores
                 if (item.createTile >= TileID.Dirt || item.createWall > WallID.None)
                 {
                     if (!OreExcavator.ServerConfig.allowReplace)
-                        OreExcavator.Log("Excavation Halted: Server has disabled Chain-Swapping.", Color.Red);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Server.DisabledSwap"), Color.Red);
                     else if (!OreExcavator.ClientConfig.tileWhitelistToggled)
-                        OreExcavator.Log("Excavation Halted: Client has disabled Chain-Swapping.", Color.Red);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Client.DisabledAlternatives"), Color.Red);
                     else if (!OreExcavator.ClientConfig.doSpecials)
-                        OreExcavator.Log("Excavation Halted: Client has disabled alternative features.", Color.Red);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Client.DisabledAlternatives"), Color.Red);
                 }
                 else
-                    OreExcavator.Log("Excavation Halted: Tile position mismatch - player is moving cursor too fast.", Color.Red);
+                    OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.PositionMismatch"), Color.Red);
                 return null;
             }
 
@@ -1306,19 +1305,19 @@ namespace OreExcavator /// The Excavator of ores
             {
                 if (oldType < TileID.Dirt)
                 {
-                    OreExcavator.Log("Excavation Halted: Tile type is invalid.", Color.Red);
+                    OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.TypeInvalid"), Color.Red);
                     return null;
                 }
 
                 if (!OreExcavator.ClientConfig.doSpecials)
                 {
-                    OreExcavator.Log("Excavation Halted: Client has alternative features disabled.", Color.Red);
+                    OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Client.DisabledAlternatives"), Color.Red);
                     return null;
                 }
 
                 if (oldType == newType && oldSubtype == newSubtype)
                 {
-                    OreExcavator.Log("Excavation Halted: Tile was not altered by item usage.", Color.Red);
+                    OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Unalterd"), Color.Red);
                     return null;
                 }
 
@@ -1326,7 +1325,7 @@ namespace OreExcavator /// The Excavator of ores
                 {
                     if (!OreExcavator.ServerConfig.chainSeeding)
                     {
-                        OreExcavator.Log("Excavation Halted: Server has disabled Chain-Planting.", Color.Red);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Server.DisabledPlanting"), Color.Red);
                         return null;
                     }
 
@@ -1338,37 +1337,43 @@ namespace OreExcavator /// The Excavator of ores
                     createType = (short)item.createTile;
                     if (!OreExcavator.ServerConfig.allowReplace)
                     {
-                        OreExcavator.Log("Excavation Halted: Server has disabled Chain-Swapping.", Color.Red);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Server.DisabledSwap"), Color.Red);
                         return null;
                     }
 
                     if (!oldHasTile)
-                        switch (item.createTile)
-                        {
-                            case TileID.Platforms:
-                            case TileID.MinecartTrack:
-                            case TileID.Rope:
-                            case TileID.VineRope:
-                            case TileID.WebRope:
-                            case TileID.PlanterBox:
-                                actionType = ActionType.ExtendPlacement;
-                                OreExcavator.ModifySpooler(actionType, (ushort)x, (ushort)y,
-                                    (byte)OreExcavator.ClientConfig.recursionDelay,
-                                    OreExcavator.ClientConfig.recursionLimit,
-                                    OreExcavator.ClientConfig.doDiagonals,
-                                    (byte)Main.myPlayer,
-                                    0, 0, 0,
-                                    item.netID,
-                                    item.placeStyle
-                                );
-                                goto default;
+                        if (OreExcavator.ClientConfig.ChainPlacing)
+                            switch (item.createTile)
+                            {
+                                case TileID.Platforms:
+                                case TileID.MinecartTrack:
+                                case TileID.Rope:
+                                case TileID.VineRope:
+                                case TileID.WebRope:
+                                case TileID.PlanterBox:
+                                    actionType = ActionType.ExtendPlacement;
+                                    OreExcavator.ModifySpooler(actionType, (ushort)x, (ushort)y,
+                                        (byte)OreExcavator.ClientConfig.recursionDelay,
+                                        OreExcavator.ClientConfig.recursionLimit,
+                                        OreExcavator.ClientConfig.doDiagonals,
+                                        (byte)Main.myPlayer,
+                                        0, 0, 0,
+                                        item.netID,
+                                        item.placeStyle
+                                    );
+                                    goto default;
 
-                            default:
-                                return null;
+                                default:
+                                    return null;
+                            }
+                        else
+                        {
+                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Client.DisabledPlacing"), Color.Red);
+                            return null;
                         }
                     else if (!newHasTile)
                     {
-                        OreExcavator.Log("Excavation Halted: Tile does not exist.", Color.Red);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.DoesNotExist"), Color.Red);
                         return null;
                     }
                     else
@@ -1379,25 +1384,25 @@ namespace OreExcavator /// The Excavator of ores
             {
                 if (oldType == newType)
                 {
-                    OreExcavator.Log("Excavation Halted: Wall was not altered by item usage.", Color.Red);
+                    OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Unaltered"), Color.Red);
                     return null;
                 }
 
                 if (oldType <= WallID.None)
                 {
-                    OreExcavator.Log("Excavation Halted: Wall is type invalid.", Color.Red);
+                    OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.TypeInvalid"), Color.Red);
                     return null;
                 }
 
                 if (!OreExcavator.ServerConfig.allowReplace)
                 {
-                    OreExcavator.Log("Excavation Halted: The world host has disabled Chain-Swapping.", Color.Red);
+                    OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Server.DisabledSwap"), Color.Red);
                     return null;
                 }
 
                 if (!OreExcavator.ClientConfig.doSpecials)
                 {
-                    OreExcavator.Log("Excavation Halted: Client has alternative features disabled.", Color.Red);
+                    OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Client.DisabledAlternatives"), Color.Red);
                     return null;
                 }
                 actionType = ActionType.WallReplaced;
@@ -1407,7 +1412,7 @@ namespace OreExcavator /// The Excavator of ores
             {
                 if (!OreExcavator.ServerConfig.chainPainting)
                 {
-                    OreExcavator.Log("Excavation Halted: Server has disabled Chain-Painting.", Color.Red);
+                    OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Server.DisabledPainting"), Color.Red);
                     return null;
                 }
 
@@ -1415,7 +1420,7 @@ namespace OreExcavator /// The Excavator of ores
                 {
                     if (oldColor == newColor)
                     {
-                        OreExcavator.Log("Excavation Halted: Tile was not altered by item usage.", Color.Red);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Unaltered"), Color.Red);
                         return null;
                     }
                     actionType = ActionType.TilePainted;
@@ -1438,14 +1443,14 @@ namespace OreExcavator /// The Excavator of ores
                                 return null;
                             }
                     }
-                    OreExcavator.Log("Excavation Halted: No paint in inventory.", Color.Orange);
+                    OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.NoPaint"), Color.Orange);
                     return null;
                 }
                 else if (item.Name.ToLower().Contains("roller"))
                 {
                     if (oldColor == newColor)
                     {
-                        OreExcavator.Log("Excavation Halted: Tile was not altered by item usage.", Color.Red);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Unaltered"), Color.Red);
                         return null;
                     }
                     actionType = ActionType.WallPainted;
@@ -1468,14 +1473,14 @@ namespace OreExcavator /// The Excavator of ores
                                 return null;
                             }
                     }
-                    OreExcavator.Log("Excavation Halted: No paint in inventory.", Color.Orange);
+                    OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.NoPaint"), Color.Orange);
                     return null;
                 }
                 else if (item.Name.ToLower().Contains("scraper"))
                 {
                     if (oldColor == newColor) // TODO: check walls and tile colors?
                     {
-                        OreExcavator.Log("Excavation Halted: Tile was not altered by item usage.", Color.Red);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Unaltered"), Color.Red);
                         return null;
                     }
                     actionType = ActionType.ClearedPaint;
@@ -1494,12 +1499,12 @@ namespace OreExcavator /// The Excavator of ores
                     }
                 }
                 else
-                    OreExcavator.Log("Excavation Halted: Invalid paint item detected.", Color.Red);
+                    OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.TypeInvalid"), Color.Red);
                 return null;
             }
             else
             {
-                OreExcavator.Log("Excavation Halted: Invalid operation attempted.", Color.Red);
+                OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.BadOperation"), Color.Red);
                 return null;
             }
 
@@ -1511,13 +1516,13 @@ namespace OreExcavator /// The Excavator of ores
             {
                 if (!Main.tile[x + 1, y].HasTile && !Main.tile[x, y + 1].HasTile && !Main.tile[x - 1, y].HasTile && !Main.tile[x, y - 1].HasTile)
                 {
-                    OreExcavator.Log("Excavation Halted: Tile is unanchored, nowhere to flood to.", Color.Red);
+                    OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Unachored"), Color.Red);
                     return null;
                 }
             }
             else if (Main.tile[x + 1, y].WallType <= WallID.None && Main.tile[x, y + 1].WallType <= WallID.None && Main.tile[x - 1, y].WallType <= WallID.None && Main.tile[x, y - 1].WallType <= WallID.None)
             {
-                OreExcavator.Log("Excavation Halted: Wall is unanchored, nowhere to flood to.", Color.Red);
+                OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Unanchored"), Color.Red);
                 return null;
             }
 
@@ -1775,10 +1780,7 @@ namespace OreExcavator /// The Excavator of ores
                 new Task(delegate
                 {
                     Thread.Sleep(2000);
-                    OreExcavator.Log($"[{OreExcavator.myMod.DisplayName}] - v{OreExcavator.myMod.Version}" +
-                                     "\n\t  We noticed you don't have a keybind set for the mod! " +
-                                     "\n\t  The mod won't work without one, so be sure it's bound before reporting bugs." +
-                                     "\n\t  You can find bindings for mods @ Settings > Controls > Mod Controls (at the bottom) > OreExcavator: Excavate", Color.Red, LogType.Warn);
+                    OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.KeyBinds.NoBind", OreExcavator.myMod.DisplayName, OreExcavator.myMod.Version), Color.Red, LogType.Warn);
                 }).Start();
             }
             else if (OreExcavator.ClientConfig.showWelcome070 && OreExcavator.ServerConfig.showWelcome)

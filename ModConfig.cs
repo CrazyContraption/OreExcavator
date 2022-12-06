@@ -400,6 +400,11 @@ namespace OreExcavator
 
         [Header("$Mods.OreExcavator.Config.Client.Headers.Items")]
 
+        [Label("$Mods.OreExcavator.Config.Client.ChainPlacing.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.ChainPlacing.Description")]
+        [DefaultValue(true)]
+        public bool ChainPlacing;
+
         [Label("$Mods.OreExcavator.Config.Client.ItemWhitelistToggled.Label")]
         [Tooltip("$Mods.OreExcavator.Config.Client.ItemWhitelistToggled.Description")]
         [DefaultValue(true)]

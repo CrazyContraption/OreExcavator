@@ -36,6 +36,12 @@
 
 			UnWhitelist:
 			"Un-whitelist tile/wall/item"
+
+			MainActionWarning:
+			"\nHey! {0} here!\nWe've detected that you're using your mining key for excavations. We don't recommend this, but to protect your world, we've disabled non-veinmining features! (chain-swap, etc.)\nAs an alternative, we recommend using Right {1} for excavations! Go ahead and try it out!\n\nYou can turn these features back on in the client configurations at any time after you switch your keybind off of Left Mouse."
+		
+			NoBind:
+			"[{0}] - v{1}\n\t  We noticed you don't have a keybind set for the mod!\n\t  The mod won't work without one, so be sure it's bound before reporting bugs.\n\t  You can find bindings for mods @ Settings > Controls > Mod Controls (at the bottom) > {0}: {$Mods.OreExcavator.KeyBinds.Excavate}"
 		}
 
 		Network:
@@ -163,7 +169,70 @@
 
 				Finish:
 				"Done whitelisting modded content."
-			} 
+			}
+
+			Warnings: {
+				NoKey:
+				"{$Mods.OreExcavator.Logging.Halted}: No key bound to Excavate."
+
+				PositionMismatch:
+				"{$Mods.OreExcavator.Logging.Halted}: Cursor and server position mismatch - player is moving cursor too fast."
+
+				WhitelistFailed:
+				"{$Mods.OreExcavator.Logging.Halted}: Blacklist or whitelist checks failed."
+
+				TilePending:
+				"{$Mods.OreExcavator.Logging.Halted}: Location data is already being processed!"
+
+				Server: {
+					DisabledExcavations:
+					"{$Mods.OreExcavator.Logging.Halted}: Host has disabled Tile Excavations."
+
+					DisabledHammer:
+					"{$Mods.OreExcavator.Logging.Halted}: Host has disabled Wall Excavations"
+
+					DisabledSwap:
+					"{$Mods.OreExcavator.Logging.Halted}: Host has disabled Chain-Swapping."
+
+					DisabledPlanting:
+					"{$Mods.OreExcavator.Logging.Halted}: Host has disabled Chain-Planting."
+
+					DisabledPainting:
+					"{$Mods.OreExcavator.Logging.Halted}: Host has disabled Chain-Painting."
+				}
+
+				Client: {
+					DisabledExcavations:
+					"{$Mods.OreExcavator.Logging.Halted}: You have disabled Tile Excavations."
+
+					DisabledPlacing:
+					"{$Mods.OreExcavator.Logging.Halted}: You have disabled chain-placing features."
+				
+					DisabledAlternatives:
+					"{$Mods.OreExcavator.Logging.Halted}: You have disabled alternative features."
+				}
+
+				TypeInvalid:
+				"{$Mods.OreExcavator.Logging.Halted}: A type for the action was invalid."
+
+				Blocked:
+				"{$Mods.OreExcavator.Logging.Halted}: Action was blocked by another tile."
+			
+				Unaltered:
+				"{$Mods.OreExcavator.Logging.Halted}: Location was not altered by vanilla feature/action."
+
+				DoesNotExist:
+				"{$Mods.OreExcavator.Logging.Halted}: Location does not exist or should not exist."
+
+				NoPaint:
+				"{$Mods.OreExcavator.Logging.Halted}: No paint in player inventory."
+
+				BadOperation:
+				"{$Mods.OreExcavator.Logging.Halted}: Invalid operation attempted. Undefined behaviour."
+
+				Unachored:
+				"{$Mods.OreExcavator.Logging.Halted}: Location is unanchored, nowhere to flood to."
+			}
 		}
 
 		Config: {
@@ -534,6 +603,14 @@
 
 					Description:
 					"Configure this list to manually set what Walls can be chain-excavated \n Prefixed by the mod that owns them. Also yields to the hosts's blacklist. \n\n Does NOT impact performance!"
+				}
+
+				ChainPlacing: {
+					Label:
+					"[i/p0:1071]{$Mods.OreExcavator.Config.Common.IconBuffer} Allow Chain Placing"
+
+					Description:
+					"When enabled, players will be allowed to chain-place large lines. \n Consumes items as normal. \n Works for items like ropes, rails, planters, platforms, etc. {$Mods.OreExcavator.Config.Common.Performance.SmallImpact}"
 				}
 
 				ItemWhitelistToggled: {
