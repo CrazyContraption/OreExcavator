@@ -7,9 +7,14 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>latest</LangVersion>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <DocumentationFile>C:\Users\Sky\Documents\my games\Terraria\tModLoader\ModSources\OreExcavator\Documentation.xml</DocumentationFile>
+    <DocumentationFile>../OreExcavator/Documentation.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="tModLoader.CodeAssist" Version="0.1.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="TUnit">
+      <HintPath>Dependencies\TUnit.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

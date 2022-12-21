@@ -4,7 +4,20 @@
         <name>OreExcavator</name>
     </assembly>
     <members>
-        <member name="M:OreExcavator.OreExcavatorKeybinds.setListUpdates(OreExcavator.Enumerations.ActionType,System.Int32,System.String)">
+        <member name="M:OreExcavator.Alteration.DoAlteration(OreExcavator.Alteration)">
+            <summary>
+            Handles the individual manipulations based on the action type desired when called.
+            This allows us to use the same floodfill for everything, but perform unique actions.
+            </summary>
+            
+            <param name="actionType">Type of action to be performed</param>
+            <param name="x">X coordinate of the alteration</param>
+            <param name="y">Y coordinate of the alteration</param>
+            <param name="playerID">The player index to teleport items to and consume items from, if needed</param>
+            <param name="consumesItemType">Item to consume if any, -1 to omit (invalid item)</param>
+            <param name="itemSubtype">ID of the item style that is being replaced with, if needed - may also represent a color</param>
+        </member>
+        <member name="M:OreExcavator.OreExcavatorKeybinds.setListUpdates(OreExcavator.Enumerations.ActionType,System.Int32,System.String,System.Int32)">
             <summary>
             Called manually, this updates configs and does the various checks to ensure a list update is valid.
             Also formats and saves the update accordingly if it is deemed valid.
@@ -32,6 +45,11 @@
             Per-thread boolean that signifies if an excavation-related actions are taking place on that thread.
             </summary>
         </member>
+        <member name="F:OreExcavator.OreExcavator.puppeting">
+            <summary>
+            Per-thread boolean that signifies if an excavation puppeting is taking place on that thread.
+            </summary>
+        </member>
         <member name="M:OreExcavator.OreExcavator.Load">
             <summary>
             Called by tML when the mod is asked to load.
@@ -54,7 +72,7 @@
             <param name="reader">Stream of data contained by the packet, first byte is always the type</param>
             <param name="whoAmI">Player index of who sent the packet</param>
         </member>
-        <member name="M:OreExcavator.OreExcavator.ModifySpooler(OreExcavator.Enumerations.ActionType,System.Int32,System.Int32,System.Int32,System.Int32,System.Boolean,System.Int32,System.Int32,System.Byte,System.Boolean,System.Int32)">
+        <member name="M:OreExcavator.OreExcavator.ModifySpooler(OreExcavator.Enumerations.ActionType,System.UInt16,System.UInt16,System.Byte,System.Int32,System.Boolean,System.Byte,System.UInt16,System.Byte,System.Int32,System.Int32,System.Int32,System.Boolean)">
             <summary>
             This "spools up" a threaded task that will define and monitor a new excavation. Clients call this locally, and servers that recieve valid packets call this with pupetting properties.
             </summary>
@@ -65,13 +83,12 @@
             <param name="limit"></param>
             <param name="delay"></param>
             <param name="doDiagonals"></param>
-            <param name="targetType"></param>
-            <param name="itemToTeleport"></param>
             <param name="playerId"></param>
             <param name="puppeting"></param>
             <param name="replacementType"></param>
+            <param name="replacementSubtype"></param>
         </member>
-        <member name="M:OreExcavator.OreExcavator.ModifyAdjacentOfType(OreExcavator.Enumerations.ActionType,System.Int32,System.Int32,System.Int32,System.Int32,System.Boolean,System.Int32,System.Int32,System.Byte,System.Int32)">
+        <member name="M:OreExcavator.OreExcavator.ModifyAdjacentFloodfill(OreExcavator.Enumerations.ActionType,System.UInt16,System.UInt16,System.Int32,System.Byte,System.Boolean,System.Byte,System.Int32,System.Byte,System.Int32,System.Int32,System.Int32)">
             <summary>
             Searches around the given origin for matching types, and modifies them based on refined clauses.
             This also recursively schedules new nodes to search from, but only serially, never concurrently.
@@ -85,11 +102,24 @@
             <param name="delay"></param>
             <param name="doDiagonals"></param>
             <param name="targetType">ID of the entity that is being searched for, and modified</param>
-            <param name="itemToTeleport">ID of the item type to teleport to the player, if needed</param>
             <param name="playerID">The player index to teleport items to, if needed</param>
-            <param name="relpaceItemType">If the action is replacing, what are we replacing the entity with</param>
+            <param name="targetSubtype">Frame Y of the targeted type to destroy</param>
+            <param name="itemType">If the action is replacing, what are we replacing the entity with</param>
+            <param name="itemSubtype">ID of the item style that is being replaced with, if needed</param>
         </member>
-        <member name="M:OreExcavator.OreExcavator.GetFullNameById(System.Int32,OreExcavator.Enumerations.ActionType)">
+        <member name="M:OreExcavator.OreExcavator.CheckIfAllowed(System.Int32,OreExcavator.Enumerations.ActionType,System.Int32,System.Boolean)">
+            <summary>
+            Checks if an id is valid for a given action against the whitelists and blacklists
+            Respecting their enabled status and contents.
+            </summary>
+            
+            <param name="id">ID to translate into a string</param>
+            <param name="type">Whitelist type of the ID being passed, black/white treated the same</param>
+            <param name="subtype">Whitelist frameY of the ID being passed, if any</param>
+            <param name="checkClient">Should checks be done against the local whitelist too?</param>
+            <returns>Translated string</returns>
+        </member>
+        <member name="M:OreExcavator.OreExcavator.GetFullNameById(System.Int32,OreExcavator.Enumerations.ActionType,System.Int32)">
             <summary>
             Gets the fully named string of a tile/wall/item with mod prefix.
             Used for writing to whitelists, as this standardizes our prefixes.
@@ -97,9 +127,10 @@
             
             <param name="id">ID to translate into a string</param>
             <param name="type">Whitelist type of the ID being passed, black/white treated the same</param>
+            <param name="subtype">Whitelist frameY of the ID being passed, if any is avaiable to be parsed</param>
             <returns>Translated string</returns>
         </member>
-        <member name="M:OreExcavator.OreExcavator.GetIdByFullName(System.String,OreExcavator.Enumerations.ActionType)">
+        <member name="M:OreExcavator.OreExcavator.GetIdByFullName(System.String,OreExcavator.Enumerations.ActionType,System.Int32@)">
             <summary>
             Gets the ID of a tile/wall/item with respect to tML loader designations.
             Used for reading from whitelists.
@@ -107,6 +138,7 @@
             
             <param name="fullName">Full name to translate into an ID</param>
             <param name="type">Whitelist type of the ID being passed, black/white treated the same</param>
+            <param name="subtype">Whitelist frameY of the ID being passed, if any is avaiable to be parsed</param>
             <returns>Translated ID. Returns negative for invalid types</returns>
         </member>
         <member name="M:OreExcavator.OreExcavator.SaveConfig(Terraria.ModLoader.Config.ModConfig)">
@@ -117,7 +149,16 @@
             
             <param name="config">The configuration object to write to storage from memory.</param>
         </member>
-        <member name="M:OreExcavator.ExcavatorBlock.KillTile(System.Int32,System.Int32,System.Int32,System.Boolean@,System.Boolean@,System.Boolean@)">
+        <member name="M:OreExcavator.OreExcavator.Log(System.String,Microsoft.Xna.Framework.Color,OreExcavator.Enumerations.LogType)">
+            <summary>
+            Logs text to chat and/or client/server loggers.
+            </summary>
+            
+            <param name="msg">Text to write to chat and/or loggers</param>
+            <param name="color">Color of the text in chat, color default will not output to chat</param>
+            <param name="type">Type of message to write, type None will not output to logger files</param>
+        </member>
+        <member name="M:OreExcavator.ExcavatorTile.KillTile(System.Int32,System.Int32,System.Int32,System.Boolean@,System.Boolean@,System.Boolean@)">
             <summary>
             Called when the player hits a block.
             This handles the tile's death, and subsequently will kill other tiles under the right conditions.
@@ -125,7 +166,7 @@
             
             <param name="x">X coordinate of the tile that was struck</param>
             <param name="y">Y coordinate of the tile that was struck (top of world is y = 0)</param>
-            <param name="type">Tile ID of the tile that was struck</param>
+            <param name="oldType">Tile ID of the tile that was struck</param>
             <param name="fail">Reference of if the tile that was struck was killed or not. Death strike = fail is false</param>
             <param name="effectOnly">Reference of if the tile was actually struck with a poweful enough pickaxe to hurt it</param>
             <param name="noItem">Reference of if the tile should drop not item(s)</param>
@@ -138,7 +179,7 @@
             
             <param name="x">X coordinate of the wall that was struck</param>
             <param name="y">Y coordinate of the wall that was struck (top of world is y = 0)</param>
-            <param name="type">Tile ID of the wall that was struck</param>
+            <param name="oldType">Tile ID of the wall that was struck</param>
             <param name="fail">Reference of if the wall that was struck was killed or not. Death strike = fail is false</param>
         </member>
         <member name="M:OreExcavator.ExcavatorItem.UseItem(Terraria.Item,Terraria.Player)">
@@ -150,6 +191,15 @@
             <param name="item">The item in question that is being used</param>
             <param name="player">The player using the item in question</param>
             <returns>True if the item did something, false if not, null for default (for use timers)</returns>
+        </member>
+        <member name="M:OreExcavator.ExcavatorItem.OnSpawn(Terraria.Item,Terraria.DataStructures.IEntitySource)">
+            <summary>
+            Called when an item is created
+            Used to update items created by excavations
+            </summary>
+            
+            <param name="item">The item in question being spawned</param>
+            <param name="source">Source of the spawned item</param>
         </member>
         <member name="M:OreExcavator.ExcavatorItem.ModifyTooltips(Terraria.Item,System.Collections.Generic.List{Terraria.ModLoader.TooltipLine})">
             <summary>

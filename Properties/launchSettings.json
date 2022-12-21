@@ -4,12 +4,15 @@
       "commandName": "Executable",
       "executablePath": "dotnet",
       "commandLineArgs": "$(tMLServerPath)",
-      "workingDirectory": "$(TerrariaSteamPath)"
+      "workingDirectory": "$(TerrariaSteamPath)",
+      "nativeDebugging": false
     },
     "tModLoader": {
       "commandName": "Executable",
-      "executablePath": "A:\\Steam\\steamapps\\common\\tModLoader\\start-tModLoader.bat",
-      "workingDirectory": "A:\\Steam\\steamapps\\common\\tModLoader"
+      "executablePath": "dotnet",
+      "commandLineArgs": "$(tMLPath)",
+      "workingDirectory": "$(tMLSteamPath)",
+      "nativeDebugging": false
     }
   }
 }

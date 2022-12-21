@@ -576,7 +576,7 @@ namespace OreExcavator /// The Excavator of ores
                 case ActionType.TilePainted:
                 case ActionType.WallPainted:
                     passReplacementTypes = true;
-                    limit = Math.Min(Main.player[playerID].CountItem(itemType), hardlimit);
+                    limit = Math.Min(Main.player[playerID].CountItem(itemType) + (Main.mouseItem.netID == itemType ? Main.mouseItem.stack : 0), hardlimit);
                     break;
 
                 case ActionType.TileReplaced:
@@ -584,6 +584,7 @@ namespace OreExcavator /// The Excavator of ores
                 case ActionType.TilePlaced:
                 case ActionType.WallPlaced:
                     passReplacementTypes = true;
+                    limit = Math.Min(Main.player[playerID].CountItem(itemType) + (Main.mouseItem.netID == itemType ? Main.mouseItem.stack : 0), hardlimit);
                     isFallingType = !isWallBounded && TileID.Sets.Falling[targetType] || (ModContent.TileType<ModTile>() > 0 && TileID.Sets.Falling[ModContent.TileType<ModTile>()]);
                     break;
             }
@@ -1233,6 +1234,8 @@ namespace OreExcavator /// The Excavator of ores
         /// <returns>True if the item did something, false if not, null for default (for use timers)</returns>
         public override bool? UseItem(Item item, Player player)
         {
+            if (Main.mouseItem != null && Main.mouseItem.Name != "")
+                item = Main.mouseItem;
             if (WorldGen.gen || Main.netMode == NetmodeID.Server || item.pick + item.axe + item.hammer != 0 || Main.gameMenu)
                 return null;
 
@@ -1251,7 +1254,7 @@ namespace OreExcavator /// The Excavator of ores
                     OreExcavator.ClientConfig.doSpecials = false;
                     OreExcavator.ClientConfig.showCursorTooltips = false;
                     OreExcavator.SaveConfig(OreExcavator.ClientConfig);
-                    return null;
+                    return true;
                 }
 
             if (OreExcavator.ClientConfig.toggleExcavations ? !OreExcavator.excavationToggled : !OreExcavatorKeybinds.excavatorHeld)
@@ -1296,7 +1299,7 @@ namespace OreExcavator /// The Excavator of ores
             byte oldColor = oldHasTile ? OreExcavator.lookingAtTile.TileColor : OreExcavator.lookingAtTile.WallColor;
             int oldSubtype = TileObjectData.GetTileStyle(OreExcavator.lookingAtTile);
 
-            bool newHasTile = OreExcavator.lookingAtTile.HasTile;
+            bool newHasTile = Main.tile[x, y].TileType > TileID.Dirt;
             ushort newType = newHasTile ? Main.tile[x, y].TileType : Main.tile[x, y].WallType;
             byte newColor = newHasTile ? Main.tile[x, y].TileColor : Main.tile[x, y].WallColor;
             int newSubtype = TileObjectData.GetTileStyle(Main.tile[x, y]);
@@ -1317,7 +1320,7 @@ namespace OreExcavator /// The Excavator of ores
 
                 if (oldType == newType && oldSubtype == newSubtype)
                 {
-                    OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Unalterd"), Color.Red);
+                    OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Unaltered"), Color.Red);
                     return null;
                 }
 
@@ -1361,7 +1364,7 @@ namespace OreExcavator /// The Excavator of ores
                                         item.netID,
                                         item.placeStyle
                                     );
-                                    goto default;
+                                    return true;
 
                                 default:
                                     return null;
@@ -1440,7 +1443,7 @@ namespace OreExcavator /// The Excavator of ores
                                     player.inventory[index].netID,
                                     player.inventory[index].paint
                                 );
-                                return null;
+                                return true;
                             }
                     }
                     OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.NoPaint"), Color.Orange);
@@ -1470,7 +1473,7 @@ namespace OreExcavator /// The Excavator of ores
                                     player.inventory[index].netID,
                                     player.inventory[index].paint
                                 );
-                                return null;
+                                return true;
                             }
                     }
                     OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.NoPaint"), Color.Orange);
@@ -1495,7 +1498,7 @@ namespace OreExcavator /// The Excavator of ores
                             oldColor,
                             oldSubtype
                         );
-                        return null;
+                        return true;
                     }
                 }
                 else

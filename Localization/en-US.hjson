@@ -263,7 +263,7 @@
 					"{$Mods.OreExcavator.Config.Common.Performance.Prefix} Does NOT affect performance!"
 
 					SmallImpact:
-					"{$Mods.OreExcavator.Config.Common.Performance.Prefix} sightly affects performance when enabled!"
+					"{$Mods.OreExcavator.Config.Common.Performance.Prefix} Sightly affects performance when enabled!"
 
 					CanImpact:
 					"{$Mods.OreExcavator.Config.Common.Performance.Prefix} Extreme values can NEGATIVELY affect performance!"
@@ -400,7 +400,7 @@
 					"[i/p0:3509]{$Mods.OreExcavator.Config.Common.IconBuffer} Allow Pickaxe Excavations"
 
 					Description:
-					"When enabled, the excavation algorithm will \n be allowed for blocks when using a sufficient pickaxe. \n\n Does NOT impact performance!"
+					"When enabled, the excavation algorithm will \n be allowed for blocks when using a sufficient pickaxe. \n\n {$Mods.OreExcavator.Config.Common.Performance.NoImpact}"
 				}
 
 				TileBlacklistToggled: {
@@ -408,7 +408,7 @@
 					"[i/p0:3497]{$Mods.OreExcavator.Config.Common.IconBuffer} Enable Tile Blacklist"
 
 					Description:
-					"When enabled, the world will enforce the Tile blacklist on its players \nDisable this to give players free whitelist controls over Tiles \n\n Does NOT impact performance!"
+					"When enabled, the world will enforce the Tile blacklist on its players \nDisable this to give players free whitelist controls over Tiles \n\n {$Mods.OreExcavator.Config.Common.Performance.NoImpact}"
 				}
 
 				TileBlacklist: {
@@ -416,7 +416,7 @@
 					"[i/p0:2697]{$Mods.OreExcavator.Config.Common.IconBuffer} Tile Blacklist"
 
 					Description:
-					"Configure this list to manually set what Tiles CANNOT be chain-excavated \n Prefixed by the mod that owns them. Players' whitelists are overruled. \n\n Does NOT impact performance!"
+					"Configure this list to manually set what Tiles CANNOT be chain-excavated \n Prefixed by the mod that owns them. Players' whitelists are overruled. \n\n {$Mods.OreExcavator.Config.Common.Performance.NoImpact}"
 				}
 
 				AllowHammering: {
@@ -432,7 +432,7 @@
 					"[i/p0:654]{$Mods.OreExcavator.Config.Common.IconBuffer} Enable Wall Blacklist"
 
 					Description:
-					"When enabled, the world will enforce the Wall blacklist on its players \n Disable this to give players free whitelist controls over Walls \n\n Does NOT impact performance!"
+					"When enabled, the world will enforce the Wall blacklist on its players \n Disable this to give players free whitelist controls over Walls \n\n {$Mods.OreExcavator.Config.Common.Performance.NoImpact}"
 				}
 
 				WallBlacklist: {
@@ -440,7 +440,7 @@
 					"[i/p0:2698]{$Mods.OreExcavator.Config.Common.IconBuffer} Wall Blacklist"
 
 					Description:
-					"Configure this list to manually set what Walls CANNOT be chain-excavated \n Prefixed by the mod that owns them. Players' whitelists are overruled. \n\n Does NOT impact performance!"
+					"Configure this list to manually set what Walls CANNOT be chain-excavated \n Prefixed by the mod that owns them. Players' whitelists are overruled. \n\n {$Mods.OreExcavator.Config.Common.Performance.NoImpact}"
 				}
 
 				AllowReplace: {
@@ -456,7 +456,7 @@
 					"[i/p0:619]{$Mods.OreExcavator.Config.Common.IconBuffer} Enable Item Blacklist"
 
 					Description:
-					"When enabled, the server will enforce the Item blacklist on its players \n Disable this to give players free whitelist controls over Items \n\n Does NOT impact performance!"
+					"When enabled, the server will enforce the Item blacklist on its players \n Disable this to give players free whitelist controls over Items \n\n {$Mods.OreExcavator.Config.Common.Performance.NoImpact}"
 				}
 
 				ItemBlacklist: {
@@ -464,7 +464,7 @@
 					"[i/p0:236]{$Mods.OreExcavator.Config.Common.IconBuffer} Item Blacklist"
 
 					Description:
-					"If you don't know what this is, you probably shouldn't touch it... \n This controls what items are forbidden by players for whitelisting \n\n Does NOT impact performance!"
+					"If you don't know what this is, you probably shouldn't touch it... \n This controls what items are forbidden by players for whitelisting \n\n {$Mods.OreExcavator.Config.Common.Performance.NoImpact}"
 				}
 			}
 
@@ -530,7 +530,7 @@
 					"[i/p0:555]{$Mods.OreExcavator.Config.Common.IconBuffer} Auto-use Mana Potions for Excavations"
 
 					Description:
-					"When enabled and the world has mana requirements turned on, \n should the mod attempt to refill your mana if you run out? \n\n Does NOT impact performance!"
+					"When enabled and the world has mana requirements turned on, \n should the mod attempt to refill your mana if you run out? \n\n {$Mods.OreExcavator.Config.Common.Performance.NoImpact}"
 				}
 
 				DoDebugStuff: {
@@ -586,7 +586,7 @@
 					"[i/p0:2695]{$Mods.OreExcavator.Config.Common.IconBuffer} Tile Whitelist"
 
 					Description:
-					"Configure this list to manually set what Tiles can be chain-excavated \n Prefixed by the mod that owns them. Also yields to the host's blacklist. \n\n Does NOT impact performance!"
+					"Configure this list to manually set what Tiles can be chain-excavated \n Prefixed by the mod that owns them. Also yields to the host's blacklist. \n\n {$Mods.OreExcavator.Config.Common.Performance.NoImpact}"
 				}
 
 				WallWhitelistToggled: {
@@ -602,12 +602,12 @@
 					"[i/p0:2696]{$Mods.OreExcavator.Config.Common.IconBuffer} Wall Whitelist"
 
 					Description:
-					"Configure this list to manually set what Walls can be chain-excavated \n Prefixed by the mod that owns them. Also yields to the hosts's blacklist. \n\n Does NOT impact performance!"
+					"Configure this list to manually set what Walls can be chain-excavated \n Prefixed by the mod that owns them. Also yields to the hosts's blacklist. \n\n {$Mods.OreExcavator.Config.Common.Performance.NoImpact}"
 				}
 
 				ChainPlacing: {
 					Label:
-					"[i/p0:1071]{$Mods.OreExcavator.Config.Common.IconBuffer} Allow Chain Placing"
+					"[i/p0:2340]{$Mods.OreExcavator.Config.Common.IconBuffer} Allow Chain Placing"
 
 					Description:
 					"When enabled, players will be allowed to chain-place large lines. \n Consumes items as normal. \n Works for items like ropes, rails, planters, platforms, etc. {$Mods.OreExcavator.Config.Common.Performance.SmallImpact}"
@@ -626,7 +626,7 @@
 					"[i/p0:38]{$Mods.OreExcavator.Config.Common.IconBuffer} Item Whitelist"
 
 					Description:
-					"Configure this list to manually set what Items can be chain-replaced \n Prefixed by the mod that owns them. Also yields to the host's blacklist. \n\n Does NOT impact performance!"
+					"Configure this list to manually set what Items can be chain-replaced \n Prefixed by the mod that owns them. Also yields to the host's blacklist. \n\n {$Mods.OreExcavator.Config.Common.Performance.NoImpact}"
 				}
 
 				ToggleExcavations: {
@@ -642,7 +642,7 @@
 					"[i/p0:166]{$Mods.OreExcavator.Config.Common.IconBuffer} Cancel Excavations on Keybind Release"
 
 					Description:
-					"When enabled, letting go of the Excavation \n control key will cease all excavation operations. \n\n NOT ADVISED ON MULTIPLAYER SERVERS!! \n\n Does NOT impact performance!"
+					"When enabled, letting go of the Excavation \n control key will cease all excavation operations. \n\n NOT ADVISED ON MULTIPLAYER SERVERS!! \n\n {$Mods.OreExcavator.Config.Common.Performance.NoImpact}"
 				}
 
 				DoSpecials: {

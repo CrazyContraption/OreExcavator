@@ -254,8 +254,11 @@ namespace OreExcavator
             int y = Player.tileTargetY;
 
             // Tooltips when excavating
-            if (OreExcavator.ClientConfig.showCursorTooltips)
-                if (OreExcavator.ClientConfig.toggleExcavations ? OreExcavator.excavationToggled : excavatorHeld)
+            if (OreExcavator.ClientConfig.showCursorTooltips) {
+                if (OreExcavator.ClientConfig.toggleExcavations ? OreExcavator.excavationToggled : excavatorHeld) {
+                    //if (Main.mouseItem != null && Main.mouseItem.Name != "")
+                    //    item = Main.mouseItem;
+
                     if ((item.Name ?? "") != "")
                         if (Main.tile[x, y].HasTile)
                         {
@@ -295,14 +298,15 @@ namespace OreExcavator
                                     Player.cursorItemIconText = "Painting";
                             }
                         }
-
-            item = Main.HoverItem;
-            if (OreExcavator.ServerConfig.allowQuickWhitelisting)
+                }
+            }
+            else if (OreExcavator.ServerConfig.allowQuickWhitelisting)
                 if (OreExcavator.WhitelistHotkey.JustPressed) {
-
+                    item = Main.HoverItem;
                     Tile localTile = Main.tile[x, y];
                     int style = TileObjectData.GetTileStyle(localTile);
-                    if (item.Name != "") // Item ADD
+
+                    if (item.Name != "" && item.Name != "{}" && item.Name != null) // Item ADD
                         setListUpdates(ActionType.ItemWhiteListed, item.type, OreExcavator.GetFullNameById(item.type, ActionType.ItemWhiteListed));
                     else if (localTile.HasTile) // Tile ADD
                         setListUpdates(ActionType.TileWhiteListed, localTile.TileType, OreExcavator.GetFullNameById(localTile.TileType, ActionType.TileWhiteListed, style), style);
@@ -313,7 +317,7 @@ namespace OreExcavator
 
                     Tile localTile = Main.tile[x, y];
                     int style = TileObjectData.GetTileStyle(localTile);
-                    if (item.Name != "") // Item REMOVE
+                    if (item.Name != "" && item.Name != "{}" && item.Name != null) // Item REMOVE
                         setListUpdates(ActionType.ItemBlackListed, item.type, OreExcavator.GetFullNameById(item.type, ActionType.ItemBlackListed));
                     else if (localTile.HasTile) // Tile REMOVE
                         setListUpdates(ActionType.TileBlackListed, localTile.TileType, OreExcavator.GetFullNameById(localTile.TileType, ActionType.TileBlackListed, style), style);
