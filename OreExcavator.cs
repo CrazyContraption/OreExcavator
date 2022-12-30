@@ -20,6 +20,11 @@ using Terraria.ModLoader;            // Modloader
 using Terraria.ModLoader.Config;
 using Terraria.ObjectData;
 using Terraria.UI.Chat;
+#region DEBUG
+#if DEBUG
+using TUnit.UnitTest;
+#endif
+#endregion
 
 namespace OreExcavator /// The Excavator of ores
 {
@@ -82,6 +87,15 @@ namespace OreExcavator /// The Excavator of ores
             //On.Terraria.WorldGen.CheckOrb += WorldGen_CheckOrb;
             //On.Terraria.WorldGen.CheckPot += WorldGen_CheckPot;
             On.Terraria.Main.Update += Detour_Update;
+
+            #region DEBUG
+#if DEBUG
+            if (ModLoader.GetMod("TUnit") != null)
+            {
+                TestList.AddTestCompiler(UnitTests.CompileTests);
+            }
+#endif
+            #endregion
 
             // IL edits
             /*
