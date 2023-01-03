@@ -1224,6 +1224,16 @@ namespace OreExcavator /// The Excavator of ores
 
     internal class ExcavatorItem : GlobalItem
     {
+        internal Direction GetExtendsDirection(int tileID)
+        {
+            return tileID switch
+            {
+                TileID.Platforms or TileID.MinecartTrack or TileID.PlanterBox => Direction.Horizontal,
+                TileID.Rope or TileID.VineRope or TileID.WebRope => Direction.Vertical,
+                _ => Direction.None,
+            };
+        }
+
         /// <summary>
         /// Called whenever a player uses an item.
         /// We use this as a hook for block swap excavations.
@@ -1653,7 +1663,7 @@ namespace OreExcavator /// The Excavator of ores
                 {
                     string keybind = OreExcavator.ExcavateHotkey.GetAssignedKeys()[0];
                     if (keybind.StartsWith("Oem"))
-                        keybind = keybind.Substring(3);
+                        keybind = keybind.Substring("Oem".Length);
                     else if (keybind == "Mouse2")
                         keybind = "Right Click";
                     else if (keybind == "Mouse1")

@@ -36,4 +36,12 @@
         Error,
         Fatal
     }
+
+    public enum Direction : byte
+    {
+        None = 0,
+        Vertical,
+        Horizontal,
+        Hoik
+    }
 }
