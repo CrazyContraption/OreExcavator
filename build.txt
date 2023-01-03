@@ -4,5 +4,5 @@ version = 0.8.0
 hideCode = true
 hideResources = true
 includeSource = false
-weakReferences = TUnit@0.1
+weakReferences = TUnit@0.0
 buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*, README.*, *.xml

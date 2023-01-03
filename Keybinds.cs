@@ -300,7 +300,7 @@ namespace OreExcavator
                         }
                 }
             }
-            else if (OreExcavator.ServerConfig.allowQuickWhitelisting)
+            if (OreExcavator.ServerConfig.allowQuickWhitelisting)
                 if (OreExcavator.WhitelistHotkey.JustPressed) {
                     item = Main.HoverItem;
                     Tile localTile = Main.tile[x, y];
@@ -314,9 +314,10 @@ namespace OreExcavator
                         setListUpdates(ActionType.WallWhiteListed, localTile.WallType, OreExcavator.GetFullNameById(localTile.WallType, ActionType.WallWhiteListed));
 
                 } else if (OreExcavator.BlacklistHotkey.JustPressed) {
-
+                    item = Main.HoverItem;
                     Tile localTile = Main.tile[x, y];
                     int style = TileObjectData.GetTileStyle(localTile);
+
                     if (item.Name != "" && item.Name != "{}" && item.Name != null) // Item REMOVE
                         setListUpdates(ActionType.ItemBlackListed, item.type, OreExcavator.GetFullNameById(item.type, ActionType.ItemBlackListed));
                     else if (localTile.HasTile) // Tile REMOVE

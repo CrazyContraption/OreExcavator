@@ -98,17 +98,10 @@ namespace OreExcavator
                             return true;
 
                         if (!OreExcavator.ServerConfig.creativeMode && !OreExcavator.puppeting)
-                            //if (Main.mouseItem == null || Main.mouseItem.Name == "" || Main.mouseItem.netID != alteration.consumesItemType || Main.mouseItem.stack <= 0)
-                            //    return true;
-                            //else
                             if (Main.mouseItem != null && Main.mouseItem.Name != "" && Main.mouseItem.netID == alteration.consumesItemType && Main.mouseItem.stack > 0)
-                            {
-                                Main.mouseItem.stack--; // Ignored?
                                 Main.player[alteration.playerID].HeldItem.stack--;
-                            }
                             else if (!Main.player[alteration.playerID].ConsumeItem(alteration.consumesItemType)) // Does the player have items to place?
                                 return true; // No inventory item
-                        }
 
                         if (alteration.actionType == ActionType.WallReplaced)
                             WorldGen.ReplaceWall(alteration.x, alteration.y, (ushort)placeType);
