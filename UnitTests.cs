@@ -7,26 +7,31 @@ using System.Threading.Tasks;
 using OreExcavator.Enumerations;
 using Terraria;
 using TUnit.UnitTest;
+using TUnit.Attributes;
 using Terraria.ModLoader;
-
+using Terraria.ID;
+using Microsoft.Xna.Framework;
 
 namespace OreExcavator
 {
     [JITWhenModsEnabled("TUnit")]
+    [TestSuite]
     internal class UnitTests
     {
         private static OreExcavatorConfig_Client cfgClient;
         private static OreExcavatorConfig_Server cfgServ;
 
-        internal static void CompileTests()
-        {
-            TestList.AddTest(new Test(DoAlteration_TileKilledHasMana_ReturnFalse, "|Alteration| Tile Killed With Mana"));
-            TestList.AddTest(new Test(DoAlteration_TileKilledNoMana_ReturnTrue, "|Alteration| Tile Killed Without Mana"));
-            TestList.AddTest(new Test(DoAlteration_WallKilledHasMana_ReturnFalse, "|Alteration| Wall Killed With Mana"));
-            TestList.AddTest(new Test(DoAlteration_WallKilledHasNoMana_ReturnTrue, "|Alteration| Wall Killed Without Mana"));
-            TestList.AddTest(new Test(DoAlteration_WallReplacedHasMana_ReturnFalse, "|Alteration| Wall Replaced With Mana"));
-            TestList.AddTest(new Test(DoAlteration_WallReplacedHasNoMana_ReturnTrue, "|Alteration| Wall Replaced Without Mana"));
-        }
+        //internal static void CompileTests()
+        //{
+        //    TestList.AddTest(new Test(DoAlteration_TileKilledHasMana_ReturnFalse, "|Alteration| Tile Killed With Mana"));
+        //    TestList.AddTest(new Test(DoAlteration_TileKilledNoMana_ReturnTrue, "|Alteration| Tile Killed Without Mana"));
+        //    TestList.AddTest(new Test(DoAlteration_WallKilledHasMana_ReturnFalse, "|Alteration| Wall Killed With Mana"));
+        //    TestList.AddTest(new Test(DoAlteration_WallKilledHasNoMana_ReturnTrue, "|Alteration| Wall Killed Without Mana"));
+        //    TestList.AddTest(new Test(DoAlteration_WallReplacedHasMana_ReturnFalse, "|Alteration| Wall Replaced With Mana"));
+        //    TestList.AddTest(new Test(DoAlteration_WallReplacedHasNoMana_ReturnTrue, "|Alteration| Wall Replaced Without Mana"));
+        //    TestList.AddTest(new Test(DoAlteration_IronExcavation_Return50Ore, "|Iron Placement| Return 50 Ore"));
+        //    TestList.AddTest(new Test(DoAlteration_RailPlacement_Remove50, "|Rail Placement| Place 50 Rail"));
+        //}
         private static void Setup()
         {
             cfgClient = OreExcavator.ClientConfig;
@@ -37,9 +42,11 @@ namespace OreExcavator
         {
             OreExcavator.ClientConfig = cfgClient;
             OreExcavator.ServerConfig = cfgServ;
+            OreExcavator.ServerConfig.manaConsumption = 0f;
         }
 
-        private static TestStatus DoAlteration_TileKilledHasMana_ReturnFalse()
+        [Test]
+        public static TestStatus DoAlteration_TileKilledHasMana_ReturnFalse()
         {
             Setup();
             // Create Alteration
@@ -70,7 +77,8 @@ namespace OreExcavator
             }
         }
 
-        private static TestStatus DoAlteration_TileKilledNoMana_ReturnTrue()
+        [Test]
+        public static TestStatus DoAlteration_TileKilledNoMana_ReturnTrue()
         {
             Setup();
             // Create Alteration
@@ -99,7 +107,8 @@ namespace OreExcavator
             }
         }
 
-        private static TestStatus DoAlteration_WallKilledHasMana_ReturnFalse()
+        [Test]
+        public static TestStatus DoAlteration_WallKilledHasMana_ReturnFalse()
         {
             Setup();
             // Create Alteration
@@ -127,7 +136,8 @@ namespace OreExcavator
             }
         }
 
-        private static TestStatus DoAlteration_WallKilledHasNoMana_ReturnTrue()
+        [Test]
+        public static TestStatus DoAlteration_WallKilledHasNoMana_ReturnTrue()
         {
             Setup();
             // Create Alteration
@@ -154,7 +164,8 @@ namespace OreExcavator
             }
         }
 
-        private static TestStatus DoAlteration_WallReplacedHasMana_ReturnFalse()
+        [Test]
+        public static TestStatus DoAlteration_WallReplacedHasMana_ReturnFalse()
         {
             Setup();
             // Create Alteration
@@ -182,7 +193,8 @@ namespace OreExcavator
             }
         }
 
-        private static TestStatus DoAlteration_WallReplacedHasNoMana_ReturnTrue()
+        [Test]
+        public static TestStatus DoAlteration_WallReplacedHasNoMana_ReturnTrue()
         {
             Setup();
             // Create Alteration
@@ -207,6 +219,106 @@ namespace OreExcavator
             else
             {
                 return TestStatus.Failed;
+            }
+        }
+
+        [Test]
+        public static TestStatus DoAlteration_IronExcavation_Return50Ore()
+        {
+            // Setup initial conditions
+            ushort initX = 2120;
+            ushort initY = 272;
+
+            ushort height = 5;
+            ushort length = 10;
+
+            ushort tile = TileID.Iron;
+
+            OreExcavator.ServerConfig.teleportLoot = true;
+
+            GenerateBlock(initX, initY, height, length, tile);
+
+            // Execute Spooler
+
+            OreExcavator.ModifySpooler(ActionType.TileKilled, 
+                initX, 
+                initY, 
+                (byte)OreExcavator.ClientConfig.recursionDelay,
+                (byte)OreExcavator.ClientConfig.recursionLimit, 
+                OreExcavator.ClientConfig.doDiagonals,
+                (byte)Main.myPlayer, 
+                tile);
+
+            // Test if successful after spooler action is complete
+
+            // Insert testing noises here
+
+            OreExcavator.ServerConfig.teleportLoot = false;
+
+            for (ushort l = 0; l < length; l++)
+            {
+                for (ushort h = 0; h < height; h++)
+                {
+                    if (!Main.tile[initX + l, initY + h].HasTile)
+                    {
+                        return TestStatus.Failed;
+                    }
+                }
+            }
+            return TestStatus.Passed;
+        }
+
+        [Test]
+        public static TestStatus DoAlteration_RailPlacement_Remove50()
+        {
+            // Setup initial conditions
+            ushort initX = 2118;
+            ushort initY = 266;
+
+            ushort length = 50;
+
+            ushort tile = TileID.MinecartTrack;
+
+            Main.player[Main.myPlayer].QuickSpawnItem(null, ItemID.MinecartTrack, length);
+            // Delay till item is added
+            // Check to ensure it is in inventory
+
+            // Clear space 
+            for (int l = 0; l < length; l++)
+            {
+                WorldGen.KillTile(initX + length, initY, noItem: true);
+            }
+
+            // Execute placement
+            OreExcavator.ModifySpooler(ActionType.TilePlaced,
+                initX,
+                initY,
+                (byte)OreExcavator.ClientConfig.recursionDelay,
+                (byte)OreExcavator.ClientConfig.recursionLimit,
+                OreExcavator.ClientConfig.doDiagonals,
+                (byte)Main.myPlayer,
+                tile);
+
+            // Test if placement was successfull
+
+            // Imagine being multithreaded.
+            int railIndex = Main.player[Main.myPlayer].FindItem(ItemID.MinecartTrack);
+            if (railIndex != -1)
+            {
+                Main.player[Main.myPlayer].inventory[railIndex].stack = 0;
+            }
+
+            return TestStatus.Passed;
+        }
+
+        private static void GenerateBlock(ushort x, ushort y, ushort height, ushort length, ushort tile)
+        {
+            for (ushort l = 0; l < length; l++)
+            {
+                for (ushort h = 0; h < height; h++)
+                {
+                    WorldGen.PlaceTile(x + l, y + h, tile, forced: true);
+                }
             }
         }
     }
