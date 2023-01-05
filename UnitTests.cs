@@ -21,17 +21,6 @@ namespace OreExcavator
         private static OreExcavatorConfig_Client cfgClient;
         private static OreExcavatorConfig_Server cfgServ;
 
-        //internal static void CompileTests()
-        //{
-        //    TestList.AddTest(new Test(DoAlteration_TileKilledHasMana_ReturnFalse, "|Alteration| Tile Killed With Mana"));
-        //    TestList.AddTest(new Test(DoAlteration_TileKilledNoMana_ReturnTrue, "|Alteration| Tile Killed Without Mana"));
-        //    TestList.AddTest(new Test(DoAlteration_WallKilledHasMana_ReturnFalse, "|Alteration| Wall Killed With Mana"));
-        //    TestList.AddTest(new Test(DoAlteration_WallKilledHasNoMana_ReturnTrue, "|Alteration| Wall Killed Without Mana"));
-        //    TestList.AddTest(new Test(DoAlteration_WallReplacedHasMana_ReturnFalse, "|Alteration| Wall Replaced With Mana"));
-        //    TestList.AddTest(new Test(DoAlteration_WallReplacedHasNoMana_ReturnTrue, "|Alteration| Wall Replaced Without Mana"));
-        //    TestList.AddTest(new Test(DoAlteration_IronExcavation_Return50Ore, "|Iron Placement| Return 50 Ore"));
-        //    TestList.AddTest(new Test(DoAlteration_RailPlacement_Remove50, "|Rail Placement| Place 50 Rail"));
-        //}
         private static void Setup()
         {
             cfgClient = OreExcavator.ClientConfig;
