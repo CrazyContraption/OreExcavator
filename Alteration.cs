@@ -106,7 +106,7 @@ namespace OreExcavator
                         if (alteration.actionType == ActionType.WallReplaced)
                             WorldGen.ReplaceWall(alteration.x, alteration.y, (ushort)placeType);
                         else if (alteration.actionType != ActionType.ExtendPlacement)
-                            WorldGen.ReplaceTile(alteration.x, alteration.y, (ushort)placeType, alteration.itemSubtype <= 0 ? (int)Main.tile[alteration.x, alteration.y].Slope : alteration.itemSubtype);
+                            WorldGen.ReplaceTile(alteration.x, alteration.y, (ushort)placeType, alteration.itemSubtype < 0 ? (int)Main.tile[alteration.x, alteration.y].Slope : alteration.itemSubtype);
                         else if (!Main.tile[alteration.x, alteration.y].HasTile)
                         {
                             WorldGen.PlaceTile(alteration.x, alteration.y, (ushort)placeType, true, false, alteration.playerID, alteration.itemSubtype <= 0 ? (int)Main.tile[alteration.x, alteration.y].Slope : alteration.itemSubtype);

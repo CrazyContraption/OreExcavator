@@ -195,6 +195,60 @@ namespace OreExcavator /// The Excavator of ores
         public override void PostSetupContent()
         {
             Log(Language.GetTextValue("Mods.OreExcavator.Logging.OreSearch.Start"), default, LogType.Info);
+
+            if (ModLoader.GetMod("ThoriumMod") != null)
+            {
+                Log("Found Calamity - Adding hard-coded tiles to whitelist!", default, LogType.Info);
+                string[] calamityTiles =
+                {
+
+                };
+                if (calamityTiles.Length <= 0)
+                    Log("Ooops - nothing to whitelist, guess I didn't finish this. CALAMITY SEND ME YOUR ORE LIST YOU WANT WHITELISTED", default, LogType.Info);
+                foreach (string calamityTile in calamityTiles)
+                {
+                    string calamityName = "ThoriumMod.ThoriumMod." + calamityTile;
+                    if (!ClientConfig.tileWhitelist.Contains(calamityName))
+                    {
+                        Log(Language.GetTextValue("Mods.OreExcavator.Logging.OreSearch.Added", calamityTile, calamityName), default, LogType.Info);
+                        ClientConfig.tileWhitelist.Add(calamityName);
+                    }
+                    else
+                        Log(Language.GetTextValue("Mods.OreExcavator.Logging.OreSearch.Found", calamityTile, calamityName), default, LogType.Info);
+                }
+                Log("CalamityMod manual whitelisting concluded.", default, LogType.Info);
+            }
+            if (ModLoader.GetMod("ThoriumMod") != null)
+            {
+                Log("Found ThroiumMod - Adding hard-coded tiles to whitelist!", default, LogType.Info);
+                string[] thoriumTiles =
+                {
+                    "Opal",
+                    "SmoothCoal",
+                    "Aquamarine",
+                    "LifeQuartz",
+                    "Aquaite",
+                    "ValadiumChunk",
+                    "LodestoneChunk",
+                    "LumiteChunk",
+                    "SynthGold",
+                    "SynthPlatinum",
+                    "ThoriumOre"
+                };
+                foreach (string thoriumTile in thoriumTiles)
+                {
+                    string thoriumName = "ThoriumMod.ThoriumMod." + thoriumTile;
+                    if (!ClientConfig.tileWhitelist.Contains(thoriumName))
+                    {
+                        Log(Language.GetTextValue("Mods.OreExcavator.Logging.OreSearch.Added", thoriumTile, thoriumName), default, LogType.Info);
+                        ClientConfig.tileWhitelist.Add(thoriumName);
+                    }
+                    else
+                        Log(Language.GetTextValue("Mods.OreExcavator.Logging.OreSearch.Found", thoriumTile, thoriumName), default, LogType.Info);
+                }
+                Log("ThoriumMod manual whitelisting concluded.", default, LogType.Info);
+            }
+
             for (int id = TileID.Count; id < TileLoader.TileCount; id++)
             {
                 string name = "";
@@ -1542,10 +1596,10 @@ namespace OreExcavator /// The Excavator of ores
             if (actionType != ActionType.WallReplaced)
             {
                 if (!Main.tile[x + 1, y].HasTile && !Main.tile[x, y + 1].HasTile && !Main.tile[x - 1, y].HasTile && !Main.tile[x, y - 1].HasTile)
-                {
-                    OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Unachored"), Color.Red);
-                    return null;
-                }
+                    if (!OreExcavator.ServerConfig.allowDiagonals || (!Main.tile[x + 1, y + 1].HasTile && !Main.tile[x + 1, y - 1].HasTile && !Main.tile[x - 1, y + 1].HasTile && !Main.tile[x - 1, y - 1].HasTile))
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Unanchored"), Color.Red);
+                    else
+                        return null;
             }
             else if (Main.tile[x + 1, y].WallType <= WallID.None && Main.tile[x, y + 1].WallType <= WallID.None && Main.tile[x - 1, y].WallType <= WallID.None && Main.tile[x, y - 1].WallType <= WallID.None)
             {

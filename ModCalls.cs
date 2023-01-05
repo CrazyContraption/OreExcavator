@@ -42,13 +42,13 @@ namespace OreExcavator
 
 					case "addwhitelistedtile":
 						{
-							// Returns true or false if a specified Tile ID has been added successfully or not - or null if it exists already, or is an invalid Tile ID
+							// Returns true or false if a specified Tile ID has been added successfully or not - or null if it exists already, or false if it was an invalid Tile ID
 							if (args.Length < 2)
 								throw new ArgumentException("Missing second argument: (int) Tile id");
 							if (args[1] is null || args[1] is not int tileID)
 								throw new Exception($"Expected an argument of type (int) when adding a Tile ID, but got type ({args[1].GetType().Name}) instead.");
 							string name = GetFullNameById(tileID, ActionType.TileWhiteListed);
-							if (name == null ? true : ClientConfig.tileWhitelist.Contains(name))
+							if (name == null ? false : ClientConfig.tileWhitelist.Contains(name))
 								return null;
 							ClientConfig.wallWhitelist.Add(name);
 							return ClientConfig.wallWhitelist.Contains(name);
