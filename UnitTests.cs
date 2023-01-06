@@ -8,6 +8,7 @@ using OreExcavator.Enumerations;
 using Terraria;
 using TUnit.UnitTest;
 using TUnit.Attributes;
+using TUnit.Commands;
 using Terraria.ModLoader;
 using Terraria.ID;
 using Microsoft.Xna.Framework;
@@ -160,7 +161,7 @@ namespace OreExcavator
 
             OreExcavator.ServerConfig.teleportLoot = true;
 
-            GenerateBlock(initX, initY, height, length, tile);
+            Tools.GenerateRectangle(initX, initY, length, height, tile);
 
             // Execute Spooler
 
@@ -199,21 +200,20 @@ namespace OreExcavator
             // Setup initial conditions
             ushort initX = 2118;
             ushort initY = 266;
+            
 
             ushort length = 50;
 
             ushort tile = TileID.MinecartTrack;
+            short item = ItemID.MinecartTrack;
 
-            Main.player[Main.myPlayer].QuickSpawnItem(null, ItemID.MinecartTrack, length);
+            int loc = Tools.GiveItem(Main.myPlayer, item, length);
             // Delay till item is added
             // Check to ensure it is in inventory
 
             // Clear space 
-            for (int l = 0; l < length; l++)
-            {
-                WorldGen.KillTile(initX + length, initY, noItem: true);
-            }
-
+            Tools.RemoveRectangle(initX, initY, length, 0, itemdrop: true);
+            Tools.GenerateRectangle(initX, initY, 1, 0, tile, force: true);
             // Execute placement
             OreExcavator.ModifySpooler(ActionType.TilePlaced,
                 initX,
@@ -227,16 +227,13 @@ namespace OreExcavator
             // Test if placement was successfull
 
             // Imagine being multithreaded.
-            int railIndex = Main.player[Main.myPlayer].FindItem(ItemID.MinecartTrack);
-            if (railIndex != -1)
-            {
-                Main.player[Main.myPlayer].inventory[railIndex].stack = 0;
-            }
+            Tools.RemoveItem(Main.myPlayer, loc, length, item);
 
             return TestStatus.Passed;
         }
 
-        private static void GenerateBlock(ushort x, ushort y, ushort height, ushort length, ushort tile)
+        [Test]
+        public static TestStatus DoAlteration_PlatformPlace_Remove50()
         {
             for (ushort l = 0; l < length; l++)
             {
