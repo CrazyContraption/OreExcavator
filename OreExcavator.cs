@@ -101,6 +101,9 @@ namespace OreExcavator /// The Excavator of ores
             */
         }
 
+        /// <summary>
+        /// Pops alteration tasks off the queue to be updated in-game in a thread-safe way respective of Draw.
+        /// </summary>
         private void Detour_Update(On.Terraria.Main.orig_Update orig, Main self, GameTime gameTime)
         {
             while (!alterQueue.IsEmpty)
@@ -126,6 +129,9 @@ namespace OreExcavator /// The Excavator of ores
             orig(self, gameTime);
         }
 
+        /// <summary>
+        /// Prevents falling tiles from updating during an excavation.
+        /// </summary>
         private bool Detour_SpawnFallingBlockProjectile(
             On.Terraria.WorldGen.orig_SpawnFallingBlockProjectile orig,
             int x,
@@ -141,6 +147,9 @@ namespace OreExcavator /// The Excavator of ores
             return orig(x, y, tileCache, tileTopCache, tileBottomCache, type);
         }
 
+        /// <summary>
+        /// Prevents orb duplication during an excavation.
+        /// </summary>
         private void WorldGen_CheckOrb(On.Terraria.WorldGen.orig_CheckOrb orig, int i, int j, int type)
         {
             if (puppeting || killCalled)
@@ -148,6 +157,9 @@ namespace OreExcavator /// The Excavator of ores
             orig(i, j, type);
         }
 
+        /// <summary>
+        /// Prevents pot duplication during an excavation.
+        /// </summary>
         private void WorldGen_CheckPot(On.Terraria.WorldGen.orig_CheckPot orig, int i, int j, int type)
         {
             if (puppeting || killCalled)
