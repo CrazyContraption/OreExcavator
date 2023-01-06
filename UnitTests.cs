@@ -276,7 +276,7 @@ namespace OreExcavator
             // Check to ensure it is in inventory
 
             // Clear space 
-            Tools.RemoveRectangle(initX, initY, length, 0, itemdrop: true);
+            Tools.RemoveRectangle(initX, initY, length, 0, noItem: true);
             Tools.GenerateRectangle(initX, initY, 1, 0, tile, force: true);
             // Execute placement
             OreExcavator.ModifySpooler(ActionType.TilePlaced,
@@ -314,7 +314,7 @@ namespace OreExcavator
             // Check to ensure it is in inventory
 
             // Clear space 
-            Tools.RemoveRectangle(initX, initY, length, 0, itemdrop: true);
+            Tools.RemoveRectangle(initX, initY, length, 0, noItem: true);
 
             // Execute placement
             OreExcavator.ModifySpooler(ActionType.TilePlaced,
