@@ -20,11 +20,6 @@ using Terraria.ModLoader;            // Modloader
 using Terraria.ModLoader.Config;
 using Terraria.ObjectData;
 using Terraria.UI.Chat;
-//#region DEBUG
-//#if DEBUG
-//using TUnit.UnitTest;
-//#endif
-//#endregion
 
 namespace OreExcavator /// The Excavator of ores
 {
@@ -87,15 +82,6 @@ namespace OreExcavator /// The Excavator of ores
             //On.Terraria.WorldGen.CheckOrb += WorldGen_CheckOrb;
             //On.Terraria.WorldGen.CheckPot += WorldGen_CheckPot;
             On.Terraria.Main.Update += Detour_Update;
-
-//            #region DEBUG
-//#if DEBUG
-//            if (ModLoader.GetMod("TUnit") != null)
-//            {
-//                TestList.AddTestCompiler(UnitTests.CompileTests);
-//            }
-//#endif
-//            #endregion
 
             // IL edits
             /*
@@ -196,7 +182,7 @@ namespace OreExcavator /// The Excavator of ores
         {
             Log(Language.GetTextValue("Mods.OreExcavator.Logging.OreSearch.Start"), default, LogType.Info);
 
-            if (ModLoader.GetMod("ThoriumMod") != null)
+            if (ModLoader.TryGetMod("CalamityMod", out var calamityMod) && calamityMod != null)
             {
                 Log("Found Calamity - Adding hard-coded tiles to whitelist!", default, LogType.Info);
                 string[] calamityTiles =
@@ -207,7 +193,7 @@ namespace OreExcavator /// The Excavator of ores
                     Log("Ooops - nothing to whitelist, guess I didn't finish this. CALAMITY SEND ME YOUR ORE LIST YOU WANT WHITELISTED", default, LogType.Info);
                 foreach (string calamityTile in calamityTiles)
                 {
-                    string calamityName = "ThoriumMod.ThoriumMod." + calamityTile;
+                    string calamityName = "CalamityMod.CalamityMod." + calamityTile;
                     if (!ClientConfig.tileWhitelist.Contains(calamityName))
                     {
                         Log(Language.GetTextValue("Mods.OreExcavator.Logging.OreSearch.Added", calamityTile, calamityName), default, LogType.Info);
@@ -218,7 +204,7 @@ namespace OreExcavator /// The Excavator of ores
                 }
                 Log("CalamityMod manual whitelisting concluded.", default, LogType.Info);
             }
-            if (ModLoader.GetMod("ThoriumMod") != null)
+            if (ModLoader.TryGetMod("ThoriumMod", out var thoriumMod) && thoriumMod != null)
             {
                 Log("Found ThroiumMod - Adding hard-coded tiles to whitelist!", default, LogType.Info);
                 string[] thoriumTiles =
@@ -251,7 +237,7 @@ namespace OreExcavator /// The Excavator of ores
 
             for (int id = TileID.Count; id < TileLoader.TileCount; id++)
             {
-                string name = "";
+                string name;
                 ModTile tile = TileLoader.GetTile(id);
                 if (tile is null)
                     name = TileID.Search.GetName(id);
