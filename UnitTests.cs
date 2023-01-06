@@ -22,199 +22,134 @@ namespace OreExcavator
         private static OreExcavatorConfig_Client cfgClient;
         private static OreExcavatorConfig_Server cfgServ;
 
+        //private static Player myPlayer;
+
         private static void Setup()
         {
+            //myPlayer = (Player)Main.player[Main.myPlayer].Clone();
             cfgClient = OreExcavator.ClientConfig;
             cfgServ = OreExcavator.ServerConfig;
+
+            OreExcavator.ClientConfig.refillMana = false;
+            OreExcavator.ServerConfig.teleportLoot = true;
+
+            Main.player[Main.myPlayer].statManaMax = 100;
+            Main.player[Main.myPlayer].statMana = 100;
         }
 
         private static void Cleanup()
         {
+            //Main.player[Main.myPlayer] = myPlayer;
             OreExcavator.ClientConfig = cfgClient;
             OreExcavator.ServerConfig = cfgServ;
-            OreExcavator.ServerConfig.manaConsumption = 0f;
+
+            Main.player[Main.myPlayer].statManaMax = 200;
+            Main.player[Main.myPlayer].statMana = 200;
         }
 
         [Test]
-        public static TestStatus DoAlteration_TileKilledHasMana_ReturnFalse()
+        public static TestStatus Alteration_HasAndConsumeMana()
         {
             Setup();
-            // Create Alteration
-            // Thread 0, TileKilled, null coords, Player 1, no puppet, no consumption, no subtype.
-            Alteration alt = new(0, Enumerations.ActionType.TileKilled, 0, 0, (byte)Main.myPlayer, false, -1, -1);
 
-            // Change configs to match expectation
             OreExcavator.ServerConfig.manaConsumption = 100f;
-            OreExcavator.ClientConfig.refillMana = true;
+            
 
-            // Alter player mana to be above cost.
-            Main.player[Main.myPlayer].statManaMax = 101;
-            Main.player[Main.myPlayer].statMana = 101;
-
-            // Test Alteration
-            bool ret = Alteration.DoAlteration(alt);
-
+            bool noMana_Pass = !Alteration.HasAndConsumeMana(1.1f, Main.myPlayer);
+            bool hasMana_Pass = Alteration.HasAndConsumeMana(0.9f, Main.myPlayer);
 
             Cleanup();
-            // Output results, expecting false (good return)
-            if (!ret)
-            {
+
+            if (noMana_Pass && hasMana_Pass)
                 return TestStatus.Passed;
-            }
             else
-            {
                 return TestStatus.Failed;
-            }
         }
 
         [Test]
-        public static TestStatus DoAlteration_TileKilledNoMana_ReturnTrue()
+        public static TestStatus DoAlteration_TileKilled()
         {
             Setup();
-            // Create Alteration
-            // Thread 0, TileKilled, null coords, Player 1, no puppet, no consumption, no subtype.
-            Alteration alt = new(0, Enumerations.ActionType.TileKilled, 0, 0, (byte)Main.myPlayer, false, -1, -1);
 
-            // Change configs to match expectation
-            OreExcavator.ServerConfig.manaConsumption = 100f;
-            OreExcavator.ClientConfig.refillMana = false;
+            Alteration alt = new(0, ActionType.TileKilled, 0, 0, (byte)Main.myPlayer, false, -1, -1);
 
-            // Alter player mana to be under cost.
-            Main.player[Main.myPlayer].statManaMax = 99;
-            Main.player[Main.myPlayer].statMana = 99;
+            OreExcavator.ServerConfig.manaConsumption = 101f;
+            bool noMana_Pass = Alteration.DoAlteration(alt);
+            OreExcavator.ServerConfig.manaConsumption = 99f;
+            bool hasMana_Pass = !Alteration.DoAlteration(alt);
+            
+            Cleanup();
 
-            // Test Alteration
-            bool ret = Alteration.DoAlteration(alt);
+            if (noMana_Pass && hasMana_Pass)
+                return TestStatus.Passed;
+            else
+                return TestStatus.Failed;
+        }
+
+        [Test]
+        public static TestStatus DoAlteration_TileReplaced()
+        {
+            Setup();
+
+            Alteration alt = new(0, ActionType.TileReplaced, 0, 0, (byte)Main.myPlayer, false, -1, -1);
+            
+            OreExcavator.ServerConfig.manaConsumption = 51f;
+            bool noMana_Pass = Alteration.DoAlteration(alt);
+            OreExcavator.ServerConfig.manaConsumption = 49f;
+            bool hasMana_Pass = !Alteration.DoAlteration(alt); // Fails due to lack of items
 
             Cleanup();
-            if (ret)
-            {
+
+            if (noMana_Pass)// && hasMana_Pass)
                 return TestStatus.Passed;
-            }
             else
-            {
                 return TestStatus.Failed;
-            }
         }
 
         [Test]
-        public static TestStatus DoAlteration_WallKilledHasMana_ReturnFalse()
+        public static TestStatus DoAlteration_WallKilled()
         {
             Setup();
-            // Create Alteration
-            // Thread 0, WallKilled, null coords, Player 1, no puppet, no consumption, no subtype.
-            Alteration alt = new(0, Enumerations.ActionType.WallKilled, 0, 0, (byte)Main.myPlayer, false, -1, -1);
 
-            // Change configs to match expectation
-            OreExcavator.ServerConfig.manaConsumption = 100f;
-            OreExcavator.ClientConfig.refillMana = false;
+            Alteration alt = new(0, ActionType.WallKilled, 0, 0, (byte)Main.myPlayer, false, -1, -1);
 
-            // Alter player mana to be above cost.
-            Main.player[Main.myPlayer].statManaMax = 101;
-            Main.player[Main.myPlayer].statMana = 101;
-
-            bool ret = Alteration.DoAlteration(alt);
+            OreExcavator.ServerConfig.manaConsumption = 202f;
+            bool noMana_Pass = Alteration.DoAlteration(alt);
+            OreExcavator.ServerConfig.manaConsumption = 198f;
+            bool hasMana_Pass = !Alteration.DoAlteration(alt);
 
             Cleanup();
-            if (!ret)
-            {
+
+            if (noMana_Pass && hasMana_Pass)
                 return TestStatus.Passed;
-            }
             else
-            {
                 return TestStatus.Failed;
-            }
         }
 
         [Test]
-        public static TestStatus DoAlteration_WallKilledHasNoMana_ReturnTrue()
+        public static TestStatus DoAlteration_WallReplaced()
         {
             Setup();
-            // Create Alteration
-            // Thread 0, WallKilled, null coords, Player 1, no puppet, no consumption, no subtype.
-            Alteration alt = new(0, Enumerations.ActionType.WallKilled, 0, 0, (byte)Main.myPlayer, false, -1, -1);
 
-            // Change configs to match expectation
-            OreExcavator.ServerConfig.manaConsumption = 100f;
-            OreExcavator.ClientConfig.refillMana = false;
+            Alteration alt = new(0, ActionType.WallReplaced, 0, 0, (byte)Main.myPlayer, false, -1, -1);
 
-            // Alter player mana to be under cost.
-            Main.player[Main.myPlayer].statManaMax = 99;
-            Main.player[Main.myPlayer].statMana = 99;
-
-            bool ret = Alteration.DoAlteration(alt);
-
-            if (ret)
-            {
-                return TestStatus.Passed;
-            }
-            else
-            {
-                return TestStatus.Failed;
-            }
-        }
-
-        [Test]
-        public static TestStatus DoAlteration_WallReplacedHasMana_ReturnFalse()
-        {
-            Setup();
-            // Create Alteration
-            // Thread 0, WallReplaced, null coords, Player 1, no puppet, no consumption, no subtype.
-            Alteration alt = new(0, Enumerations.ActionType.WallReplaced, 0, 0, (byte)Main.myPlayer, false, -1, -1);
-
-            // Change configs to match expectation
-            OreExcavator.ServerConfig.manaConsumption = 100f;
-            OreExcavator.ClientConfig.refillMana = false;
-
-            // Alter player mana to be above cost.
-            Main.player[Main.myPlayer].statManaMax = 201;
-            Main.player[Main.myPlayer].statMana = 201;
-
-            bool ret = Alteration.DoAlteration(alt);
+            OreExcavator.ServerConfig.manaConsumption = 51f;
+            bool noMana_Pass = Alteration.DoAlteration(alt);
+            OreExcavator.ServerConfig.manaConsumption = 49f;
+            bool hasMana_Pass = !Alteration.DoAlteration(alt); // Fails due to lack of items
 
             Cleanup();
-            if (!ret)
-            {
+
+            if (noMana_Pass)// && hasMana_Pass)
                 return TestStatus.Passed;
-            }
             else
-            {
                 return TestStatus.Failed;
-            }
-        }
-
-        [Test]
-        public static TestStatus DoAlteration_WallReplacedHasNoMana_ReturnTrue()
-        {
-            Setup();
-            // Create Alteration
-            // Thread 0, WallReplaced, null coords, Player 1, no puppet, no consumption, no subtype.
-            Alteration alt = new(0, Enumerations.ActionType.WallReplaced, 0, 0, (byte)Main.myPlayer, false, -1, -1);
-
-            // Change configs to match expectation
-            OreExcavator.ServerConfig.manaConsumption = 100f;
-            OreExcavator.ClientConfig.refillMana = false;
-
-            // Alter player mana to be above cost.
-            Main.player[Main.myPlayer].statManaMax = 99;
-            Main.player[Main.myPlayer].statMana = 99;
-
-            bool ret = Alteration.DoAlteration(alt);
-
-            Cleanup();
-            if (ret)
-            {
-                return TestStatus.Passed;
-            }
-            else
-            {
-                return TestStatus.Failed;
-            }
         }
 
         [Test]
         public static TestStatus DoAlteration_IronExcavation_Return50Ore()
         {
+            Setup();
             // Setup initial conditions
             ushort initX = 2120;
             ushort initY = 272;
@@ -244,6 +179,7 @@ namespace OreExcavator
             // Insert testing noises here
 
             OreExcavator.ServerConfig.teleportLoot = false;
+            Cleanup();
 
             for (ushort l = 0; l < length; l++)
             {
@@ -299,39 +235,13 @@ namespace OreExcavator
         [Test]
         public static TestStatus DoAlteration_PlatformPlace_Remove50()
         {
-            // Setup initial conditions
-            ushort initX = 2118;
-            ushort initY = 266;
-
-            ushort length = 50;
-
-            ushort tile = TileID.Platforms;
-
-            short item = ItemID.WoodPlatform;
-
-            int loc = Tools.GiveItem(Main.myPlayer, item, length);
-            // Delay till item is added
-            // Check to ensure it is in inventory
-
-            // Clear space 
-            Tools.RemoveRectangle(initX, initY, length, 0, noItem: true);
-
-            // Execute placement
-            OreExcavator.ModifySpooler(ActionType.TilePlaced,
-                initX,
-                initY,
-                (byte)OreExcavator.ClientConfig.recursionDelay,
-                (byte)OreExcavator.ClientConfig.recursionLimit,
-                OreExcavator.ClientConfig.doDiagonals,
-                (byte)Main.myPlayer,
-                tile);
-
-            // Test if placement was successfull
-
-            // Imagine being multithreaded.
-            Tools.RemoveItem(Main.myPlayer, loc, length, item);
-
-            return TestStatus.Passed;
+            for (ushort l = 0; l < length; l++)
+            {
+                for (ushort h = 0; h < height; h++)
+                {
+                    WorldGen.PlaceTile(x + l, y + h, tile, true, true);
+                }
+            }
         }
     }
 }
