@@ -41,72 +41,69 @@ namespace OreExcavator
 						return CheckIfAllowed(tileID, ActionType.TileWhiteListed);
 					}
 
-				case "addwhitelistedtile":
-					{
-						// Returns true or false if a specified Tile ID has been added successfully or not - or null if it exists already, or false if it was an invalid Tile ID
-						if (args.Length < 2)
-							throw new ArgumentException("Missing second argument: (int) Tile id");
-						if (args[1] is null || args[1] is not ushort tileID)
-							throw new Exception($"Expected an argument of type (int) when adding a Tile ID, but got type ({args[1].GetType().Name}) instead.");
-						bool? response = CheckIfAllowed(tileID, ActionType.TileWhiteListed);
-						if (response is null || response is false)
-							return response;
-						string name = GetFullNameById(tileID, ActionType.TileWhiteListed);
-						if (name is null || ClientConfig.tileWhitelist.Contains(name) is false)
-							return null;
-						ClientConfig.wallWhitelist.Add(name);
-						return ClientConfig.wallWhitelist.Contains(name);
-					}
+					case "addwhitelistedtile":
+						{
+							// Returns true or false if a specified Tile ID has been added successfully or not - or null if it exists already, or false if it was an invalid Tile ID
+							if (args.Length < 2)
+								throw new ArgumentException("Missing second argument: (int) Tile id");
+							if (args[1] is null || args[1] is not int tileID)
+								throw new Exception($"Expected an argument of type (int) when adding a Tile ID, but got type ({args[1].GetType().Name}) instead.");
+							string name = GetFullNameById(tileID, ActionType.TileWhiteListed);
+							if (name == null ? false : ClientConfig.tileWhitelist.Contains(name))
+								return null;
+							ClientConfig.wallWhitelist.Add(name);
+							return ClientConfig.wallWhitelist.Contains(name);
+						}
 
-				case "iswhitelistedwall":
-					{
-						// Returns true or false if a specified Wall ID is whitelisted - or null if it's an invalid Wall ID
-						if (args.Length < 2)
-							throw new ArgumentException("Missing second argument: (int) Wall id");
-						if (args[1] is null || args[1] is not ushort wallID)
-							throw new Exception($"Expected an argument of type (int) when getting a Wall ID, but got type ({args[1].GetType().Name}) instead.");
-						return CheckIfAllowed(wallID, ActionType.WallWhiteListed);
-					}
+					case "iswhitelistedwall":
+						{
+							// Returns true or false if a specified Wall ID is whitelisted - or null if it's an invalid Wall ID
+							if (args.Length < 2)
+								throw new ArgumentException("Missing second argument: (int) Wall id");
+							if (args[1] is null || args[1] is not int wallID)
+								throw new Exception($"Expected an argument of type (int) when getting a Wall ID, but got type ({args[1].GetType().Name}) instead.");
+							string name = GetFullNameById(wallID, ActionType.WallWhiteListed);
+							return ClientConfig.wallWhitelistToggled ? true : (name == null ? null : ClientConfig.wallWhitelist.Contains(name));
+						}
 
-				case "addwhitelistedwall":
-					{
-						// Returns true or false if a specified Wall ID has been added successfully or not - or null if it exists already, or is an invalid Wall ID
-						if (args.Length < 2)
-							throw new ArgumentException("Missing second argument: (int) Wall id");
-						if (args[1] is null || args[1] is not int wallID)
-							throw new Exception($"Expected an argument of type (int) when adding a Wall ID, but got type ({args[1].GetType().Name}) instead.");
-						string name = GetFullNameById(wallID, ActionType.WallWhiteListed);
-						if (name == null)
-							return null;
-						if (ClientConfig.wallWhitelist.Contains(name))
-							return true;
-						ClientConfig.wallWhitelist.Add(name);
-						return ClientConfig.wallWhitelist.Contains(name);
-					}
+					case "addwhitelistedwall":
+						{
+							// Returns true or false if a specified Wall ID has been added successfully or not - or null if it exists already, or is an invalid Wall ID
+							if (args.Length < 2)
+								throw new ArgumentException("Missing second argument: (int) Wall id");
+							if (args[1] is null || args[1] is not int wallID)
+								throw new Exception($"Expected an argument of type (int) when adding a Wall ID, but got type ({args[1].GetType().Name}) instead.");
+							string name = GetFullNameById(wallID, ActionType.WallWhiteListed);
+							if (name == null ? true : ClientConfig.wallWhitelist.Contains(name))
+								return null;
+							ClientConfig.wallWhitelist.Add(name);
+							return ClientConfig.wallWhitelist.Contains(name);
+						}
 
-				case "iswhitelisteditem":
-					{
-						// Returns true or false if a specified Item ID is whitelisted, also respecting the blacklist - or null if it's an invalid Item ID
-						if (args.Length < 2)
-							throw new ArgumentException("Missing second argument: (int) Item id");
-						if (args[1] is null || args[1] is not int itemID)
-							throw new Exception($"Expected an argument of type (int) when getting a Item ID, but got type ({args[1].GetType().Name}) instead.");
-						return CheckIfAllowed(itemID, ActionType.ItemWhiteListed);
-					}
+					case "iswhitelisteditem":
+						{
+							// Returns true or false if a specified Item ID is whitelisted - or null if it's an invalid Item ID
+							if (args.Length < 2)
+								throw new ArgumentException("Missing second argument: (int) Item id");
+							if (args[1] is null || args[1] is not int itemID)
+								throw new Exception($"Expected an argument of type (int) when getting a Item ID, but got type ({args[1].GetType().Name}) instead.");
+							string name = GetFullNameById(itemID, ActionType.ItemWhiteListed);
+							return ClientConfig.itemWhitelistToggled ? true : (name == null ? null : ClientConfig.itemWhitelist.Contains(name));
+						}
 
-				case "addwhitelisteditem":
-					{
-						// Returns true or false if a specified Item ID has been added successfully or not - or null if it exists already, or is an invalid Item ID
-						if (args.Length < 2)
-							throw new ArgumentException("Missing second argument: (int) Item id");
-						if (args[1] is null || args[1] is not int itemID)
-							throw new Exception($"Expected an argument of type (int) when adding a Item ID, but got type ({args[1].GetType().Name}) instead.");
-						string name = GetFullNameById(itemID, ActionType.ItemWhiteListed);
-						if (name == null ? true : ClientConfig.itemWhitelist.Contains(name))
-							return null;
-						ClientConfig.itemWhitelist.Add(name);
-						return ClientConfig.itemWhitelist.Contains(name);
-					}
+					case "addwhitelisteditem":
+						{
+							// Returns true or false if a specified Item ID has been added successfully or not - or null if it exists already, or is an invalid Item ID
+							if (args.Length < 2)
+								throw new ArgumentException("Missing second argument: (int) Item id");
+							if (args[1] is null || args[1] is not int itemID)
+								throw new Exception($"Expected an argument of type (int) when adding a Item ID, but got type ({args[1].GetType().Name}) instead.");
+							string name = GetFullNameById(itemID, ActionType.ItemWhiteListed);
+							if (name == null ? true : ClientConfig.itemWhitelist.Contains(name))
+								return null;
+							ClientConfig.itemWhitelist.Add(name);
+							return ClientConfig.itemWhitelist.Contains(name);
+						}
 
 				case "savewhitelist":
 					// Forces client changes committed to RAM to be written to storage - so future reloads will use updated data. Returns true/false based on success.
