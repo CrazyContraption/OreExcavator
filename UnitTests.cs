@@ -212,7 +212,7 @@ namespace OreExcavator
             // Check to ensure it is in inventory
 
             // Clear space 
-            Tools.RemoveRectangle(initX, initY, length, 0, itemdrop: true);
+            Tools.RemoveRectangle(initX, initY, length, 0, noItem: true);
             Tools.GenerateRectangle(initX, initY, 1, 0, tile, force: true);
             // Execute placement
             OreExcavator.ModifySpooler(ActionType.TilePlaced,
@@ -230,18 +230,6 @@ namespace OreExcavator
             Tools.RemoveItem(Main.myPlayer, loc, length, item);
 
             return TestStatus.Passed;
-        }
-
-        [Test]
-        public static TestStatus DoAlteration_PlatformPlace_Remove50()
-        {
-            for (ushort l = 0; l < length; l++)
-            {
-                for (ushort h = 0; h < height; h++)
-                {
-                    WorldGen.PlaceTile(x + l, y + h, tile, true, true);
-                }
-            }
         }
     }
 }

@@ -41,7 +41,6 @@
     {
         None = 0,
         Vertical,
-        Horizontal,
-        Hoik
+        Horizontal
     }
 }

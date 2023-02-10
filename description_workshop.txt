@@ -83,13 +83,14 @@ A:No, not anymore. Once upon a time we did, now things are much easier for us, a
 
 
 [h1] Recent Changelog [/h1]
-0.7.6
+0.8.0
  ~ Updated mana configurations to use a slider for better user control. Turn it back on after this update if you had it on before!
  ~ Updated permission error messages to only display when debug mode is enabled.
  ~ Updated core excavation queue logic - gameplay should be the same, but performance might change.
  + Added a toggle for chain-placing features to the server configurations.
  + Added a config for servers to block the mod's motd forever, can also be used in singleplayer.
  + Added translations! We're working on adding more languages, visit our Discord to help out!
+ + Added full controller support.
  + Added English translations.
  + Added ??? translations.
  + Added ??? translations.
@@ -100,6 +101,7 @@ A:No, not anymore. Once upon a time we did, now things are much easier for us, a
  * Fixed crashes related to Draw method race condition crashes.
  * Fixed crashes related to excavating trees.
  * Fixed crashes related to smart cursors and torch excavations.
+ * Fixed controllers requiring a keyboard binding to function.
  - Removed a bunch of outdated patchwork fixes for dupes, crashes, and old compatibility issues.
 
 0.7.5

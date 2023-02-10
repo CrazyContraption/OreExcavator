@@ -214,7 +214,7 @@ namespace OreExcavator
         [Label("$Mods.OreExcavator.Config.Client.ShowWelcome.Label")]
         [Tooltip("$Mods.OreExcavator.Config.Client.ShowWelcome.Description")]
         [DefaultValue(true)]
-        public bool showWelcome070;
+        public bool showWelcome080;
 
         [Label("$Mods.OreExcavator.Config.Client.ShowCursorTooltips.Label")]
         [Tooltip("$Mods.OreExcavator.Config.Client.ShowCursorTooltips.Description")]
@@ -270,8 +270,8 @@ namespace OreExcavator
 
         [Label("$Mods.OreExcavator.Config.Client.TileWhitelistToggled.Label")]
         [Tooltip("$Mods.OreExcavator.Config.Client.TileWhitelistToggled.Description")]
-        [DefaultValue(true)]
-        public bool tileWhitelistToggled;
+        [DefaultValue(false)]
+        public bool tileWhitelistAll;
 
         [Label("$Mods.OreExcavator.Config.Client.TileWhitelist.Label")]
         [Tooltip("$Mods.OreExcavator.Config.Client.TileWhitelist.Description")]
@@ -323,8 +323,8 @@ namespace OreExcavator
 
         [Label("$Mods.OreExcavator.Config.Client.WallWhitelistToggled.Label")]
         [Tooltip("$Mods.OreExcavator.Config.Client.WallWhitelistToggled.Description")]
-        [DefaultValue(true)]
-        public bool wallWhitelistToggled;
+        [DefaultValue(false)]
+        public bool wallWhitelistAll;
 
         [Label("$Mods.OreExcavator.Config.Client.WallWhitelist.Label")]
         [Tooltip("$Mods.OreExcavator.Config.Client.WallWhitelist.Description")]
@@ -407,8 +407,8 @@ namespace OreExcavator
 
         [Label("$Mods.OreExcavator.Config.Client.ItemWhitelistToggled.Label")]
         [Tooltip("$Mods.OreExcavator.Config.Client.ItemWhitelistToggled.Description")]
-        [DefaultValue(true)]
-        public bool itemWhitelistToggled;
+        [DefaultValue(false)]
+        public bool itemWhitelistAll;
 
         [Label("$Mods.OreExcavator.Config.Client.ItemWhitelist.Label")]
         [Tooltip("$Mods.OreExcavator.Config.Client.ItemWhitelist.Description")]

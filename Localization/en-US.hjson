@@ -15,12 +15,6 @@
 		Item:
 		"Item"
 
-		Swapping:
-		"Swapping"
-
-		Planting:
-		"Planting"
-
 		Chain:
 		"Chain-"
 
@@ -573,9 +567,9 @@
 					"When enabled, the algorithm checks the whitelists & blacklists BEFORE \n attempting an excavation, when bound to a right mouse. \n\n Enabling this may hurt performance, but \n might produce more stable behaviour!"
 				}
 
-				TileWhitelistToggled: {
+				TileWhitelistAll: {
 					Label:
-					"[i/p0:3509]{$Mods.OreExcavator.Config.Common.IconBuffer} Enable Tile Whitelist"
+					"[i/p0:3509]{$Mods.OreExcavator.Config.Common.IconBuffer} Whitelist all tiles"
 
 					Description:
 					"When enabled, all tiles will be whitelisted by default. \n\n Slightly improves performance!"
@@ -589,9 +583,9 @@
 					"Configure this list to manually set what Tiles can be chain-excavated \n Prefixed by the mod that owns them. Also yields to the host's blacklist. \n\n {$Mods.OreExcavator.Config.Common.Performance.NoImpact}"
 				}
 
-				WallWhitelistToggled: {
+				WallWhitelistAll: {
 					Label:
-					"[i/p0:196]{$Mods.OreExcavator.Config.Common.IconBuffer} Enable Wall Whitelist"
+					"[i/p0:196]{$Mods.OreExcavator.Config.Common.IconBuffer} Whitelist all walls"
 
 					Description:
 					"When enabled, all walls will be whitelisted by default. \n\n Slightly improves performance!"
@@ -613,9 +607,9 @@
 					"When enabled, players will be allowed to chain-place large lines. \n Consumes items as normal. \n Works for items like ropes, rails, planters, platforms, etc. {$Mods.OreExcavator.Config.Common.Performance.SmallImpact}"
 				}
 
-				ItemWhitelistToggled: {
+				ItemWhitelistAll: {
 					Label:
-					"[i/p0:9]{$Mods.OreExcavator.Config.Common.IconBuffer} Enable Item Whitelist"
+					"[i/p0:9]{$Mods.OreExcavator.Config.Common.IconBuffer} Whitelist all items"
 
 					Description:
 					"When enabled, all items will be whitelisted by default. \n\n Slightly improves performance!"
