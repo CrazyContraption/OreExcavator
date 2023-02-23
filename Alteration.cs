@@ -8,34 +8,78 @@ namespace OreExcavator
     internal class Alteration
     {
 
-        public readonly int? threadID;
+        public readonly ushort? threadID;
         private readonly ActionType actionType;
-        private readonly int x;
-        private readonly int y;
         private readonly byte playerID;
         private readonly bool puppeting;
         private readonly int consumesItemType = -1;
-        private readonly int itemSubtype = -1;
+        private readonly sbyte consumesItemSubtype = -1;
+        private bool? done;
 
-        public Alteration(int? threadID, ActionType actionType, int x, int y, byte playerID, bool puppeting = false, int consumesItemType = -1, int itemSubtype = -1)
+        public Alteration(ushort? threadID, ActionType actionType, byte playerID, bool puppeting = false, int consumesItemType = -1, sbyte consumesItemSubtype = -1)
         {
             this.threadID = threadID; 
             this.actionType = actionType;
-            this.x = x;
-            this.y = y;
             this.playerID = playerID;
             this.puppeting = puppeting;
             this.consumesItemType = consumesItemType;
-            this.itemSubtype = itemSubtype;
+            this.consumesItemSubtype = consumesItemSubtype;
+        }
+
+        internal bool? Finished()
+        {
+            return done;
+        }
+
+        internal static float GetManaCost(ActionType actionType)
+        {
+            return actionType switch
+            {
+                ActionType.TileKilled => 1f,
+                ActionType.TilePlaced => 1.5f,
+                ActionType.WallKilled => 0.5f,
+                ActionType.WallPlaced => 1f,
+                ActionType.TileReplaced => 1.5f,
+                ActionType.WallReplaced => 1f,
+                ActionType.SeedPlanted => 1.5f,
+                ActionType.SeedHarvested => 2f,
+                ActionType.TilePainted => 2f,
+                ActionType.WallPainted => 1.5f,
+                ActionType.ClearedPaint => 1f,
+                ActionType.ExtendPlacement => 2f,
+                _ => 0f,
+            };
         }
 
         internal static bool HasAndConsumeMana(float manaCost, int player = -1)
         {
+            if (OreExcavator.ServerConfig.creativeMode is true)
+                return true;
             if (manaCost <= 0)
                 return true;
             if (player < 0)
                 return false;
-            return Main.player[player].CheckMana((int)(OreExcavator.ServerConfig.manaConsumption * manaCost), true, !OreExcavator.ClientConfig.refillMana);
+            return Main.player[player].CheckMana((int)(OreExcavator.ServerConfig.manaConsumption * manaCost), true, OreExcavator.ClientConfig.refillMana is false);
+        }
+
+        internal bool HasAndConsumeItem(int item, int player = -1, int amount = -1)
+        {
+            if (item <= ItemID.None || player < 0)
+                return false;
+            if (OreExcavator.ServerConfig.creativeMode is true || puppeting is true)
+                return true;
+
+            if (Main.mouseItem is not null && Main.mouseItem.netID == item && Main.mouseItem.stack >= 0)
+                Main.player[player].HeldItem.stack += amount;
+            else if (amount < 0)
+            {
+                if (Main.player[player].ConsumeItem(consumesItemType) is false) // Does the player have items to place?
+                    return false; // No inventory item
+            }
+            else if (amount >= 0)
+                Main.player[player].QuickSpawnItem(Main.player[player].GetSource_FromThis(), consumesItemType, amount * -1);
+
+            return true;
         }
 
         /// <summary>
@@ -43,32 +87,34 @@ namespace OreExcavator
         /// This allows us to use the same floodfill for everything, but perform unique actions.
         /// </summary>
         /// 
-        /// <param name="actionType">Type of action to be performed</param>
         /// <param name="x">X coordinate of the alteration</param>
         /// <param name="y">Y coordinate of the alteration</param>
-        /// <param name="playerID">The player index to teleport items to and consume items from, if needed</param>
-        /// <param name="consumesItemType">Item to consume if any, -1 to omit (invalid item)</param>
-        /// <param name="itemSubtype">ID of the item style that is being replaced with, if needed - may also represent a color</param>
-        public static bool DoAlteration(Alteration alteration)
+        public bool DoAlteration(int x, int y)
         {
-            if (OreExcavator.devmode)
-                OreExcavator.Log($"AlterHandler ({alteration.x},{alteration.y}) - {alteration.actionType} = {alteration.consumesItemType}:{alteration.itemSubtype}", Color.Aquamarine, LogType.None);
+            done = false;
 
-            if (alteration.x < 0 || alteration.y < 0 || alteration.x > Main.maxTilesX || alteration.y > Main.maxTilesY)
+            if (WorldGen.InWorld(x, y) is false)
                 return false;
 
-            switch (alteration.actionType)
+#if DEBUG
+            OreExcavator.Log($"AlterHandler ({x},{y}) - {actionType} = {consumesItemType}:{consumesItemSubtype}", Color.Aquamarine, LogType.None);
+#endif
+
+            done = false;
+            float manaCost = GetManaCost(actionType);
+
+            switch (actionType)
             {
                 case ActionType.TileKilled:
-                    if (HasAndConsumeMana(1.0f, alteration.playerID) is false)
+                    if (puppeting is false && HasAndConsumeMana(manaCost, playerID) is false)
                         return true;
-                    WorldGen.KillTile(alteration.x, alteration.y, !Main.tile[alteration.x, alteration.y].HasTile, false, OreExcavator.ServerConfig.creativeMode);
+                    WorldGen.KillTile(x, y, Main.tile[x, y].HasTile is false, false, OreExcavator.ServerConfig.creativeMode);
                     return false;
 
                 case ActionType.WallKilled:
-                    if (HasAndConsumeMana(0.5f, alteration.playerID) is false)
+                    if (puppeting is false && HasAndConsumeMana(manaCost, playerID) is false)
                         return true;
-                    WorldGen.KillWall(alteration.x, alteration.y, false);
+                    WorldGen.KillWall(x, y, false);
                     return false;
 
                 //case ActionType.WallReplaced:
@@ -81,11 +127,11 @@ namespace OreExcavator
                 case ActionType.TileReplaced:
                     {
                         // TODO: Move this outside of modify loop?
-                        if (alteration.consumesItemType <= ItemID.None) // Invalid item type?
+                        if (consumesItemType <= ItemID.None) // Invalid item type?
                             return true;
                         int placeType;
-                        Item item = new(alteration.consumesItemType);
-                        if (alteration.actionType == ActionType.WallReplaced)
+                        Item item = new(consumesItemType);
+                        if (actionType == ActionType.WallReplaced)
                             placeType = item.createWall;
                         else
                             placeType = item.createTile;
@@ -93,106 +139,110 @@ namespace OreExcavator
                         if (placeType < TileID.Dirt) // Places invalid thing?
                             return true;
 
-                        if (HasAndConsumeMana(2.0f, alteration.playerID) is false)
+                        if (puppeting is false & HasAndConsumeMana(manaCost, playerID) is false)
                             return true;
 
-                        if (OreExcavator.ServerConfig.creativeMode is false && OreExcavator.puppeting is false)
-                            if (Main.mouseItem is not null && Main.mouseItem.Name != "" && Main.mouseItem.netID == alteration.consumesItemType && Main.mouseItem.stack > 0)
-                                Main.player[alteration.playerID].HeldItem.stack--;
-                            else if (Main.player[alteration.playerID].ConsumeItem(alteration.consumesItemType) is false) // Does the player have items to place?
-                                return true; // No inventory item
+                        if (HasAndConsumeItem(consumesItemType, playerID) is false)
+                            return true;
 
-                        if (alteration.actionType == ActionType.WallReplaced)
-                            WorldGen.ReplaceWall(alteration.x, alteration.y, (ushort)placeType);
-                        else if (alteration.actionType != ActionType.ExtendPlacement)
-                            WorldGen.ReplaceTile(alteration.x, alteration.y, (ushort)placeType, alteration.itemSubtype < 0 ? (int)Main.tile[alteration.x, alteration.y].Slope : alteration.itemSubtype);
-                        else if (Main.tile[alteration.x, alteration.y].HasTile is false)
+                        if (actionType == ActionType.WallReplaced)
                         {
-                            WorldGen.PlaceTile(alteration.x, alteration.y, (ushort)placeType, true, false, alteration.playerID, alteration.itemSubtype <= 0 ? (int)Main.tile[alteration.x, alteration.y].Slope : alteration.itemSubtype);
-                            WorldGen.KillTile(alteration.x, alteration.y, true, !OreExcavator.ClientConfig.reducedEffects, true);
+                            if (WorldGen.ReplaceWall(x, y, (ushort)placeType) is false)
+                                { }//_ = HasAndConsumeItem(consumesItemType, playerID, 1);
                         }
+                        else if (actionType is not ActionType.ExtendPlacement)
+                        {
+                            if (WorldGen.ReplaceTile(x, y, (ushort)placeType, consumesItemSubtype < 0 ? (int)Main.tile[x, y].Slope : consumesItemSubtype) is false)
+                                { }//_ = HasAndConsumeItem(consumesItemType, playerID, 1);
+                        }
+                        else if (Main.tile[x, y].HasTile is false)
+                        {
+                            if (WorldGen.PlaceTile(x, y, (ushort)placeType, true, false, playerID, consumesItemSubtype <= 0 ? (int)Main.tile[x, y].Slope : consumesItemSubtype) is false)
+                            {
+                                _ = HasAndConsumeItem(consumesItemType, playerID, 1);
+                                return true;
+                            }
+                            WorldGen.KillTile(x, y, true, OreExcavator.ClientConfig.reducedEffects is false, true);
+                        }
+                        return false;
                     }
-                    return false;
+                    
 
-                case ActionType.TurfPlanted:
+                case ActionType.SeedPlanted:
                     {
-                        if (HasAndConsumeMana(2.5f, alteration.playerID) is false)
+                        if (puppeting is false && HasAndConsumeMana(manaCost, playerID) is false)
                             return true;
                         // TODO: Move this outside of modify loop?
-                        if (alteration.consumesItemType <= ItemID.None) // Invalid item type?
+                        if (consumesItemType <= ItemID.None) // Invalid item type?
                             return true; //goto case ActionType.TileKilled;
-                        int placeType = new Item(alteration.consumesItemType).createTile;
+                        int placeType = new Item(consumesItemType).createTile;
                         if (placeType < TileID.Dirt) // Places invalid thing?
                             return true;
 
-                        if (!OreExcavator.ServerConfig.creativeMode && !OreExcavator.puppeting)
-                            if (Main.player[alteration.playerID].ConsumeItem(alteration.consumesItemType) is false) // Does the player have items to place?
-                                return true;
+                        if (HasAndConsumeItem(consumesItemType, playerID) is false)
+                            return true;
 
                         // TODO: Retain paint?
-                        WorldGen.KillTile(alteration.x, alteration.y, true, !OreExcavator.ClientConfig.reducedEffects, true);
-                        WorldGen.SpreadGrass(alteration.x, alteration.y, Main.tile[alteration.x, alteration.y].TileType, placeType, false, 0);
+                        WorldGen.KillTile(x, y, true, OreExcavator.ClientConfig.reducedEffects is false, true);
+                        WorldGen.SpreadGrass(x, y, Main.tile[x, y].TileType, placeType, false, 0);
                     }
                     return false;
 
-                case ActionType.TurfHarvested:
+                case ActionType.SeedHarvested:
                     {
-                        if (HasAndConsumeMana(2.0f, alteration.playerID) is false)
+                        if (puppeting is false && HasAndConsumeMana(manaCost, playerID) is false)
                             return true;
 
-                        if (alteration.consumesItemType < ItemID.None) // Invalid grass type?
+                        if (consumesItemType < ItemID.None) // Invalid grass type?
                             return true;
 
                         // TODO: Retain paint?
-                        WorldGen.KillTile(alteration.x, alteration.y, false, false, true);
-                        WorldGen.PlaceTile(alteration.x, alteration.y, (ushort)alteration.consumesItemType, !OreExcavator.ClientConfig.reducedEffects, true, alteration.playerID, alteration.itemSubtype <= 0 ? (int)Main.tile[alteration.x, alteration.y].Slope : alteration.itemSubtype);
+                        WorldGen.KillTile(x, y, false, false, true);
+                        WorldGen.PlaceTile(x, y, (ushort)consumesItemType, OreExcavator.ClientConfig.reducedEffects is false, true, playerID, consumesItemSubtype <= 0 ? (int)Main.tile[x, y].Slope : consumesItemSubtype);
                     }
                     return false;
 
                 case ActionType.TilePainted:
                     {
-                        if (HasAndConsumeMana(2.5f, alteration.playerID) is false)
+                        if (puppeting is false && HasAndConsumeMana(manaCost, playerID) is false)
                             return true;
 
-                        if (alteration.consumesItemType <= ItemID.None) // Invalid item type?
+                        if (consumesItemType <= ItemID.None) // Invalid item type?
                             return true;
 
-                        if (!OreExcavator.ServerConfig.creativeMode && !OreExcavator.puppeting)
-                            if (Main.player[alteration.playerID].ConsumeItem(alteration.consumesItemType) is false) // Does the player have items to place?
-                                return true;
+                        if (HasAndConsumeItem(consumesItemType, playerID) is false)
+                            return true;
 
-                        WorldGen.paintTile(alteration.x, alteration.y, (byte)alteration.itemSubtype, false);
+                        WorldGen.paintTile(x, y, (byte)consumesItemSubtype, false);
                     }
                     return false;
 
                 case ActionType.WallPainted:
                     {
-                        if (HasAndConsumeMana(2.0f, alteration.playerID) is false)
+                        if (puppeting is false && HasAndConsumeMana(manaCost, playerID) is false)
                             return true;
 
-                        if (alteration.consumesItemType <= ItemID.None) // Invalid item type?
+                        if (consumesItemType <= ItemID.None) // Invalid item type?
                             return true;
 
-                        if (!OreExcavator.ServerConfig.creativeMode && !OreExcavator.puppeting)
-                            if (Main.player[alteration.playerID].ConsumeItem(alteration.consumesItemType) is false) // Does the player have items to place?
-                                return true;
+                        if (HasAndConsumeItem(consumesItemType, playerID) is false)
+                            return true;
 
-                        WorldGen.paintWall(alteration.x, alteration.y, (byte)alteration.itemSubtype, false);
+                        WorldGen.paintWall(x, y, (byte)consumesItemSubtype, false);
                     }
                     return false;
 
                 case ActionType.ClearedPaint:
-                    if (HasAndConsumeMana(1.5f, alteration.playerID) is false)
+                    if (puppeting is false && HasAndConsumeMana(manaCost, playerID) is false)
                         return true;
 
-                    WorldGen.paintTile(alteration.x, alteration.y, PaintID.None, false);
-                    WorldGen.paintWall(alteration.x, alteration.y, PaintID.None, false);
+                    WorldGen.paintTile(x, y, PaintID.None, false);
+                    WorldGen.paintWall(x, y, PaintID.None, false);
                     return false;
 
                 default: // Malformed Alter
                     return true;
             }
-            return false;
         }
     }
 }

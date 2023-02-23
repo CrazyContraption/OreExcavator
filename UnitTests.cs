@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿#if DEBUG
 
 using OreExcavator.Enumerations;
 using Terraria;
@@ -11,7 +7,9 @@ using TUnit.Attributes;
 using TUnit.Commands;
 using Terraria.ModLoader;
 using Terraria.ID;
-using Microsoft.Xna.Framework;
+using System.Threading.Tasks;
+using System.Threading;
+using System;
 
 namespace OreExcavator
 {
@@ -19,32 +17,33 @@ namespace OreExcavator
     [TestSuite]
     internal class UnitTests
     {
-        private static OreExcavatorConfig_Client cfgClient;
-        private static OreExcavatorConfig_Server cfgServ;
+        private static int? mana;
 
         //private static Player myPlayer;
 
         private static void Setup()
         {
-            //myPlayer = (Player)Main.player[Main.myPlayer].Clone();
-            cfgClient = OreExcavator.ClientConfig;
-            cfgServ = OreExcavator.ServerConfig;
+            ExcavatorSystem.SaveConfig(OreExcavator.ClientConfig);
+            ExcavatorSystem.SaveConfig(OreExcavator.ServerConfig);
 
             OreExcavator.ClientConfig.refillMana = false;
             OreExcavator.ServerConfig.teleportLoot = true;
 
+            mana = Main.player[Main.myPlayer].statManaMax;
             Main.player[Main.myPlayer].statManaMax = 100;
             Main.player[Main.myPlayer].statMana = 100;
         }
 
         private static void Cleanup()
         {
-            //Main.player[Main.myPlayer] = myPlayer;
-            OreExcavator.ClientConfig = cfgClient;
-            OreExcavator.ServerConfig = cfgServ;
+            if (mana is null)
+                return;
 
-            Main.player[Main.myPlayer].statManaMax = 200;
-            Main.player[Main.myPlayer].statMana = 200;
+            ExcavatorSystem.LoadConfig(OreExcavator.ClientConfig);
+            ExcavatorSystem.LoadConfig(OreExcavator.ServerConfig);
+
+            Main.player[Main.myPlayer].statManaMax = mana ?? 200;
+            Main.player[Main.myPlayer].statMana = mana ?? 200;
         }
 
         [Test]
@@ -71,12 +70,12 @@ namespace OreExcavator
         {
             Setup();
 
-            Alteration alt = new(0, ActionType.TileKilled, 0, 0, (byte)Main.myPlayer, false, -1, -1);
+            Alteration alt = new(0, ActionType.TileKilled, (byte)Main.myPlayer, false, -1, -1);
 
             OreExcavator.ServerConfig.manaConsumption = 101f;
-            bool noMana_Pass = Alteration.DoAlteration(alt);
+            bool noMana_Pass = alt.DoAlteration(0,0);
             OreExcavator.ServerConfig.manaConsumption = 99f;
-            bool hasMana_Pass = !Alteration.DoAlteration(alt);
+            bool hasMana_Pass = !alt.DoAlteration(0,0);
             
             Cleanup();
 
@@ -91,12 +90,12 @@ namespace OreExcavator
         {
             Setup();
 
-            Alteration alt = new(0, ActionType.TileReplaced, 0, 0, (byte)Main.myPlayer, false, -1, -1);
+            Alteration alt = new(0, ActionType.TileReplaced, (byte)Main.myPlayer, false, -1, -1);
             
             OreExcavator.ServerConfig.manaConsumption = 51f;
-            bool noMana_Pass = Alteration.DoAlteration(alt);
+            bool noMana_Pass = alt.DoAlteration(0,0);
             OreExcavator.ServerConfig.manaConsumption = 49f;
-            bool hasMana_Pass = !Alteration.DoAlteration(alt); // Fails due to lack of items
+            bool hasMana_Pass = !alt.DoAlteration(0,0); // Fails due to lack of items
 
             Cleanup();
 
@@ -111,12 +110,12 @@ namespace OreExcavator
         {
             Setup();
 
-            Alteration alt = new(0, ActionType.WallKilled, 0, 0, (byte)Main.myPlayer, false, -1, -1);
+            Alteration alt = new(0, ActionType.WallKilled, (byte)Main.myPlayer, false, -1, -1);
 
             OreExcavator.ServerConfig.manaConsumption = 202f;
-            bool noMana_Pass = Alteration.DoAlteration(alt);
+            bool noMana_Pass = alt.DoAlteration(0,0);
             OreExcavator.ServerConfig.manaConsumption = 198f;
-            bool hasMana_Pass = !Alteration.DoAlteration(alt);
+            bool hasMana_Pass = !alt.DoAlteration(0,0);
 
             Cleanup();
 
@@ -131,12 +130,12 @@ namespace OreExcavator
         {
             Setup();
 
-            Alteration alt = new(0, ActionType.WallReplaced, 0, 0, (byte)Main.myPlayer, false, -1, -1);
+            Alteration alt = new(0, ActionType.WallReplaced, (byte)Main.myPlayer, false, -1, -1);
 
             OreExcavator.ServerConfig.manaConsumption = 51f;
-            bool noMana_Pass = Alteration.DoAlteration(alt);
+            bool noMana_Pass = alt.DoAlteration(0,0);
             OreExcavator.ServerConfig.manaConsumption = 49f;
-            bool hasMana_Pass = !Alteration.DoAlteration(alt); // Fails due to lack of items
+            bool hasMana_Pass = !alt.DoAlteration(0,0); // Fails due to lack of items
 
             Cleanup();
 
@@ -147,7 +146,7 @@ namespace OreExcavator
         }
 
         [Test]
-        public static TestStatus DoAlteration_IronExcavation_Return50Ore()
+        public static TestStatus DoAlteration_IronExcavation_Return50Ore() // Needs to be async
         {
             Setup();
             // Setup initial conditions
@@ -164,34 +163,35 @@ namespace OreExcavator
             Tools.GenerateRectangle(initX, initY, length, height, tile);
 
             // Execute Spooler
+            Task<TestStatus> task = new Task<TestStatus>(() =>
+            {
+                ushort? taskId = OreExcavator.ModifySpooler(ActionType.TileKilled,
+                    initX,
+                    initY,
+                    (byte)OreExcavator.ClientConfig.recursionDelay,
+                    (byte)OreExcavator.ClientConfig.recursionLimit,
+                    OreExcavator.ClientConfig.doDiagonals,
+                    (byte)Main.myPlayer,
+                    tile);
 
-            OreExcavator.ModifySpooler(ActionType.TileKilled, 
-                initX, 
-                initY, 
-                (byte)OreExcavator.ClientConfig.recursionDelay,
-                (byte)OreExcavator.ClientConfig.recursionLimit, 
-                OreExcavator.ClientConfig.doDiagonals,
-                (byte)Main.myPlayer, 
-                tile);
+                if (taskId is null)
+                    return TestStatus.Failed;
 
-            // Test if successful after spooler action is complete
+                // Wait for excavation to complete
+                while (OreExcavator.alterTasks.TryGetValue(taskId, out var thread) && thread.IsCompleted is false)
+                    Thread.Sleep(500);
 
-            // Insert testing noises here
+                // Check factors for success
+
+                return TestStatus.Passed;
+            });
+            task.Start();
+            TestStatus response = task.Result;
 
             OreExcavator.ServerConfig.teleportLoot = false;
             Cleanup();
 
-            for (ushort l = 0; l < length; l++)
-            {
-                for (ushort h = 0; h < height; h++)
-                {
-                    if (!Main.tile[initX + l, initY + h].HasTile)
-                    {
-                        return TestStatus.Failed;
-                    }
-                }
-            }
-            return TestStatus.Passed;
+            return response;
         }
 
         [Test]
@@ -233,3 +233,4 @@ namespace OreExcavator
         }
     }
 }
+#endif

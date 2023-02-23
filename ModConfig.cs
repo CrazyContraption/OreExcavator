@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using Newtonsoft.Json;
 using Terraria;
+using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader.Config;
@@ -31,6 +31,11 @@ namespace OreExcavator
         [Tooltip("$Mods.OreExcavator.Config.Server.AllowDiagonals.Description")]
         [DefaultValue(true)]
         public bool allowDiagonals;
+
+        [Label("$Mods.OreExcavator.Config.Server.ChainPlacing.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Server.ChainPlacing.Description")]
+        [DefaultValue(true)]
+        public bool chainPlacing;
 
         [Label("$Mods.OreExcavator.Config.Server.ChainSeeding.Label")]
         [Tooltip("$Mods.OreExcavator.Config.Server.ChainSeeding.Description")]
@@ -71,10 +76,10 @@ namespace OreExcavator
         [DefaultValue(false)]
         public bool creativeMode;
 
-        [Label("$Mods.OreExcavator.Config.Server.AggressiveCompatibility.Label")]
-        [Tooltip("$Mods.OreExcavator.Config.Server.AggressiveCompatibility.Description")]
-        [DefaultValue(true)]
-        public bool aggressiveCompatibility;
+        [Label("$Mods.OreExcavator.Config.Server.AggressiveModCompatibility.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Server.AggressiveModCompatibility.Description")]
+        [DefaultValue(false)]
+        public bool aggressiveModCompatibility;
 
 
         [Header("$Mods.OreExcavator.Config.Server.Headers.Tiles")]
@@ -185,13 +190,13 @@ namespace OreExcavator
 
         public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message)
         {
+
             if (OreExcavator.hostOnly && Main.CurrentFrameFlags.ActivePlayersCount <= 0 && whoAmI == 0)
             {
                 message = Language.GetTextValue("Mods.OreExcavator.Config.Common.Changes.Remote");
                 return true;
             }
-
-            if (OreExcavator.hostOnly && Main.CurrentFrameFlags.ActivePlayersCount == 1 && whoAmI == 0)
+            else if (OreExcavator.hostOnly && Main.CurrentFrameFlags.ActivePlayersCount == 1 && whoAmI == 0)
             {
                 message = Language.GetTextValue("Mods.OreExcavator.Config.Common.Changes.HostOnly");
                 return true;
@@ -268,8 +273,8 @@ namespace OreExcavator
 
         [Header("$Mods.OreExcavator.Config.Client.Headers.Tiles")]
 
-        [Label("$Mods.OreExcavator.Config.Client.TileWhitelistToggled.Label")]
-        [Tooltip("$Mods.OreExcavator.Config.Client.TileWhitelistToggled.Description")]
+        [Label("$Mods.OreExcavator.Config.Client.TileWhitelistAll.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.TileWhitelistAll.Description")]
         [DefaultValue(false)]
         public bool tileWhitelistAll;
 
@@ -321,8 +326,8 @@ namespace OreExcavator
 
         [Header("$Mods.OreExcavator.Config.Client.Headers.Walls")]
 
-        [Label("$Mods.OreExcavator.Config.Client.WallWhitelistToggled.Label")]
-        [Tooltip("$Mods.OreExcavator.Config.Client.WallWhitelistToggled.Description")]
+        [Label("$Mods.OreExcavator.Config.Client.WallWhitelistAll.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.WallWhitelistAll.Description")]
         [DefaultValue(false)]
         public bool wallWhitelistAll;
 
@@ -400,13 +405,8 @@ namespace OreExcavator
 
         [Header("$Mods.OreExcavator.Config.Client.Headers.Items")]
 
-        [Label("$Mods.OreExcavator.Config.Client.ChainPlacing.Label")]
-        [Tooltip("$Mods.OreExcavator.Config.Client.ChainPlacing.Description")]
-        [DefaultValue(true)]
-        public bool ChainPlacing;
-
-        [Label("$Mods.OreExcavator.Config.Client.ItemWhitelistToggled.Label")]
-        [Tooltip("$Mods.OreExcavator.Config.Client.ItemWhitelistToggled.Description")]
+        [Label("$Mods.OreExcavator.Config.Client.ItemWhitelistAll.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.ItemWhitelistAll.Description")]
         [DefaultValue(false)]
         public bool itemWhitelistAll;
 
@@ -447,6 +447,6 @@ namespace OreExcavator
         [DefaultValue("Unknown")]
         [ReadOnly(true)]
         [JsonIgnore]
-        public string keybind => (OreExcavator.ExcavateHotkey != null ? (OreExcavator.ExcavateHotkey.GetAssignedKeys().Count > 0 ? OreExcavator.ExcavateHotkey.GetAssignedKeys()[0] : "Not Set") : "Unknown");
+        public string keybind => (OreExcavator.ExcavateHotkey is not null ? (OreExcavator.ExcavateHotkey.GetAssignedKeys(PlayerInput.UsingGamepad ? InputMode.XBoxGamepad : InputMode.Keyboard).Count > 0 ? OreExcavator.ExcavateHotkey.GetAssignedKeys(PlayerInput.UsingGamepad ? InputMode.XBoxGamepad : InputMode.Keyboard)[0] : "Not Set") : "Unknown");
     }
 }

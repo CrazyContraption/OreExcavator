@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using Terraria.ObjectData;
 using Terraria.Localization;
+using System;
 
 namespace OreExcavator
 {
@@ -35,79 +36,79 @@ namespace OreExcavator
             {
                 case ActionType.TileWhiteListed:
                     if (OreExcavator.ClientConfig.tileWhitelistAll)
-                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Off", Language.GetTextValue("Mods.OreExcavator.Tile"), $"ID.{name} ({typeId})"), Color.Red, LogType.Warn);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Off", $"TileID.{name} ({typeId})"), Color.Red, LogType.Warn);
 
                     if (OreExcavator.ServerConfig.tileBlacklistToggled is false || OreExcavator.ServerConfig.tileBlacklist.Contains(name) is false)
                     {
                         if (OreExcavator.ClientConfig.tileWhitelist.Contains(name) is false)
                         {
                             OreExcavator.ClientConfig.tileWhitelist.Add(name);
-                            OreExcavator.SaveConfig(OreExcavator.ClientConfig);
-                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Added", Language.GetTextValue("Mods.OreExcavator.Tile"), $"ID.{name} ({typeId})"), Color.Green, LogType.Info);
+                            ExcavatorSystem.SaveConfig(OreExcavator.ClientConfig);
+                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Added", $"TileID.{name} ({typeId})"), Color.Green, LogType.Info);
                         }
                         else
-                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Contains", Language.GetTextValue("Mods.OreExcavator.Tile"), $"ID.{name} ({typeId})"), Color.Yellow, LogType.Warn);
+                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Contains", $"TileID.{name} ({typeId})"), Color.Yellow, LogType.Warn);
                     }
                     else if (Main.netMode == NetmodeID.SinglePlayer)
                     {
                         if (timeout <= 0)
                         {
                             timeout = byte.MaxValue;
-                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Blacklisted", Language.GetTextValue("Mods.OreExcavator.Tile"), $"ID.{name} ({typeId})"), Color.Red, LogType.Error);
-                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Override", Language.GetTextValue("Mods.OreExcavator.Tile"), $"ID.{name} ({typeId})"), Color.Aqua, LogType.Info);
+                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Blacklisted", $"TileID.{name} ({typeId})"), Color.Red, LogType.Error);
+                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Override", $"TileID.{name} ({typeId})"), Color.Aqua, LogType.Info);
                         }
                         else
                         {
                             timeout = 0;
                             OreExcavator.ServerConfig.tileBlacklist.Remove(name);
                             OreExcavator.ClientConfig.tileWhitelist.Add(name);
-                            OreExcavator.SaveConfig(OreExcavator.ClientConfig);
-                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Added", Language.GetTextValue("Mods.OreExcavator.Tile"), $"ID.{name} ({typeId})") + Language.GetTextValue("Mods.OreExcavator.Whitelisting.Ignore", Language.GetTextValue("Mods.OreExcavator.Wall"), $"ID.{name} ({typeId})"), Color.Green, LogType.Info);
+                            ExcavatorSystem.SaveConfig(OreExcavator.ClientConfig);
+                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Added", $"TileID.{name} ({typeId})") + Language.GetTextValue("Mods.OreExcavator.Whitelisting.Ignore", Language.GetTextValue("Mods.OreExcavator.Wall"), $"ID.{name} ({typeId})"), Color.Green, LogType.Info);
                         }
                     }
                     else
                     {
-                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Blacklisted", Language.GetTextValue("Mods.OreExcavator.Tile"), $"ID.{name} ({typeId})"), Color.Red, LogType.Error);
-                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.ContactHost", Language.GetTextValue("Mods.OreExcavator.Tile"), $"ID.{name} ({typeId})"), Color.Aqua, LogType.Info);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Blacklisted", $"TileID.{name} ({typeId})"), Color.Red, LogType.Error);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.ContactHost", $"TileID.{name} ({typeId})"), Color.Aqua, LogType.Info);
                     }
                     break;
 
                 case ActionType.WallWhiteListed:
                     if (OreExcavator.ClientConfig.wallWhitelistAll)
-                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Off", Language.GetTextValue("Mods.OreExcavator.Wall"), $"ID.{name} ({typeId})"), Color.Red, LogType.Warn);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Off", $"WallID.{name} ({typeId})"), Color.Red, LogType.Warn);
 
                     if (!OreExcavator.ServerConfig.wallBlacklistToggled || !OreExcavator.ServerConfig.wallBlacklist.Contains(name))
                     {
                         if (!OreExcavator.ClientConfig.wallWhitelist.Contains(name))
                         {
                             OreExcavator.ClientConfig.wallWhitelist.Add(name);
-                            OreExcavator.SaveConfig(OreExcavator.ClientConfig);
-                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Added", Language.GetTextValue("Mods.OreExcavator.Wall"), $"ID.{name} ({typeId})"), Color.Green, LogType.Info);
+                            ExcavatorSystem.SaveConfig(OreExcavator.ClientConfig);
+                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Added", $"WallID.{name} ({typeId})"), Color.Green, LogType.Info);
                         }
                         else
-                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Contains", Language.GetTextValue("Mods.OreExcavator.Wall"), $"ID.{name} ({typeId})"), Color.Yellow, LogType.Warn);
+                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Contains", $"WallID.{name} ({typeId})"), Color.Yellow, LogType.Warn);
                     }
                     else if (Main.netMode == NetmodeID.SinglePlayer)
                     {
                         if (timeout <= 0)
                         {
                             timeout = byte.MaxValue;
-                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Blacklisted", Language.GetTextValue("Mods.OreExcavator.Wall"), $"ID.{name} ({typeId})"), Color.Red, LogType.Error);
-                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Override", Language.GetTextValue("Mods.OreExcavator.Wall"), $"ID.{name} ({typeId})"), Color.Aqua, LogType.Info);
+                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Blacklisted", $"WallID.{name} ({typeId})"), Color.Red, LogType.Error);
+                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Override", $"WallID.{name} ({typeId})"), Color.Aqua, LogType.Info);
                         }
                         else
                         {
                             timeout = 0;
                             OreExcavator.ServerConfig.wallBlacklist.Remove(name);
                             OreExcavator.ClientConfig.wallWhitelist.Add(name);
-                            OreExcavator.SaveConfig(OreExcavator.ClientConfig);
-                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Contains", Language.GetTextValue("Mods.OreExcavator.Wall"), $"ID.{name} ({typeId})") + Language.GetTextValue("Mods.OreExcavator.Whitelisting.Ignore", Language.GetTextValue("Mods.OreExcavator.Wall"), $"ID.{name} ({typeId})"), Color.Green, LogType.Info);
+                            ExcavatorSystem.SaveConfig(OreExcavator.ClientConfig);
+                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Contains", $"WallID.{name} ({typeId})") + Language.GetTextValue("Mods.OreExcavator.Whitelisting.Ignore", Language.GetTextValue("Mods.OreExcavator.Wall"), $"ID.{name} ({typeId})"), Color.Green, LogType.Info);
                         }
                     }
                     else
                     {
-                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Blacklist", Language.GetTextValue("Mods.OreExcavator.Wall"), $"ID.{name} ({typeId})"), Color.Red, LogType.Error);
-                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.ContactHost", Language.GetTextValue("Mods.OreExcavator.Wall"), $"ID.{name} ({typeId})"), Color.Aqua, LogType.Info);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Blacklist", $"WallID.{name} ({typeId})"), Color.Red, LogType.Error);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.ContactHost", $"WallID.{name} ({typeId})"), Color.Aqua, LogType.Info);
                     }
                     break;
 
@@ -116,33 +117,33 @@ namespace OreExcavator
                         break;
                     if (item.createTile < 0.0 && item.createWall < 1) // Tried adding non-placeable
                     {
-                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.NoPlace", Language.GetTextValue("Mods.OreExcavator.Item"), $"ID.{name} ({typeId})"), Color.Red, LogType.Warn);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.NoPlace", $"ItemID.{name} ({typeId})"), Color.Red, LogType.Warn);
                         break;
                     }
 
                     if (OreExcavator.ClientConfig.itemWhitelistAll)
-                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Off", Language.GetTextValue("Mods.OreExcavator.Item"), $"ID.{name} ({typeId})"), Color.Red, LogType.Warn);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Off", $"ItemID.{name} ({typeId})"), Color.Red, LogType.Warn);
 
                     if (OreExcavator.ServerConfig.itemBlacklistToggled is false || OreExcavator.ServerConfig.itemBlacklist.Contains(name) is false)
                     {
                         if (OreExcavator.ClientConfig.itemWhitelist.Contains(name) is false)
                         {
                             OreExcavator.ClientConfig.itemWhitelist.Add(name);
-                            OreExcavator.SaveConfig(OreExcavator.ClientConfig);
-                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Added", Language.GetTextValue("Mods.OreExcavator.Item"), $"ID.{name} ({typeId})"), Color.Green, LogType.Info);
+                            ExcavatorSystem.SaveConfig(OreExcavator.ClientConfig);
+                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Added", $"ItemID.{name} ({typeId})"), Color.Green, LogType.Info);
                         }
                         else if (typeId > 0)
-                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Contains", Language.GetTextValue("Mods.OreExcavator.Item"), $"ID.{name} ({typeId})"), Color.Yellow, LogType.Warn);
+                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Contains", $"ItemID.{name} ({typeId})"), Color.Yellow, LogType.Warn);
                         else
-                            OreExcavator.Log($"You can't whitelist nothing! Hover over a tile, wall or item and try again.", Color.Red, LogType.Error);
+                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Nothing"), Color.Red, LogType.Error);
                     }
                     else if (Main.netMode == NetmodeID.SinglePlayer)
                     {
                         if (timeout <= 0)
                         {
                             timeout = byte.MaxValue;
-                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Blacklisted", Language.GetTextValue("Mods.OreExcavator.Item"), $"ID.{name} ({typeId})"), Color.Red, LogType.Error);
-                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Override", Language.GetTextValue("Mods.OreExcavator.Item"), $"ID.{name} ({typeId})"), Color.Aqua, LogType.Info);
+                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Blacklisted", $"ItemID.{name} ({typeId})"), Color.Red, LogType.Error);
+                            OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Override", $"ItemID.{name} ({typeId})"), Color.Aqua, LogType.Info);
                         }
                         else
                         {
@@ -150,65 +151,65 @@ namespace OreExcavator
                             {
                                 OreExcavator.ServerConfig.itemBlacklist.Remove(name);
                                 OreExcavator.ClientConfig.itemWhitelist.Add(name);
-                                OreExcavator.SaveConfig(OreExcavator.ClientConfig);
-                                OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Added", Language.GetTextValue("Mods.OreExcavator.Item"), $"ID.{name} ({typeId})") + Language.GetTextValue("Mods.OreExcavator.Whitelisting.Ignore", Language.GetTextValue("Mods.OreExcavator.Item"), $"ID.{name} ({typeId})"), Color.Green, LogType.Info);
+                                ExcavatorSystem.SaveConfig(OreExcavator.ClientConfig);
+                                OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Added", $"ItemID.{name} ({typeId})") + Language.GetTextValue("Mods.OreExcavator.Whitelisting.Ignore", Language.GetTextValue("Mods.OreExcavator.Item"), $"ID.{name} ({typeId})"), Color.Green, LogType.Info);
                             }
                             else if (typeId > 0)
-                                OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Contains", Language.GetTextValue("Mods.OreExcavator.Item"), $"ID.{name} ({typeId})"), Color.Yellow, LogType.Warn);
+                                OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Contains", $"ItemID.{name} ({typeId})"), Color.Yellow, LogType.Warn);
                             else
                                 OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Nothing"), Color.Red, LogType.Error);
                         }
                     }
                     else
                     {
-                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Blacklisted", Language.GetTextValue("Mods.OreExcavator.Item"), $"ID.{name} ({typeId})"), Color.Red, LogType.Error);
-                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.ContactHost", Language.GetTextValue("Mods.OreExcavator.Item"), $"ID.{name} ({typeId})"), Color.Aqua, LogType.Info);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Blacklisted", $"ItemID.{name} ({typeId})"), Color.Red, LogType.Error);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.ContactHost", $"ItemID.{name} ({typeId})"), Color.Aqua, LogType.Info);
                     }
                     break;
 
                 case ActionType.TileBlackListed:
                     if (OreExcavator.ClientConfig.tileWhitelistAll)
-                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Blacklisting.Off", Language.GetTextValue("Mods.OreExcavator.Tile"), $"ID.{name} ({typeId})"), Color.Red, LogType.Warn);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Off", $"TileID.{name} ({typeId})"), Color.Red, LogType.Warn);
 
                     if (OreExcavator.ClientConfig.tileWhitelist.Contains(name))
                     {
                         OreExcavator.ClientConfig.tileWhitelist.Remove(name);
-                        OreExcavator.SaveConfig(OreExcavator.ClientConfig);
-                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Removed", Language.GetTextValue("Mods.OreExcavator.Tile"), $"ID.{name} ({typeId})"), Color.Orange, LogType.Info);
+                        ExcavatorSystem.SaveConfig(OreExcavator.ClientConfig);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Removed", $"TileID.{name} ({typeId})"), Color.Orange, LogType.Info);
                     }
                     else
-                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Missing", Language.GetTextValue("Mods.OreExcavator.Tile"), $"ID.{name} ({typeId})"), Color.Yellow, LogType.Warn);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Missing", $"TileID.{name} ({typeId})"), Color.Yellow, LogType.Warn);
                     break;
 
                 case ActionType.WallBlackListed:
                     if (OreExcavator.ClientConfig.wallWhitelistAll)
-                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.RemoveOff", Language.GetTextValue("Mods.OreExcavator.Wall"), $"ID.{name} ({typeId})"), Color.Red, LogType.Warn);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.RemoveOff", $"WallID.{name} ({typeId})"), Color.Red, LogType.Warn);
 
                     if (OreExcavator.ClientConfig.wallWhitelist.Contains(name))
                     {
 
                         OreExcavator.ClientConfig.wallWhitelist.Remove(name);
-                        OreExcavator.SaveConfig(OreExcavator.ClientConfig);
-                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Removed", Language.GetTextValue("Mods.OreExcavator.Wall"), $"ID.{name} ({typeId})"), Color.Orange, LogType.Info);
+                        ExcavatorSystem.SaveConfig(OreExcavator.ClientConfig);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Removed", $"WallID.{name} ({typeId})"), Color.Orange, LogType.Info);
                     }
                     else
-                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Missing", Language.GetTextValue("Mods.OreExcavator.Wall"), $"ID.{name} ({typeId})"), Color.Yellow, LogType.Warn);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Missing", $"WallID.{name} ({typeId})"), Color.Yellow, LogType.Warn);
                     break;
 
                 case ActionType.ItemBlackListed:
                     if (OreExcavator.ClientConfig.itemWhitelistAll)
-                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.RemoveOff", Language.GetTextValue("Mods.OreExcavator.Item"), $"ID.{name} ({typeId})"), Color.Red, LogType.Warn);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.RemoveOff", $"ItemID.{name} ({typeId})"), Color.Red, LogType.Warn);
 
                     if ((item.Name ?? "") != "" && OreExcavator.ClientConfig.itemWhitelist.Contains(name))
                     {
                         OreExcavator.ClientConfig.itemWhitelist.Remove(name);
-                        OreExcavator.SaveConfig(OreExcavator.ClientConfig);
-                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Removed", Language.GetTextValue("Mods.OreExcavator.Item"), $"ID.{name} ({typeId})"), Color.Orange, LogType.Info);
+                        ExcavatorSystem.SaveConfig(OreExcavator.ClientConfig);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Removed", $"ItemID.{name} ({typeId})"), Color.Orange, LogType.Info);
                     }
                     else if ((item.Name ?? "") != "")
-                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Missing", Language.GetTextValue("Mods.OreExcavator.Item"), $"ID.{name} ({typeId})"), Color.Yellow, LogType.Warn);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Missing", $"ItemID.{name} ({typeId})"), Color.Yellow, LogType.Warn);
                     else if (typeId <= 0)
-                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Nothing", Language.GetTextValue("Mods.OreExcavator.Item"), $"ID.{name} ({typeId})"), Color.Red, LogType.Error);
+                        OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Whitelisting.Nothing", $"ItemID.{name} ({typeId})"), Color.Red, LogType.Error);
                     break;
             }
 
@@ -245,9 +246,9 @@ namespace OreExcavator
             {
                 OreExcavator.excavationToggled = !OreExcavator.excavationToggled;
                 if (OreExcavator.excavationToggled)
-                    OreExcavator.Log("Excavations activated", Color.Green, LogType.Info);
+                    OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Keybinds.Enabled"), Color.Green, LogType.Info);
                 else
-                    OreExcavator.Log("Excavations disabled", Color.Orange, LogType.Info);
+                    OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Keybinds.Disabled"), Color.Orange, LogType.Info);
             }
 
             int x = Player.tileTargetX;
@@ -263,16 +264,16 @@ namespace OreExcavator
                         if (Main.tile[x, y].HasTile)
                         {
                             if (item.pick != 0)
-                                Player.cursorItemIconText = "Excavating";
+                                Player.cursorItemIconText = Language.GetTextValue("Mods.OreExcavator.UI.Mode.Excavating");
                             else if (item.createTile >= TileID.Dirt || item.createWall > WallID.None)
                             {
-                                if (item.Name.ToLower().Contains("seed"))
-                                    Player.cursorItemIconText = "Planting";
+                                if (item.Name.EndsWith("seeds", StringComparison.OrdinalIgnoreCase))
+                                    Player.cursorItemIconText = Language.GetTextValue("Mods.OreExcavator.UI.Mode.Planting");
                                 else
-                                    Player.cursorItemIconText = "Replacing";
+                                    Player.cursorItemIconText = Language.GetTextValue("Mods.OreExcavator.UI.Mode.Replacing");
                             }
-                            else if (item.Name.Contains("Paint") && item.paint == PaintID.None)
-                                Player.cursorItemIconText = "Painting";
+                            else if (item.Name.Contains("paint", StringComparison.OrdinalIgnoreCase) && item.paint == PaintID.None)
+                                Player.cursorItemIconText = Language.GetTextValue("Mods.OreExcavator.UI.Mode.Painting"); ;
                         }
                         else
                         {
@@ -285,17 +286,17 @@ namespace OreExcavator
                                     case TileID.VineRope:
                                     case TileID.WebRope:
                                     case TileID.PlanterBox:
-                                        Player.cursorItemIconText = "Placing";
+                                        Player.cursorItemIconText = Language.GetTextValue("Mods.OreExcavator.UI.Mode.Placing");
                                         break;
                                 }
                             else if (item.createWall > WallID.None)
-                                Player.cursorItemIconText = "Replacing";
+                                Player.cursorItemIconText = Language.GetTextValue("Mods.OreExcavator.UI.Mode.Replacing");
                             else if (Main.tile[x, y].WallType > WallID.None)
                             {
                                 if (item.hammer != 0)
-                                    Player.cursorItemIconText = "Excavating";
-                                else if (item.Name.Contains("Paint") && item.paint == PaintID.None)
-                                    Player.cursorItemIconText = "Painting";
+                                    Player.cursorItemIconText = Language.GetTextValue("Mods.OreExcavator.UI.Mode.Excavating");
+                                else if (item.Name.Contains("paint", StringComparison.OrdinalIgnoreCase) && item.paint == PaintID.None)
+                                    Player.cursorItemIconText = Language.GetTextValue("Mods.OreExcavator.UI.Mode.Painting");
                             }
                         }
                 }

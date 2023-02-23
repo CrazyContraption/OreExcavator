@@ -1,5 +1,5 @@
 ﻿
-Welcome to Ore Excavator! - Last Updated 10/12/2022
+Welcome to Ore Excavator! - Last Updated 2/16/2023
 
 
 Found an issue? Join our Discord and help report it: https://discord.gg/FtrsRtPe6h
@@ -7,7 +7,7 @@ Found an issue? Join our Discord and help report it: https://discord.gg/FtrsRtPe
 
 Ore Excavator has become the offical 1.4 port of VeinMiner, with VeinMiner being discontinued, and merged into Ore Excavator with permission.
 
-Just like with Minecraft's Ore Excavator, Ore Excavator aims to improve, expand, and adapt with the future of the modding community for the ultimate quality of life experience. Ore Excavator allows you to effortlessly mine groups of ores, walls, and perform many other tile manipulation features effortlessly at once, with plenty more to come before 1.0!
+Just like with Minecraft's Ore Excavation, Ore Excavator aims to improve, expand, and adapt with the future of the modding community for the ultimate quality of life experience. Ore Excavator allows you to effortlessly mine groups of ores, walls, and perform many other tile manipulation features effortlessly at once, with plenty more to come before 1.0!
 
 Credit to NanobotZ for the base code and the original concept!
 
@@ -20,6 +20,7 @@ FEATURES:
  - Fully configurable client controls and keybindings
  - Fully configurable client settings to tailor to dynamic performance needs
  - Fully threaded support
+ - Mod.Call API for modders
  - Autoswing compatible
  - Progression friendly
  - Powerful server management configurations
@@ -27,7 +28,7 @@ FEATURES:
  - Full modded compatibility support
 
 
-!!! THIS IS AN ALPHA VERSION !!!
+!!! THIS IS AN INCOMPLETE MOD !!!
 This is intended for early access users wishing to play on 1.4, and is likely to be broken several times!
 
 I will do my best to ensure that the mod stays for compatible and issue updates as needed, especially for multiplayer.

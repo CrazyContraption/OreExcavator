@@ -3,6 +3,7 @@
     public enum ActionType : byte
     {
         None = 0,
+        HaltExcavation,
         HaltExcavations,
         ResetExcavations,
         TileKilled,
@@ -11,8 +12,6 @@
         WallPlaced,
         TileReplaced,
         WallReplaced,
-        TurfPlanted,
-        TurfHarvested,
         SeedPlanted,
         SeedHarvested,
         TilePainted,

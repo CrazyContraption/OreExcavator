@@ -1,5 +1,5 @@
 ﻿
-[b]Welcome to Ore Excavator! - Last Updated 10/12/2022[/b]
+[b]Welcome to Ore Excavator! - Last Updated 2/16/2023[/b]
 
 
 Found an issue? Join our Discord and help report it: https://discord.gg/FtrsRtPe6h
@@ -7,7 +7,7 @@ Found an issue? Join our Discord and help report it: https://discord.gg/FtrsRtPe
 
 Ore Excavator has become the offical 1.4 port of VeinMiner, with VeinMiner being discontinued, and merged into Ore Excavator with permission.
 
-Just like with Minecraft's Ore Excavator, Ore Excavator aims to improve, expand, and adapt with the future of the modding community for the ultimate quality of life experience. Ore Excavator allows you to effortlessly mine groups of ores, walls, and perform many other tile manipulation features effortlessly at once, with plenty more to come before 1.0!
+Just like with Minecraft's Ore Excavation, Ore Excavator aims to improve, expand, and adapt with the future of the modding community for the ultimate quality of life experience. Ore Excavator allows you to effortlessly mine groups of ores, walls, and perform many other tile manipulation features effortlessly at once, with plenty more to come before 1.0!
 
 Credit to NanobotZ for the base code and the original concept!
 
@@ -21,6 +21,7 @@ Credit to NanobotZ for the base code and the original concept!
     [*]Fully configurable client controls and keybindings
     [*]Fully configurable client settings to tailor to dynamic performance needs
     [*]Fully threaded support
+    [*]Mod.Call API for modders
     [*]Autoswing compatible
     [*]Progression friendly
     [*]Excavations require mana option (for balanced play)
@@ -29,13 +30,13 @@ Credit to NanobotZ for the base code and the original concept!
     [*]Full modded compatibility support
 [/list]
 
-[h1] !!! THIS IS AN ALPHA VERSION !!! [/h1]
+[h1] !!! THIS IS AN INCOMPLETE MOD !!! [/h1]
 This is intended for early access users wishing to play on 1.4, and is likely to be broken several times!
 
 I will do my best to ensure that the mod stays for compatible and issue updates as needed, especially for multiplayer.
 
 Due to the nature of the mod, bugs involving deleting massive amounts of blocks, walls, and similar issues are to be expected.
-Please report any issues -no matter how small- to me on the tModloader Discord (@CrazyContraption#0666)
+Please report any issues -no matter how small- to me on the tModloader Discord (@CrazyContraption#0666), or our Discord server!
 
 PLEASE REPORT ANY ISSUES, EVEN IF YOU THINK IT MAY ALREADY BE REPORTED!!
 It helps us deduce how common the issue is, and to better gather data on who, and how it happens.
@@ -71,6 +72,9 @@ A:Yes! But also no... we don't know. Every mod is different and unique, however 
 Q:"Do you use any IL edits?"
 A:No, not anymore. Once upon a time we did, now things are much easier for us, and we can use vanilla tML for everything we do.
 
+Q:"Do you hanve an API?"
+A:Yes! as of v0.8.0, we have an API your mods can access when loaded together. Visit our Discord for more information.
+
 [h1] Roadmap (Order of Priority) [/h1]
 [olist]
     [*]Fixing duplication exploits
@@ -86,22 +90,21 @@ A:No, not anymore. Once upon a time we did, now things are much easier for us, a
 0.8.0
  ~ Updated mana configurations to use a slider for better user control. Turn it back on after this update if you had it on before!
  ~ Updated permission error messages to only display when debug mode is enabled.
- ~ Updated core excavation queue logic - gameplay should be the same, but performance might change.
+ ~ Updated core excavation queue logic - gameplay should be the same, but performance should be much better.
+ + Finished full controller support.
  + Added a toggle for chain-placing features to the server configurations.
  + Added a config for servers to block the mod's motd forever, can also be used in singleplayer.
  + Added translations! We're working on adding more languages, visit our Discord to help out!
- + Added full controller support.
  + Added English translations.
- + Added ??? translations.
- + Added ??? translations.
- + Added ??? translations.
- + Added ??? translations.
+ + Added a Mod.Call() API to the mod for modders to use.
+ + Added Tunit testing suite, coming soon to the workshop!
  * Fixed connected gravity tiles not always updating following the conclusions of excavations.
  * Fixed most (if not all) duplication-related exploits within the mod.
  * Fixed crashes related to Draw method race condition crashes.
  * Fixed crashes related to excavating trees.
  * Fixed crashes related to smart cursors and torch excavations.
  * Fixed controllers requiring a keyboard binding to function.
+ * Fixed file saving, shouldn't cause any security issues anymore!
  - Removed a bunch of outdated patchwork fixes for dupes, crashes, and old compatibility issues.
 
 0.7.5

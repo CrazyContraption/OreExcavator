@@ -4,20 +4,16 @@
         <name>OreExcavator</name>
     </assembly>
     <members>
-        <member name="M:OreExcavator.Alteration.DoAlteration(OreExcavator.Alteration)">
+        <member name="M:OreExcavator.Alteration.DoAlteration(System.Int32,System.Int32)">
             <summary>
             Handles the individual manipulations based on the action type desired when called.
             This allows us to use the same floodfill for everything, but perform unique actions.
             </summary>
             
-            <param name="actionType">Type of action to be performed</param>
             <param name="x">X coordinate of the alteration</param>
             <param name="y">Y coordinate of the alteration</param>
-            <param name="playerID">The player index to teleport items to and consume items from, if needed</param>
-            <param name="consumesItemType">Item to consume if any, -1 to omit (invalid item)</param>
-            <param name="itemSubtype">ID of the item style that is being replaced with, if needed - may also represent a color</param>
         </member>
-        <member name="M:OreExcavator.OreExcavatorKeybinds.setListUpdates(OreExcavator.Enumerations.ActionType,System.Int32,System.String,System.Int32)">
+        <member name="M:OreExcavator.OreExcavatorKeybinds.SetListUpdates(OreExcavator.Enumerations.ActionType,System.Int32,System.String,System.Int32)">
             <summary>
             Called manually, this updates configs and does the various checks to ensure a list update is valid.
             Also formats and saves the update accordingly if it is deemed valid.
@@ -35,19 +31,19 @@
             
             <param name="triggersSet"></param>
         </member>
-        <member name="F:OreExcavator.OreExcavator.devmode">
-                                          ///
-                !!!THE DANGER ZONE!!!     ///
-                                          ///
-        </member>
-        <member name="F:OreExcavator.OreExcavator.killCalled">
+        <member name="F:OreExcavator.OreExcavator.KillCalled">
             <summary>
-            Per-thread boolean that signifies if an excavation-related actions are taking place on that thread.
+            Static boolean that signifies if an excavation-related actions are taking place.
             </summary>
         </member>
-        <member name="F:OreExcavator.OreExcavator.puppeting">
+        <member name="F:OreExcavator.OreExcavator.Puppeting">
             <summary>
             Per-thread boolean that signifies if an excavation puppeting is taking place on that thread.
+            </summary>
+        </member>
+        <member name="F:OreExcavator.OreExcavator.ThreadId">
+            <summary>
+            Per-thread ushort identifying the ID of the thread being run if any.
             </summary>
         </member>
         <member name="M:OreExcavator.OreExcavator.Load">
@@ -55,6 +51,33 @@
             Called by tML when the mod is asked to load.
             This binds various important aspects of the mod.
             </summary>
+        </member>
+        <member name="M:OreExcavator.OreExcavator.Detour_Update(On.Terraria.Main.orig_Update,Terraria.Main,Microsoft.Xna.Framework.GameTime)">
+            <summary>
+            Pops alteration tasks off the queue to be updated in-game in a thread-safe way respective of Draw.
+            </summary>
+        </member>
+        <member name="M:OreExcavator.OreExcavator.Detour_SpawnFallingBlockProjectile(On.Terraria.WorldGen.orig_SpawnFallingBlockProjectile,System.Int32,System.Int32,Terraria.Tile,Terraria.Tile,Terraria.Tile,System.Int32)">
+            <summary>
+            Prevents falling tiles from updating during an excavation.
+            </summary>
+        </member>
+        <member name="M:OreExcavator.OreExcavator.WorldGen_CheckOrb(On.Terraria.WorldGen.orig_CheckOrb,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Prevents orb duplication during an excavation.
+            </summary>
+        </member>
+        <member name="M:OreExcavator.OreExcavator.WorldGen_CheckPot(On.Terraria.WorldGen.orig_CheckPot,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Prevents pot duplication during an excavation.
+            </summary>
+        </member>
+        <member name="M:OreExcavator.OreExcavator.ReturnIfCalled(MonoMod.Cil.ILContext)">
+            <summary>
+            IL-ready injection that returns any injected method immediately if the thread calling it is doing an excavation
+            </summary>
+            
+            <param name="il"></param>
         </member>
         <member name="M:OreExcavator.OreExcavator.PostSetupContent">
             <summary>
@@ -72,7 +95,7 @@
             <param name="reader">Stream of data contained by the packet, first byte is always the type</param>
             <param name="whoAmI">Player index of who sent the packet</param>
         </member>
-        <member name="M:OreExcavator.OreExcavator.ModifySpooler(OreExcavator.Enumerations.ActionType,System.UInt16,System.UInt16,System.Byte,System.Int32,System.Boolean,System.Byte,System.UInt16,System.Byte,System.Int32,System.Int32,System.Int32,System.Boolean)">
+        <member name="M:OreExcavator.OreExcavator.ModifySpooler(OreExcavator.Enumerations.ActionType,System.UInt16,System.UInt16,System.Byte,System.Int32,System.Boolean,System.Byte,System.UInt16,System.Byte,System.Int32,System.Int32,System.SByte,System.Boolean)">
             <summary>
             This "spools up" a threaded task that will define and monitor a new excavation. Clients call this locally, and servers that recieve valid packets call this with pupetting properties.
             </summary>
@@ -88,7 +111,7 @@
             <param name="replacementType"></param>
             <param name="replacementSubtype"></param>
         </member>
-        <member name="M:OreExcavator.OreExcavator.ModifyAdjacentFloodfill(OreExcavator.Enumerations.ActionType,System.UInt16,System.UInt16,System.Int32,System.Byte,System.Boolean,System.Byte,System.Int32,System.Byte,System.Int32,System.Int32,System.Int32)">
+        <member name="M:OreExcavator.OreExcavator.ModifyAdjacentFloodfill(OreExcavator.Enumerations.ActionType,System.UInt16,System.UInt16,System.Int32,System.Byte,System.Boolean,System.Byte,System.Int32,System.Byte,System.Int32,System.Int32,System.SByte)">
             <summary>
             Searches around the given origin for matching types, and modifies them based on refined clauses.
             This also recursively schedules new nodes to search from, but only serially, never concurrently.
@@ -109,14 +132,22 @@
         </member>
         <member name="M:OreExcavator.OreExcavator.CheckIfAllowed(System.Int32,OreExcavator.Enumerations.ActionType,System.Int32,System.Boolean)">
             <summary>
-            Checks if an id is valid for a given action against the whitelists and blacklists
-            Respecting their enabled status and contents.
+            Checks if an id is valid for a given action against the whitelists and blacklists.
+            Respecting their enabled status and contents. Will return null for invalid lookups.
             </summary>
             
             <param name="id">ID to translate into a string</param>
             <param name="type">Whitelist type of the ID being passed, black/white treated the same</param>
             <param name="subtype">Whitelist frameY of the ID being passed, if any</param>
             <param name="checkClient">Should checks be done against the local whitelist too?</param>
+            <returns>Translated string</returns>
+        </member>
+        <member name="M:OreExcavator.OreExcavator.GetExtendsDirection(System.Int32)">
+            <summary>
+            Gets the extendable direction of the tile being interacted with, if any.
+            </summary>
+            
+            <param name="tileID">TileID type to check the direction of extension, if any.</param>
             <returns>Translated string</returns>
         </member>
         <member name="M:OreExcavator.OreExcavator.GetFullNameById(System.Int32,OreExcavator.Enumerations.ActionType,System.Int32)">
@@ -129,25 +160,6 @@
             <param name="type">Whitelist type of the ID being passed, black/white treated the same</param>
             <param name="subtype">Whitelist frameY of the ID being passed, if any is avaiable to be parsed</param>
             <returns>Translated string</returns>
-        </member>
-        <member name="M:OreExcavator.OreExcavator.GetIdByFullName(System.String,OreExcavator.Enumerations.ActionType,System.Int32@)">
-            <summary>
-            Gets the ID of a tile/wall/item with respect to tML loader designations.
-            Used for reading from whitelists.
-            </summary>
-            
-            <param name="fullName">Full name to translate into an ID</param>
-            <param name="type">Whitelist type of the ID being passed, black/white treated the same</param>
-            <param name="subtype">Whitelist frameY of the ID being passed, if any is avaiable to be parsed</param>
-            <returns>Translated ID. Returns negative for invalid types</returns>
-        </member>
-        <member name="M:OreExcavator.OreExcavator.SaveConfig(Terraria.ModLoader.Config.ModConfig)">
-            <summary>
-            For whatever reason, ModConfig has no native way of saving runtime changes to a config.
-            So here I am, writing a file system to manually save changes, usually just whitelist changes.
-            </summary>
-            
-            <param name="config">The configuration object to write to storage from memory.</param>
         </member>
         <member name="M:OreExcavator.OreExcavator.Log(System.String,Microsoft.Xna.Framework.Color,OreExcavator.Enumerations.LogType)">
             <summary>
@@ -230,6 +242,22 @@
             
             <param name="item">The item in question</param>
             <param name="player">The player using the item in question</param>
+        </member>
+        <member name="M:OreExcavator.ExcavatorSystem.SaveConfig(Terraria.ModLoader.Config.ModConfig)">
+            <summary>
+            For whatever reason, ModConfig has no native way of saving runtime changes to a config.
+            So here I am, writing a file system to manually save changes, usually just whitelist changes.
+            </summary>
+            
+            <param name="config">The configuration object to write to storage from memory.</param>
+        </member>
+        <member name="M:OreExcavator.ExcavatorSystem.LoadConfig(Terraria.ModLoader.Config.ModConfig)">
+            <summary>
+            For whatever reason, ModConfig has no native way of saving runtime changes to a config.
+            So here I am, writing a file system to manually save changes, usually just whitelist changes.
+            </summary>
+            
+            <param name="config">The configuration object to write to storage from memory.</param>
         </member>
     </members>
 </doc>
