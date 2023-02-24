@@ -1,5 +1,5 @@
-using Microsoft.Xna.Framework;
-using MonoMod.RuntimeDetour.HookGen;
+using Microsoft.Xna.Framework;       // XNA
+using MonoMod.RuntimeDetour.HookGen; // Rip my soul
 using MonoMod.Cil;                   // IL
 using OreExcavator.Enumerations;     // Enums
 
@@ -8,24 +8,24 @@ using System.Collections.Concurrent; // ConcurrentDictionary
 using System.Collections.Generic;    // Lists & Dictionaries
 using System.IO;                     // Binary Reader, Path
 
-using System.Reflection;
+using System.Reflection;             // Send help if you see this
 using System.Threading;              // Threading
 using System.Threading.Tasks;        // Threading
 
 using Terraria;                      // Terraria
 using Terraria.DataStructures;       // Point16
-using Terraria.GameContent.UI.Chat;
-using Terraria.GameInput;
+using Terraria.GameContent.UI.Chat;  // Used for message de-duplication
+using Terraria.GameInput;            // Detecting controller vs. keyboard
 using Terraria.ID;                   // Networking
 using Terraria.Localization;
 using Terraria.ModLoader;            // Modloader
-using Terraria.ModLoader.Config;
-using Terraria.ObjectData;
-using Terraria.UI.Chat;
+using Terraria.ModLoader.Config;     // Configs
+using Terraria.ObjectData;           // No a clue
+using Terraria.UI.Chat;              // Used for message de-duplication
 
 
 
-namespace OreExcavator /// The Excavator of ores
+namespace OreExcavator /// The Excavator of Ores
 {
     public partial class OreExcavator : Mod
     {
@@ -60,9 +60,9 @@ namespace OreExcavator /// The Excavator of ores
 
 
         internal static Tile lookingAtTile;
-        internal static ushort lookingCoordX;
-        internal static ushort lookingCoordY;
-        internal static bool[] playerHalted = new bool[Main.maxPlayers+2];
+        internal static uint lookingCoordX;
+        internal static uint lookingCoordY;
+        internal static bool[] playerHalt = new bool[Main.maxPlayers + 1];
         internal static bool excavationToggled = false;
         internal static int msgReps = 1;
         internal static bool hostOnly = true;
@@ -75,13 +75,15 @@ namespace OreExcavator /// The Excavator of ores
         {
 #if DEBUG
             Log($"Loading [{myMod.DisplayName}] - v{myMod.Version}... (DEBUG)", default, LogType.Info);
-#else
+#elif TML_2022_10
             Log($"Loading [{myMod.DisplayName}] - v{myMod.Version}... (RELEASE)", default, LogType.Info);
+#else
+            Log($"Loading [{myMod.DisplayName}] - v{myMod.Version}... (PREVIEW)", default, LogType.Info);
 #endif
 
-            ExcavateHotkey = KeybindLoader.RegisterKeybind(this, Language.GetTextValue("Mods.OreExcavator.KeyBinds.Excavate"), "OemTilde");
-            WhitelistHotkey = KeybindLoader.RegisterKeybind(this, Language.GetTextValue("Mods.OreExcavator.KeyBinds.Whitelist"), "Insert");
-            BlacklistHotkey = KeybindLoader.RegisterKeybind(this, Language.GetTextValue("Mods.OreExcavator.KeyBinds.UnWhitelist"), "Delete");
+            ExcavateHotkey = KeybindLoader.RegisterKeybind(this, "Excavate", "OemTilde");
+            WhitelistHotkey = KeybindLoader.RegisterKeybind(this, "Whitelist", "Insert");
+            BlacklistHotkey = KeybindLoader.RegisterKeybind(this, "UnWhitelist", "Delete");
             
             On.Terraria.Main.Update += Detour_Update; // Alteration updates to main world, required
             
@@ -105,7 +107,7 @@ namespace OreExcavator /// The Excavator of ores
         /// </summary>
         private void Detour_Update(On.Terraria.Main.orig_Update orig, Main self, GameTime gameTime)
         {
-            while (alterQueue.IsEmpty is false && (Main.gamePaused is false || Main.netMode is not NetmodeID.SinglePlayer))
+            while (alterQueue.IsEmpty is false && (Main.gamePaused is false || Main.netMode is NetmodeID.MultiplayerClient))
             {
                 _ = alterQueue.TryDequeue(out (int x, int y, Alteration alteration) alteration);
                 if (alteration.alteration is not null)
@@ -116,6 +118,10 @@ namespace OreExcavator /// The Excavator of ores
                         KillCalled = true;
                         bool fatal = alteration.alteration.DoAlteration(alteration.x, alteration.y);
                         KillCalled = false;
+
+                        if (Main.netMode is not NetmodeID.Server)
+                            if (alteration.x == Player.tileTargetX && alteration.y == Player.tileTargetY)
+                                lookingAtTile.CopyFrom(Main.tile[alteration.x, alteration.y]);
 
                         if (fatal)
                         {
@@ -196,6 +202,7 @@ namespace OreExcavator /// The Excavator of ores
             cursor.MarkLabel(label); // Label
         }
 
+#if DEBUG == false
         /// <summary>
         /// Executes once most -if not all- modded content is loaded by tML.
         /// Looks for items from other mods that could be classified as ores, gems, chunks, etc.
@@ -203,7 +210,21 @@ namespace OreExcavator /// The Excavator of ores
         /// </summary>
         public override void PostSetupContent()
         {
-            Log(Language.GetTextValue("Mods.OreExcavator.Logging.OreSearch.Start"), default, LogType.Info);
+            Log("Auto-whitelist runner started. Looking for modded ores and gems to whitelist...", default, LogType.Info);
+
+            Log("Running through tML Ore Tile Set...", default, LogType.Info);
+
+            foreach (var ore in TileID.Sets.Ore.GetTrueIndexes())
+            {
+                string name = GetFullNameById(ore, ActionType.TileWhiteListed);
+                if (ClientConfig.tileWhitelist.Contains(name) is false)
+                {
+                    Log($"Found ore from Ore Set: '{name}', adding to whitelist...", default, LogType.Info);
+                    ClientConfig.tileWhitelist.Add(name);
+                }
+                else
+                    Log($"Found ore from Ore Set: '{name}', but was already whitelisted.", default, LogType.Info);
+            }
 
             if (ModLoader.TryGetMod("CalamityMod", out var calamityMod) && calamityMod != null)
             {
@@ -219,11 +240,11 @@ namespace OreExcavator /// The Excavator of ores
                     string calamityName = "CalamityMod.CalamityMod." + calamityTile;
                     if (ClientConfig.tileWhitelist.Contains(calamityName) is false)
                     {
-                        Log(Language.GetTextValue("Mods.OreExcavator.Logging.OreSearch.Added", "TileID." + calamityTile, calamityName), default, LogType.Info);
+                        Log($"Found Calamity Ore: 'TileID.{calamityTile}'... Adding to whitelist as '{calamityName}'", default, LogType.Info);
                         ClientConfig.tileWhitelist.Add(calamityName);
                     }
                     else
-                        Log(Language.GetTextValue("Mods.OreExcavator.Logging.OreSearch.Found", "TileID." + calamityTile, calamityName), default, LogType.Info);
+                        Log($"Found Calamity Ore: 'TileID.{calamityTile}'... But already exists in whitelist as '{calamityName}'", default, LogType.Info);
                 }
                 Log("CalamityMod manual whitelisting concluded.", default, LogType.Info);
             }
@@ -249,11 +270,11 @@ namespace OreExcavator /// The Excavator of ores
                     string thoriumName = "ThoriumMod.ThoriumMod." + thoriumTile;
                     if (ClientConfig.tileWhitelist.Contains(thoriumName) is false)
                     {
-                        Log(Language.GetTextValue("Mods.OreExcavator.Logging.OreSearch.Added", "TileID." + thoriumTile, thoriumName), default, LogType.Info);
+                        Log($"Found Thorium Ore: 'TileID.{thoriumTile}'... Adding to whitelist as '{thoriumName}'", default, LogType.Info);
                         ClientConfig.tileWhitelist.Add(thoriumName);
                     }
                     else
-                        Log(Language.GetTextValue("Mods.OreExcavator.Logging.OreSearch.Found", "TileID." + thoriumTile, thoriumName), default, LogType.Info);
+                        Log($"Found Thorium Ore: 'TileID.{thoriumTile}'... But already exists in whitelist as '{thoriumName}'", default, LogType.Info);
                 }
                 Log("ThoriumMod manual whitelisting concluded.", default, LogType.Info);
             }
@@ -310,16 +331,17 @@ namespace OreExcavator /// The Excavator of ores
                     name = GetFullNameById(id, ActionType.TileWhiteListed);
                     if (ClientConfig.tileWhitelist.Contains(name) is false)
                     {
-                        Log(Language.GetTextValue("Mods.OreExcavator.Logging.OreSearch.Added", "TileID." + newName, name), default, LogType.Info);
+                        Log($"Found Other Ore: 'TileID.{newName}'... Adding to whitelist as '{name}'", default, LogType.Info);
                         ClientConfig.tileWhitelist.Add(name);
                     }
                     else
-                        Log(Language.GetTextValue("Mods.OreExcavator.Logging.OreSearch.Found", "TileID." + newName, name), default, LogType.Info);
+                        Log($"Found Other Ore: 'TileID.{newName}'... But already exists in whitelist as '{name}'", default, LogType.Info);
                 }
             }
             ExcavatorSystem.SaveConfig(ClientConfig);
-            Log(Language.GetTextValue("Mods.OreExcavator.Logging.OreSearch.Finish"), default, LogType.Info);
+            Log("Auto-whitelist runner concluded. Finishing up...", default, LogType.Info);
         }
+#endif
 
         internal static bool TaskOkay(ushort? id)
         {
@@ -390,7 +412,7 @@ namespace OreExcavator /// The Excavator of ores
                     break;
             }
 #if DEBUG
-            Log($"Packet from: '{(Main.netMode == NetmodeID.MultiplayerClient ? $"SERVER', origin: 'Player.{Main.player[origin].name}" : "Player." + Main.player[origin].name) + $" ({origin})"}', type: 'ActionType.{msgType}'");
+            Log($"Packet from: '{(Main.netMode == NetmodeID.MultiplayerClient ? $"SERVER', origin: 'Player.{Main.player[origin].name}" : "Player." + Main.player[origin].name) + $" ({origin})"}', type: [{ThreadId}]'ActionType.{msgType}'");
 #endif
 
             switch (msgType)
@@ -414,7 +436,7 @@ namespace OreExcavator /// The Excavator of ores
                             packet.Write((byte)ActionType.HaltExcavations);
                             packet.Send(-1, origin);
                         }
-                        playerHalted[origin] = true;
+                        playerHalt[origin] = true;
                     }
                     break;
 
@@ -425,7 +447,7 @@ namespace OreExcavator /// The Excavator of ores
                             packet.Write((byte)ActionType.ResetExcavations);
                             packet.Send(-1, origin);
                         }
-                        playerHalted[origin] = false;
+                        playerHalt[origin] = false;
                     }
                     break;
 
@@ -433,7 +455,7 @@ namespace OreExcavator /// The Excavator of ores
                 case ActionType.TileKilled:
                 case ActionType.WallKilled:
                     {
-                        playerHalted[origin] = false;
+                        playerHalt[origin] = false;
                         ushort x = reader.ReadUInt16(), y = reader.ReadUInt16();
                         byte delay = reader.ReadByte();
                         int limit = reader.ReadInt32();
@@ -453,7 +475,7 @@ namespace OreExcavator /// The Excavator of ores
                 case ActionType.TilePainted:
                 case ActionType.WallPainted:
                     {
-                        playerHalted[origin] = false;
+                        playerHalt[origin] = false;
                         ushort x = reader.ReadUInt16(), y = reader.ReadUInt16();
                         byte delay = reader.ReadByte();
                         int limit = reader.ReadInt32();
@@ -469,7 +491,7 @@ namespace OreExcavator /// The Excavator of ores
                 case ActionType.SeedHarvested:
                 case ActionType.SeedPlanted:
                     {
-                        playerHalted[origin] = false;
+                        playerHalt[origin] = false;
                         ushort x = reader.ReadUInt16(), y = reader.ReadUInt16();
                         byte delay = reader.ReadByte();
                         int limit = reader.ReadInt32();
@@ -496,32 +518,32 @@ namespace OreExcavator /// The Excavator of ores
                             {
                                 case ActionType.TileWhiteListed:
                                     
-                                    Log(Language.GetTextValue("Mods.OreExcavator.Network.Added", Main.player[origin].name, "Tile", $"{GetFullNameById(id, msgType, subtype)} ({id})"),
+                                    Log(Language.GetTextValue("Mods.OreExcavator.Network.Added", Main.player[origin].name, $"TileID.{GetFullNameById(id, msgType, subtype)} ({id})"),
                                         Color.Green, LogType.Info);
                                     break;
 
                                 case ActionType.WallWhiteListed:
-                                    Log(Language.GetTextValue("Mods.OreExcavator.Network.Added", Main.player[origin].name, "Wall", $"{GetFullNameById(id, msgType, subtype)} ({id})"),
+                                    Log(Language.GetTextValue("Mods.OreExcavator.Network.Added", Main.player[origin].name, $"WallID.{GetFullNameById(id, msgType, subtype)} ({id})"),
                                         Color.Orange, LogType.Info);
                                     break;
 
                                 case ActionType.ItemWhiteListed:
-                                    Log(Language.GetTextValue("Mods.OreExcavator.Network.Added", Main.player[origin].name, "Item", $"{GetFullNameById(id, msgType, subtype)} ({id})"),
+                                    Log(Language.GetTextValue("Mods.OreExcavator.Network.Added", Main.player[origin].name, $"ItemID.{GetFullNameById(id, msgType, subtype)} ({id})"),
                                         Color.Green, LogType.Info);
                                     break;
 
                                 case ActionType.TileBlackListed:
-                                    Log(Language.GetTextValue("Mods.OreExcavator.Network.Removed", Main.player[origin].name, "Tile", $"{GetFullNameById(id, msgType, subtype)} ({id})"),
+                                    Log(Language.GetTextValue("Mods.OreExcavator.Network.Removed", Main.player[origin].name, $"TileID.{GetFullNameById(id, msgType, subtype)} ({id})"),
                                         Color.Orange, LogType.Info);
                                     break;
 
                                 case ActionType.WallBlackListed:
-                                    Log(Language.GetTextValue("Mods.OreExcavator.Network.Removed", Main.player[origin].name, "Wall", $"{GetFullNameById(id, msgType, subtype)} ({id})"),
+                                    Log(Language.GetTextValue("Mods.OreExcavator.Network.Removed", Main.player[origin].name, $"WallID.{GetFullNameById(id, msgType, subtype)} ({id})"),
                                         Color.Green, LogType.Info);
                                     break;
 
                                 case ActionType.ItemBlackListed:
-                                    Log(Language.GetTextValue("Mods.OreExcavator.Network.Removed", Main.player[origin].name, "Item", $"{GetFullNameById(id, msgType, subtype)} ({id})"),
+                                    Log(Language.GetTextValue("Mods.OreExcavator.Network.Removed", Main.player[origin].name, $"ItemID.{GetFullNameById(id, msgType, subtype)} ({id})"),
                                         Color.Orange, LogType.Info);
                                     break;
                             }
@@ -547,11 +569,11 @@ namespace OreExcavator /// The Excavator of ores
         /// <param name="limit"></param>
         /// <param name="delay"></param>
         /// <param name="doDiagonals"></param>
-        /// <param name="playerId"></param>
+        /// <param name="playerID"></param>
         /// <param name="puppeting"></param>
         /// <param name="replacementType"></param>
         /// <param name="replacementSubtype"></param>
-        internal static ushort? ModifySpooler(ActionType actionType, ushort x, ushort y, byte delay, int limit, bool doDiagonals, byte playerId, ushort targetType, byte targetColor = 0, int targetSubtype = -1, int replacementType = -1, sbyte replacementSubtype = -1, bool puppeting = false)
+        internal static ushort? ModifySpooler(ActionType actionType, ushort x, ushort y, byte delay, int limit, bool doDiagonals, byte playerID, ushort targetType, byte targetColor = 0, int targetSubtype = -1, int replacementType = -1, sbyte replacementSubtype = -1, bool puppeting = false)
         {
             var checkPoint = new Point16(x, y);
 
@@ -565,25 +587,48 @@ namespace OreExcavator /// The Excavator of ores
 
             ushort? randomId = null;
 
-            if (ThreadId is null && puppeting is false)
+            if (puppeting is false)
                 do
-                    randomId = (ushort)Main.rand.Next(ushort.MinValue, ushort.MaxValue + 1);
+                    randomId = (ushort)Main.rand.Next(ushort.MinValue, ushort.MaxValue);
                 while (alterTasks.ContainsKey(randomId));
             else
                 randomId = ThreadId;
 
+            int hardlimit = Math.Min(ClientConfig.recursionLimit, ServerConfig.recursionLimit);
+            if (limit <= 0 || hardlimit <= 0)
+                return null;
+
+            // Not a server, and not multiplayer or non-puppeting
+            // Singleplayer or non-puppeting multiplayer
+            if (Main.netMode is NetmodeID.SinglePlayer || (Main.netMode is NetmodeID.MultiplayerClient && puppeting is false))
+            {
+                switch (actionType)
+                {
+                    case ActionType.ExtendPlacement:
+                    case ActionType.TileReplaced:
+                    case ActionType.WallReplaced:
+                    case ActionType.TilePlaced:
+                    case ActionType.WallPlaced:
+                    case ActionType.TilePainted:
+                    case ActionType.WallPainted:
+                    case ActionType.SeedPlanted:
+                        limit = Main.player[playerID].CountItem(replacementType) + (Main.mouseItem.netID == replacementType ? Main.mouseItem.stack : 0);
+                        break;
+                }
+                limit = Math.Min(limit, hardlimit);
+            }
+            // Multi-non-puppet, or server 
             if (Main.netMode is NetmodeID.Server || (Main.netMode is NetmodeID.MultiplayerClient && puppeting is false))
             {
-                //Log(playerId + " SENDING " + actionType);
                 ModPacket packet = myMod.GetPacket();
                 if (Main.netMode is NetmodeID.Server)
-                    packet.Write((byte)playerId);
+                    packet.Write((byte)playerID);
                 packet.Write((byte)actionType);
-                packet.Write((ushort)randomId);
+                packet.Write((ushort)(randomId ?? 0));
                 packet.Write((ushort)x);
                 packet.Write((ushort)y);
                 packet.Write((byte)delay);
-                packet.Write((int)limit); // move limit calcs here?
+                packet.Write((int)limit);
                 packet.Write((bool)doDiagonals);
                 packet.Write((ushort)targetType);
                 packet.Write((byte)targetColor);
@@ -606,19 +651,48 @@ namespace OreExcavator /// The Excavator of ores
                         packet.Write((int)replacementType);
                         break;
                 }
-                packet.Send(-1, playerId);
-            }
+                packet.Send(-1, playerID);
 
-            if (Main.netMode is NetmodeID.SinglePlayer || (Main.netMode is NetmodeID.MultiplayerClient && puppeting is false))
-                if (x == Player.tileTargetX && y == Player.tileTargetY)
-                    lookingAtTile.CopyFrom(Main.tile[x, y]);
+#if DEBUG
+                switch (actionType)
+                {
+                    case ActionType.None:
+                        Log($"Packet FAIL: '{(Main.netMode == NetmodeID.MultiplayerClient ? "TO SERVER" : "TO PLAYERS")}', type: [{ThreadId}]'ActionType.{actionType}'");
+                        break;
+
+                    case ActionType.HaltExcavation:
+                    case ActionType.TileKilled:
+                    case ActionType.TilePlaced:
+                    case ActionType.WallKilled:
+                    case ActionType.WallPlaced:
+                    case ActionType.TileReplaced:
+                    case ActionType.WallReplaced:
+                    case ActionType.SeedPlanted:
+                    case ActionType.SeedHarvested:
+                    case ActionType.TilePainted:
+                    case ActionType.WallPainted:
+                    case ActionType.ClearedPaint:
+                    case ActionType.ExtendPlacement:
+                        Log($"Packet sent: '{(Main.netMode == NetmodeID.MultiplayerClient ? "TO SERVER" : "TO PLAYERS")}', type: [{ThreadId}]'ActionType.{actionType}'");
+                        break;
+
+                    default:
+                        Log($"Packet sent: '{(Main.netMode == NetmodeID.MultiplayerClient ? "TO SERVER" : "TO PLAYERS")}', type: 'ActionType.{actionType}'");
+                        break;
+                }
+#endif
+            }
 
             Task task = new(delegate
             {
                 ThreadId = randomId;
                 Puppeting = puppeting;
-                ModifyAdjacentFloodfill(actionType, x, y, limit, delay, doDiagonals, playerId, targetType, targetColor, targetSubtype, replacementType, replacementSubtype);
+                ModifyAdjacentFloodfill(actionType, x, y, limit, delay, doDiagonals, playerID, targetType, targetColor, targetSubtype, replacementType, replacementSubtype);
             });
+
+            if (x == Player.tileTargetX && y == Player.tileTargetY)
+                lookingAtTile.CopyFrom(Main.tile[x, y]);
+
             _ = alterTasks.TryAdd(randomId, task);
             task.Start();
             return randomId;
@@ -682,22 +756,14 @@ namespace OreExcavator /// The Excavator of ores
             bool isFallingType = false;
             bool passReplacementTypes = false;
 
-            int hardlimit = Math.Min(ClientConfig.recursionLimit, ServerConfig.recursionLimit);
-            if (limit <= 0 || hardlimit <= 0)
-                return;
-
             switch (actionType)
             {
                 case ActionType.SeedHarvested:
-                    passReplacementTypes = true;
-                    break;
-
                 case ActionType.ExtendPlacement:
                 case ActionType.SeedPlanted:
                 case ActionType.TilePainted:
                 case ActionType.WallPainted:
                     passReplacementTypes = true;
-                    limit = Math.Min(Main.player[playerID].CountItem(itemType) + 1 + (Main.mouseItem.netID == itemType ? Main.mouseItem.stack + 1 : 0), hardlimit);
                     break;
 
                 case ActionType.TileReplaced:
@@ -705,7 +771,6 @@ namespace OreExcavator /// The Excavator of ores
                 case ActionType.TilePlaced:
                 case ActionType.WallPlaced:
                     passReplacementTypes = true;
-                    limit = Math.Min(Main.player[playerID].CountItem(itemType) + 1 + (Main.mouseItem.netID == itemType ? Main.mouseItem.stack : 0), hardlimit);
                     isFallingType = !isWallBounded && TileID.Sets.Falling[targetType] || (ModContent.TileType<ModTile>() > 0 && TileID.Sets.Falling[ModContent.TileType<ModTile>()]);
                     break;
             }
@@ -728,7 +793,7 @@ namespace OreExcavator /// The Excavator of ores
                 limit = Math.Min(200, limit); // Ensure that placements don't get out of hand
 
             Alteration alteration = new(ThreadId, actionType, playerID, Puppeting, (passReplacementTypes ? itemType : -1), passReplacementTypes ? itemSubtype : (sbyte)-1);
-            Log($"(ID:{playerID} - P:{Puppeting}) {actionType}, OX:{originX}, OY:{originY}, L:{limit}, D:{delay}, DD:{doDiagonals}, TT:{targetType}:{targetSubtype}({targetColor})[{(isWallBounded ? "W" : "T" )}], RT:{itemType}:{itemSubtype} F:{isFallingType}", Color.Yellow);
+            Log($"[{ThreadId}] (ID:{playerID} - P:{Puppeting}) {actionType}, OX:{originX}, OY:{originY}, L:{limit}, D:{delay}, DD:{doDiagonals}, TT:{targetType}:{targetSubtype}({targetColor})[{(isWallBounded ? "W" : "T" )}], RT:{itemType}:{itemSubtype} F:{isFallingType}", Color.Yellow);
 
             Queue<Point16> queue = new();
             queue.Enqueue(new Point16(originX, originY));
@@ -757,7 +822,8 @@ namespace OreExcavator /// The Excavator of ores
                 if (delay > 0)
                     Thread.Sleep(delay);
 
-                for (byte index = (byte)(actionType == ActionType.ExtendPlacement ? (extensionDirection is Direction.Vertical ? 2 : 0) : 0 ); index < (actionType == ActionType.ExtendPlacement ? (extensionDirection is Direction.Vertical ? 4 : 2) : (doDiagonals ? 8: 4)); index++)
+                byte max = (byte)(actionType == ActionType.ExtendPlacement ? (extensionDirection is Direction.Vertical ? 4 : 2) : (doDiagonals ? 8 : 4)); // Because testing this every loop is terrible
+                for (byte index = (byte)(actionType == ActionType.ExtendPlacement ? (extensionDirection is Direction.Vertical ? 2 : 0) : 0 ); index < max; index++)
                 {
                     Point16 nextPoint = new(currentPoint.X + ch_x[index], currentPoint.Y + ch_y[index]);
 
@@ -770,7 +836,7 @@ namespace OreExcavator /// The Excavator of ores
                             if (checkTile.HasTile is false)
                             {
                                 queue.Enqueue(nextPoint);
-                                if (checkTile.TileType != Main.tile[originX, originY].TileType)
+                                if (ClientConfig.reducedEffects is false && checkTile.TileType != Main.tile[originX, originY].TileType)
                                     Dust.NewDustPerfect(new Vector2(x * 16, y * 16), DustID.Teleporter);
                             }
                         }
@@ -810,7 +876,7 @@ namespace OreExcavator /// The Excavator of ores
                                     Dust.NewDustPerfect(new Vector2(x * 16, y * 16), DustID.Teleporter);
                             }
                 }
-                if ((playerHalted[playerID] && Puppeting) || (Main.netMode != NetmodeID.Server && playerID == Main.myPlayer && ClientConfig.releaseCancelsExcavations && (ClientConfig.toggleExcavations ? excavationToggled : OreExcavatorKeybinds.excavatorHeld) is false))
+                if ((playerHalt[playerID] && Puppeting) || (Main.netMode != NetmodeID.Server && playerID == Main.myPlayer && ClientConfig.releaseCancelsExcavations && (ClientConfig.toggleExcavations ? excavationToggled : OreExcavatorKeybinds.excavatorHeld) is false))
                     break;
             }
 
@@ -822,7 +888,7 @@ namespace OreExcavator /// The Excavator of ores
                 return;
             }
 
-            if ((playerHalted[playerID] && Puppeting) || (Main.netMode != NetmodeID.Server && playerID == Main.myPlayer && ClientConfig.releaseCancelsExcavations && (ClientConfig.toggleExcavations ? excavationToggled : OreExcavatorKeybinds.excavatorHeld) is false))
+            if ((playerHalt[playerID] && Puppeting) || (Main.netMode != NetmodeID.Server && playerID == Main.myPlayer && ClientConfig.releaseCancelsExcavations && (ClientConfig.toggleExcavations ? excavationToggled : OreExcavatorKeybinds.excavatorHeld) is false))
             {
                 //Log(playerID + " HALTED");
                 if (Main.netMode is NetmodeID.MultiplayerClient && playerID == Main.myPlayer)
@@ -837,8 +903,9 @@ namespace OreExcavator /// The Excavator of ores
 
                 while (queue.Count > 0)
                 {
-                    WorldGen.TileFrame(queue.Peek().X, queue.Peek().Y);
-                    _ = masterTiles.TryRemove(queue.Dequeue(), out _);
+                    Point16 temp = queue.Dequeue();
+                    WorldGen.TileFrame(temp.X, temp.Y);
+                    _ = masterTiles.TryRemove(temp, out _);
                 }
 
                 if (Main.netMode is NetmodeID.MultiplayerClient && playerID == Main.myPlayer)
@@ -848,7 +915,7 @@ namespace OreExcavator /// The Excavator of ores
                     packet.Send();
                     //Log(playerID + " SENDING " + ActionType.ResetExcavations);
                 }
-                playerHalted[playerID] = false;
+                playerHalt[playerID] = false; // No longer halted because operations are terminated
             }
 
             queue.Clear(); // Clear the queue
@@ -954,14 +1021,14 @@ namespace OreExcavator /// The Excavator of ores
         /// <param name="type">Whitelist type of the ID being passed, black/white treated the same</param>
         /// <param name="subtype">Whitelist frameY of the ID being passed, if any is avaiable to be parsed</param>
         /// <returns>Translated string</returns>
-        internal static string? GetFullNameById(int id, ActionType type, int subtype = -1)
+        internal static string GetFullNameById(int id, ActionType type, int subtype = -1)
         {
             switch (type)
             {
                 case ActionType.TileWhiteListed:
                 case ActionType.TileBlackListed:
                 case ActionType.TileKilled:
-                    var modTile = TileLoader.GetTile(id);
+                    ModTile modTile = TileLoader.GetTile(id);
                     if (modTile is not null)
                         return $"{modTile.Mod}:{modTile.Name}" + (subtype >= 0 ? $":{subtype}" : "");
                     else if (id < TileID.Count)
@@ -972,7 +1039,7 @@ namespace OreExcavator /// The Excavator of ores
                 case ActionType.WallWhiteListed:
                 case ActionType.WallBlackListed:
                 case ActionType.WallKilled:
-                    var modWall = WallLoader.GetWall(id);
+                    ModWall modWall = WallLoader.GetWall(id);
                     if (modWall is not null)
                         return $"{modWall.Mod}:{modWall.Name}";
                     else if (id < WallID.Count)
@@ -1098,9 +1165,9 @@ namespace OreExcavator /// The Excavator of ores
                         break;
                 }
 #if DEBUG == false
-            if (Main.netMode != NetmodeID.Server && (type != LogType.Debug || ClientConfig.doDebugStuff))
+            if (type is not LogType.Debug || ClientConfig.doDebugStuff)
 #endif
-                if (color != default)
+                if (Main.netMode is not NetmodeID.Server && color != default)
                     {
                         // This stuff combines duplicated messages
                         try {
@@ -1109,7 +1176,10 @@ namespace OreExcavator /// The Excavator of ores
                             {
                                 List<TextSnippet[]> parsedText = (List<TextSnippet[]>)typeof(ChatMessageContainer).GetField("_parsedText", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(messages[0]);
                                 if (parsedText[^1][0].TextOriginal.Equals(msg))
-                                    parsedText[^1][0].Text = parsedText[^1][0].TextOriginal + $" [{++msgReps}x]";
+                                {
+                                    int newline = parsedText[^1][0].TextOriginal.LastIndexOf('\n');
+                                    parsedText[^1][0].Text = string.Concat(parsedText[^1][0].TextOriginal.AsSpan(newline >= 0 ? newline : 0), $" [{++msgReps}x]");
+                                }
                                 else
                                 {
                                     msgReps = 1;
@@ -1157,7 +1227,7 @@ namespace OreExcavator /// The Excavator of ores
             // Not essential, but helps reset the player during inactive phases
             if (OreExcavator.ClientConfig.toggleExcavations ? !OreExcavator.excavationToggled : !OreExcavatorKeybinds.excavatorHeld)
             {
-                if (OreExcavator.ClientConfig.releaseCancelsExcavations)
+                if (OreExcavator.ClientConfig.releaseCancelsExcavations && OreExcavator.playerHalt[Main.myPlayer] is true)
                 {
                     OreExcavator.masterTiles.Clear();
                     if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -1166,7 +1236,7 @@ namespace OreExcavator /// The Excavator of ores
                         packet.Write((byte)ActionType.ResetExcavations);
                         packet.Send();
                     }
-                    OreExcavator.playerHalted[Main.myPlayer] = false;
+                    OreExcavator.playerHalt[Main.myPlayer] = false;
                 }
                 return;
             }
@@ -1265,7 +1335,7 @@ namespace OreExcavator /// The Excavator of ores
             // Not essential, but helps reset the player during inactive phases
             if (OreExcavator.ClientConfig.toggleExcavations ? !OreExcavator.excavationToggled : !OreExcavatorKeybinds.excavatorHeld)
             {
-                if (OreExcavator.ClientConfig.releaseCancelsExcavations)
+                if (OreExcavator.ClientConfig.releaseCancelsExcavations && OreExcavator.playerHalt[Main.myPlayer] is true)
                 {
                     OreExcavator.masterTiles.Clear();
                     if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -1274,7 +1344,7 @@ namespace OreExcavator /// The Excavator of ores
                         packet.Write((byte)ActionType.ResetExcavations);
                         packet.Send();
                     }
-                    OreExcavator.playerHalted[Main.myPlayer] = false;
+                    OreExcavator.playerHalt[Main.myPlayer] = false;
                 }
                 return;
             }
@@ -1358,12 +1428,6 @@ namespace OreExcavator /// The Excavator of ores
             if (WorldGen.gen || Main.netMode == NetmodeID.Server || Main.gameMenu)
                 return null;
 
-            if (OreExcavator.ClientConfig.doSpecials is false)
-            {
-                OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Client.DisabledAlternatives"), Color.Red);
-                return null;
-            }
-
             if (Main.mouseItem is not null && Main.mouseItem.Name != "")
                 item = Main.mouseItem;
             if (item.pick + item.axe + item.hammer != 0)
@@ -1380,7 +1444,7 @@ namespace OreExcavator /// The Excavator of ores
             if (inputKeyName is "Mouse1" or "RightTrigger")
                 if (OreExcavator.ServerConfig.allowReplace && OreExcavator.ClientConfig.doSpecials)
                 {
-                    OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.KeyBinds.MainActionWarning",
+                    OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Keybind.MainActionWarning",
                         OreExcavator.myMod.Name, (PlayerInput.UsingGamepad ? "Trigger" : "Click")),
                         Color.Orange, LogType.Warn);
                     OreExcavator.ClientConfig.doSpecials = false;
@@ -1392,7 +1456,7 @@ namespace OreExcavator /// The Excavator of ores
 
             if (OreExcavator.ClientConfig.toggleExcavations ? (OreExcavator.excavationToggled is false) : (OreExcavatorKeybinds.excavatorHeld is false))
             {
-                if (OreExcavator.ClientConfig.releaseCancelsExcavations)
+                if (OreExcavator.ClientConfig.releaseCancelsExcavations && OreExcavator.playerHalt[Main.myPlayer] is true)
                 {
                     OreExcavator.masterTiles.Clear();
                     if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -1401,8 +1465,14 @@ namespace OreExcavator /// The Excavator of ores
                         packet.Write((byte)ActionType.ResetExcavations);
                         packet.Send();
                     }
-                    OreExcavator.playerHalted[Main.myPlayer] = false;
+                    OreExcavator.playerHalt[Main.myPlayer] = false;
                 }
+                return null;
+            }
+
+            if (OreExcavator.ClientConfig.doSpecials is false)
+            {
+                OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Client.DisabledAlternatives"), Color.Red);
                 return null;
             }
 
@@ -1623,7 +1693,7 @@ namespace OreExcavator /// The Excavator of ores
                 || (createType == oldType && (actionType == ActionType.WallReplaced || actionType == ActionType.SeedPlanted)))
                 return null;
 
-            if (actionType != ActionType.WallReplaced)
+            if (actionType is not ActionType.WallReplaced)
             {
                 if (!Main.tile[x + 1, y].HasTile && !Main.tile[x, y + 1].HasTile && !Main.tile[x - 1, y].HasTile && !Main.tile[x, y - 1].HasTile)
                     if (!OreExcavator.ServerConfig.allowDiagonals || (!Main.tile[x + 1, y + 1].HasTile && !Main.tile[x + 1, y - 1].HasTile && !Main.tile[x - 1, y + 1].HasTile && !Main.tile[x - 1, y - 1].HasTile))
@@ -1638,27 +1708,45 @@ namespace OreExcavator /// The Excavator of ores
             }
 
             string itemName = OreExcavator.GetFullNameById(item.type, actionType);
-            string keybind = "<Unbound>";
 
-            if (OreExcavator.ExcavateHotkey.GetAssignedKeys().Count > 0)
+            if (OreExcavator.ClientConfig.itemWhitelistAll is false && OreExcavator.ClientConfig.itemWhitelist.Contains(itemName) is false)
             {
-                keybind = OreExcavator.ExcavateHotkey.GetAssignedKeys()[0];
-                if (keybind.StartsWith("Oem"))
-                    keybind = keybind.Substring(3);
+                string keybind = OreExcavator.WhitelistHotkey.GetAssignedKeys(PlayerInput.UsingGamepad ? InputMode.XBoxGamepad : InputMode.Keyboard)[0] ?? "<Unbound>";
+                if (keybind.StartsWith("oem", StringComparison.OrdinalIgnoreCase))
+                    keybind = keybind[3..];
                 else if (keybind == "Mouse2")
                     keybind = "Right Click";
                 else if (keybind == "Mouse1")
                     keybind = "Left Click";
-            }
+                
+                OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Client.RejectSwapUnwhitelisted", $"ItemID.{item.Name} ({ item.netID})", keybind), Color.Orange);
+                switch (actionType)
+                {
+                    case ActionType.TilePlaced:
+                    case ActionType.TileReplaced:
+                    case ActionType.SeedPlanted:
+                    case ActionType.ExtendPlacement:
+                        OreExcavator.lookingAtTile.TileType = (ushort)item.createTile;
+                        break;
 
-            if (OreExcavator.ClientConfig.itemWhitelistAll && OreExcavator.ClientConfig.itemWhitelist.Contains(itemName) is false)
-            {
-                OreExcavator.Log($"Rejected chain-swapping 'ItemID.{item.Name} ({item.netID})' because it isn't whitelisted by you,\nHover over the item in your inventory and press '{keybind}' to start chain-swapping!", Color.Orange);
+                    case ActionType.WallPlaced:
+                    case ActionType.WallReplaced:
+                        OreExcavator.lookingAtTile.WallType = (ushort)item.createWall;
+                        break;
+
+                    //case ActionType.TilePainted:
+                    //case ActionType.WallPainted:
+                    //case ActionType.ClearedPaint:
+                    //    OreExcavator.lookingAtTile.TileColor = (ushort)item.createTile;
+                    //    break;
+                }
+                
                 return null;
             }
+
             if (OreExcavator.ServerConfig.itemBlacklistToggled && OreExcavator.ServerConfig.itemBlacklist.Contains(itemName))
             {
-                OreExcavator.Log($"Rejected chain-swapping 'ItemID.{item.Name} ({item.netID})' because it's blacklisted by the server", Color.Orange);
+                OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Client.RejectSwapBlacklisted", $"ItemID.{item.Name} ({ item.netID})"), Color.Orange);
                 return null;
             }
 
@@ -1697,7 +1785,6 @@ namespace OreExcavator /// The Excavator of ores
                 return;
             try
             {
-                //OreExcavator.Log($"OnSpawn('{item.Name}', '{(source != null ? source.Context : "")}') Places: {item.createTile}, {item.createWall}", Color.Red);
                 if (item is not null && item.active && (source is null || source.Context is null || source.Context == "") && (item.createTile != -1 || item.createWall != -1))
                 {
                     if (OreExcavator.ServerConfig.teleportLoot) // Add check for initial drop from excavations
@@ -1708,7 +1795,7 @@ namespace OreExcavator /// The Excavator of ores
                             byte closestPlayer = 0;
                             for (short index = 0; index < Main.player.Length; index++)
                             {
-                                if (OreExcavator.playerHalted[index])
+                                if (OreExcavator.playerHalt[index])
                                     continue;
                                 if (!Main.player[index].active)
                                     continue;
@@ -1754,7 +1841,7 @@ namespace OreExcavator /// The Excavator of ores
             // Keybind?
             if (OreExcavator.ExcavateHotkey.GetAssignedKeys(PlayerInput.UsingGamepad ? InputMode.XBoxGamepad : InputMode.Keyboard).Count <= 0)
             {
-                tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", $"[OE] [c/E11919:{Language.GetTextValue("Mods.OreExcavator.KeyBinds.None")}]"));
+                tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", $"[OE] [c/E11919:{Language.GetTextValue("Mods.OreExcavator.Keybind.None")}]"));
                 return;
             }
 
@@ -1767,7 +1854,7 @@ namespace OreExcavator /// The Excavator of ores
 
             string keybind = OreExcavator.ExcavateHotkey.GetAssignedKeys(PlayerInput.UsingGamepad ? InputMode.XBoxGamepad : InputMode.Keyboard)[0];
             if (keybind.StartsWith("Oem"))
-                keybind = keybind.Substring("Oem".Length);
+                keybind = keybind["Oem".Length..];
             else if (keybind == "Mouse2")
                 keybind = "Right Click";
             else if (keybind == "Mouse1")
@@ -1835,9 +1922,15 @@ namespace OreExcavator /// The Excavator of ores
         public override bool AltFunctionUse(Item item, Player player)
         {
             if (Main.netMode != NetmodeID.Server &&
-                (OreExcavatorKeybinds.excavatorHeld || OreExcavator.excavationToggled) &&
-                OreExcavator.ExcavateHotkey.GetAssignedKeys().Count > 0 &&
-                OreExcavator.ExcavateHotkey.GetAssignedKeys()[0] == "Mouse2") // check for trigger too, or whatever the primary mining key is set to?
+                (
+                    OreExcavatorKeybinds.excavatorHeld ||
+                    OreExcavator.excavationToggled
+                ) &&
+                (
+                    (OreExcavator.ExcavateHotkey.GetAssignedKeys(InputMode.Keyboard).Count > 0 && OreExcavator.ExcavateHotkey.GetAssignedKeys(InputMode.Keyboard)[0] == "Mouse2")
+                    //|| (OreExcavator.ExcavateHotkey.GetAssignedKeys(InputMode.XBoxGamepad).Count > 0 && OreExcavator.ExcavateHotkey.GetAssignedKeys(InputMode.XBoxGamepad)[0] == "B")
+                )
+               )
                 RepeatHandler(item, player);
             return base.AltFunctionUse(item, player); // Restore the original use(s) (recovers things like summon staffs)
         }
@@ -1889,7 +1982,7 @@ namespace OreExcavator /// The Excavator of ores
                 new Task(delegate
                 {
                     Thread.Sleep(2000);
-                    OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.KeyBinds.NoBind", OreExcavator.myMod.DisplayName, OreExcavator.myMod.Version), Color.Red, LogType.Warn);
+                    OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Keybind.NoBind", OreExcavator.myMod.DisplayName, OreExcavator.myMod.Version), Color.Red, LogType.Warn);
                 }).Start();
             }
             else if (OreExcavator.ClientConfig.showWelcome080 && OreExcavator.ServerConfig.showWelcome)
@@ -1900,11 +1993,13 @@ namespace OreExcavator /// The Excavator of ores
                     OreExcavator.Log($"[{OreExcavator.myMod.DisplayName}] - v{OreExcavator.myMod.Version}" +
                                      "\n\t  We have a discord for bug reporting and feature suggestions:" +
                                      "\n\t  https://discord.gg/FtrsRtPe6h" +
-                                     "\n\n\t  We've released a HUGE update with translations, fixes, and more!" +
+
+                                   "\n\n\t  We've released a HUGE update with translations, fixes, and more!" +
                                      "\n\t  Most major issues have been fixed, and compatibility expanded." +
                                      "\n\t  We recommend resetting OE's configs, and re-editing them as you see fit." +
                                      "\n\t  If your language is missing, come help us translate the mod on Discord!" +
-                                     "\n\n\t  Oh yeah, you can also disable this popup in your Client configs.", Color.SteelBlue, LogType.Info);
+
+                                   "\n\n\t  Oh yeah, you can also disable this popup in your Client configs.", Color.SteelBlue, LogType.Info);
                 }).Start();
             }
             else
