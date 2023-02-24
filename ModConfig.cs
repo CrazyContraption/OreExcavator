@@ -101,6 +101,7 @@ namespace OreExcavator
             "Terraria:" + TileID.Search.GetName(TileID.Dirt),
             "Terraria:" + TileID.Search.GetName(TileID.Stone),
             "Terraria:" + TileID.Search.GetName(TileID.Sand),
+            "Terraria:" + TileID.Search.GetName(TileID.Sandstone),
             "Terraria:" + TileID.Search.GetName(TileID.Mud),
             "Terraria:" + TileID.Search.GetName(TileID.Ebonstone),
             "Terraria:" + TileID.Search.GetName(TileID.Crimstone),

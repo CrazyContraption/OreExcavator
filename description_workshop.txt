@@ -4,6 +4,7 @@
 
 Found an issue? Join our Discord and help report it: https://discord.gg/FtrsRtPe6h
 
+[img]http://i.imgur.com/oEtvFdv.png[/img][url=https://steamcommunity.com/id/CrazyContraption/myworkshopfiles/?appid=1281930][img]http://i.imgur.com/aJmBEpZ.png[/img][/url][img]http://i.imgur.com/Mftyk3C.png[/img][url=https://steamcommunity.com/tradeoffer/new/?partner=118835142&token=NMUc1w_a][img]http://i.imgur.com/esb4eke.png[/img][/url][img]http://i.imgur.com/rmnT7kv.png[/img][url=https://www.buymeacoffee.com/CrazyCoder][img]http://i.imgur.com/uPY3dEJ.png[/img][/url]
 
 Ore Excavator has become the offical 1.4 port of VeinMiner, with VeinMiner being discontinued, and merged into Ore Excavator with permission.
 
@@ -87,10 +88,14 @@ A:Yes! as of v0.8.0, we have an API your mods can access when loaded together. V
 
 
 [h1] Recent Changelog [/h1]
+0.8.1
+ - Blacklisted Sandstone tiles by default.
+ - Hotfixed an issue with whitelists being ignored for some users. - Thanks @Phrog#2674!
+
 0.8.0
  ~ Updated mana configurations to use a slider for better user control. Turn it back on after this update if you had it on before!
  ~ Updated permission error messages to only display when debug mode is enabled.
- ~ Updated core excavation queue logic - gameplay should be the same, but performance should be much better.
+ ~ Updated core excavation queue logic - gameplay should be the same, but performance should be much, much better.
  + Finished full controller support.
  + Added a toggle for chain-placing features to the server configurations.
  + Added a config for servers to block the mod's motd forever, can also be used in singleplayer.
@@ -99,22 +104,18 @@ A:Yes! as of v0.8.0, we have an API your mods can access when loaded together. V
  + Added a Mod.Call() API to the mod for modders to use.
  + Added Tunit testing suite, coming soon to the workshop!
  * Fixed connected gravity tiles not always updating following the conclusions of excavations.
- * Fixed most (if not all) duplication-related exploits within the mod.
  * Fixed crashes related to Draw method race condition crashes.
  * Fixed crashes related to excavating trees.
  * Fixed crashes related to smart cursors and torch excavations.
  * Fixed controllers requiring a keyboard binding to function.
  * Fixed file saving, shouldn't cause security issues anymore!
+ - Removed most (if not all) duplication-related exploits within the mod.
  - Removed a bunch of outdated patchwork fixes for dupes, crashes, and old compatibility issues.
+ ... So many, many, other minor things like typos, bad logic, literally everything was changed.
 
 0.7.5
  + Added some groundwork for localization. Coming soon! We're also looking for translators!
  * Fixed wall excavations not working in instances where unrelated features were disabled.
-
-0.7.4
- ~ Updated debug messages server error messages to not show by default now.
- * Actually fixed the dirt appearing issue this time. We swear.
- * Actually fixed mud being replaced with dirt for grass excavations. We also swear.
 
 See all changelogs here: https://steamcommunity.com/sharedfiles/filedetails/changelog/2565639705
 

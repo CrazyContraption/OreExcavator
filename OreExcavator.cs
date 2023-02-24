@@ -961,8 +961,8 @@ namespace OreExcavator /// The Excavator of Ores
                             return false;
                     }
                     return
-                        (!checkClient || !ClientConfig.tileWhitelistAll || ClientConfig.tileWhitelist.Contains(fullName)) &&
-                        (!ServerConfig.tileBlacklistToggled || !ServerConfig.tileBlacklist.Contains(fullName));
+                        (checkClient is false || ClientConfig.tileWhitelistAll is true || ClientConfig.tileWhitelist.Contains(fullName)) &&
+                        (ServerConfig.tileBlacklistToggled is false || ServerConfig.tileBlacklist.Contains(fullName) is false);
 
                 case ActionType.WallKilled:
                     if (ServerConfig.allowHammering)
@@ -971,8 +971,8 @@ namespace OreExcavator /// The Excavator of Ores
                 case ActionType.WallWhiteListed:
                 case ActionType.WallBlackListed:
                     return
-                        (!checkClient || !ClientConfig.wallWhitelistAll || ClientConfig.wallWhitelist.Contains(fullName)) &&
-                        (!ServerConfig.wallBlacklistToggled || !ServerConfig.wallBlacklist.Contains(fullName));
+                        (checkClient is false || ClientConfig.wallWhitelistAll is true || ClientConfig.wallWhitelist.Contains(fullName)) &&
+                        (ServerConfig.wallBlacklistToggled is false || ServerConfig.wallBlacklist.Contains(fullName) is false);
 
                 case ActionType.TileReplaced:
                 case ActionType.WallReplaced:
@@ -988,8 +988,8 @@ namespace OreExcavator /// The Excavator of Ores
                 case ActionType.ItemWhiteListed:
                 case ActionType.ItemBlackListed:
                     return
-                        (!checkClient || !ClientConfig.itemWhitelistAll || ClientConfig.itemWhitelist.Contains(fullName)) &&
-                        (!ServerConfig.itemBlacklistToggled || !ServerConfig.itemBlacklist.Contains(fullName));
+                        (checkClient is false || ClientConfig.itemWhitelistAll is true || ClientConfig.itemWhitelist.Contains(fullName)) &&
+                        (ServerConfig.itemBlacklistToggled is false || ServerConfig.itemBlacklist.Contains(fullName) is false);
 
                 default:
                     return null;
