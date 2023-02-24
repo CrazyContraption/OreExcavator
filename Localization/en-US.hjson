@@ -28,7 +28,7 @@ Mods: {
 
 		Keybind: {
 			None:
-			"No keybind set, please set one in your control settings to use OreExcavator!"
+			"Missing keybind, please set them in your control settings to use OreExcavator!"
 
 			Enabled:
 			"Excavations enabled"

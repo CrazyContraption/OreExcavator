@@ -1498,7 +1498,7 @@ namespace OreExcavator /// The Excavator of Ores
             byte oldColor = oldHasTile ? OreExcavator.lookingAtTile.TileColor : OreExcavator.lookingAtTile.WallColor;
             int oldSubtype = TileObjectData.GetTileStyle(OreExcavator.lookingAtTile);
 
-            bool newHasTile = Main.tile[x, y].TileType > TileID.Dirt;
+            bool newHasTile = Main.tile[x, y].HasTile && Main.tile[x, y].TileType >= TileID.Dirt;
             ushort newType = newHasTile ? Main.tile[x, y].TileType : Main.tile[x, y].WallType;
             byte newColor = newHasTile ? Main.tile[x, y].TileColor : Main.tile[x, y].WallColor;
             int newSubtype = TileObjectData.GetTileStyle(Main.tile[x, y]);
@@ -1532,7 +1532,7 @@ namespace OreExcavator /// The Excavator of Ores
                 {
                     createType = (short)item.createTile;
 
-                    if (!oldHasTile)
+                    if (oldHasTile is false)
                         if (OreExcavator.ServerConfig.chainPlacing is false)
                         {
                             OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Client.DisabledPlacing"), Color.Red);
@@ -1554,7 +1554,7 @@ namespace OreExcavator /// The Excavator of Ores
                         }
                         else
                             return null;
-                    else if (!newHasTile)
+                    else if (newHasTile is false)
                     {
                         OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.DoesNotExist"), Color.Red);
                         return null;
@@ -1838,8 +1838,9 @@ namespace OreExcavator /// The Excavator of Ores
 
             string name = OreExcavator.GetFullNameById(item.type, ActionType.ItemBlackListed);
 
+            var excavateKey = OreExcavator.ExcavateHotkey.GetAssignedKeys(PlayerInput.UsingGamepad ? InputMode.XBoxGamepad : InputMode.Keyboard);
             // Keybind?
-            if (OreExcavator.ExcavateHotkey.GetAssignedKeys(PlayerInput.UsingGamepad ? InputMode.XBoxGamepad : InputMode.Keyboard).Count <= 0)
+            if (excavateKey.Count <= 0)
             {
                 tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", $"[OE] [c/E11919:{Language.GetTextValue("Mods.OreExcavator.Keybind.None")}]"));
                 return;
@@ -1852,8 +1853,8 @@ namespace OreExcavator /// The Excavator of Ores
                 return;
             }
 
-            string keybind = OreExcavator.ExcavateHotkey.GetAssignedKeys(PlayerInput.UsingGamepad ? InputMode.XBoxGamepad : InputMode.Keyboard)[0];
-            if (keybind.StartsWith("Oem"))
+            string keybind = excavateKey[0] ?? "";
+            if (keybind.StartsWith("oem", StringComparison.OrdinalIgnoreCase))
                 keybind = keybind["Oem".Length..];
             else if (keybind == "Mouse2")
                 keybind = "Right Click";
@@ -1870,8 +1871,11 @@ namespace OreExcavator /// The Excavator of Ores
                 {
                     if (OreExcavator.ClientConfig.itemWhitelistAll is false && OreExcavator.ClientConfig.itemWhitelist.Contains(name) is false)
                     {
-                        string whitelistKey = OreExcavator.WhitelistHotkey.GetAssignedKeys(PlayerInput.UsingGamepad ? InputMode.XBoxGamepad : InputMode.Keyboard)[0];
-                        tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", $"[OE] [c/FFF014:{Language.GetTextValue("Mods.OreExcavator.UI.Tooltips.PressToWhitelist", whitelistKey)}]"));
+                        var whitelistKey = OreExcavator.WhitelistHotkey.GetAssignedKeys(PlayerInput.UsingGamepad ? InputMode.XBoxGamepad : InputMode.Keyboard);
+                        if (whitelistKey.Count <= 0)
+                            tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", $"[OE] [c/E11919:{Language.GetTextValue("Mods.OreExcavator.Keybind.None")}]"));
+                        else
+                            tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", $"[OE] [c/FFF014:{Language.GetTextValue("Mods.OreExcavator.UI.Tooltips.PressToWhitelist", whitelistKey[0])}]"));
                     }
                     else if (OreExcavator.GetExtendsDirection(item.createTile) > Direction.None)
                         tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", $"[OE] [c/32FF82:{Language.GetTextValue("Mods.OreExcavator.UI.Tooltips.HoldToPlace", keybind)}]"));

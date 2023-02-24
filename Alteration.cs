@@ -62,24 +62,36 @@ namespace OreExcavator
             return Main.player[player].CheckMana((int)(OreExcavator.ServerConfig.manaConsumption * manaCost), true, OreExcavator.ClientConfig.refillMana is false);
         }
 
-        internal bool HasAndConsumeItem(int item, int player = -1, short amount = 1)
+        internal bool HasAndConsumeItem(int itemID, int playerID, short amount = 1)
         {
-            if (item <= ItemID.None || player < 0)
+            if (itemID <= ItemID.None || playerID < 0)
                 return false;
             if (OreExcavator.ServerConfig.creativeMode is true || puppeting is true)
                 return true;
 
-            if (Main.mouseItem is not null && Main.mouseItem.netID == item && Main.mouseItem.stack >= 0 + amount)
-                Main.player[player].HeldItem.stack -= amount;
+            if (IsResearched(itemID, playerID) ?? false)
+                return true;
+
+            if (Main.mouseItem is not null && Main.mouseItem.netID == itemID && Main.mouseItem.stack >= 0 + amount)
+                Main.player[playerID].HeldItem.stack -= amount;
             else if (amount > 0)
             {
-                if (Main.player[player].ConsumeItem(consumesItemType) is false) // Does the player have items to place?
+                if (Main.player[playerID].ConsumeItem(consumesItemType) is false) // Does the player have items to place?
                     return false; // No inventory item
             }
             else if (amount < 0)
-                Main.player[player].QuickSpawnItem(Main.player[player].GetSource_FromThis(), consumesItemType, amount * -1);
+                Main.player[playerID].QuickSpawnItem(Main.player[playerID].GetSource_FromThis(), consumesItemType, amount * -1);
 
             return true;
+        }
+
+        internal static bool? IsResearched(int itemID, int playerID)
+        {
+            if (itemID <= ItemID.None || playerID < 0)
+                return null;
+            if (Terraria.GameContent.Creative.CreativeItemSacrificesCatalog.Instance.TryGetSacrificeCountCapToUnlockInfiniteItems(itemID, out int required) is false)
+                return null; // Invalid
+            return required <= Main.player[playerID].creativeTracker.ItemSacrifices.GetSacrificeCount(itemID);
         }
 
         /// <summary>

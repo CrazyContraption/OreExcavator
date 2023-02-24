@@ -70,10 +70,7 @@ A:Yes! Yes! Yes! This is a huge priority for us, and we plan on implementing a f
 Q:"Does this work with modded content?"
 A:Yes! But also no... we don't know. Every mod is different and unique, however most modded tiles, tools, and walls should work seamlessly without issue! Please let us know if you encounter any major issues, and we'll be sure to add some failsafes to include them forcefully!
 
-Q:"Do you use any IL edits?"
-A:No, not anymore. Once upon a time we did, now things are much easier for us, and we can use vanilla tML for everything we do.
-
-Q:"Do you hanve an API?"
+Q:"Do you have an API?"
 A:Yes! as of v0.8.0, we have an API your mods can access when loaded together. Visit our Discord for more information.
 
 [h1] Roadmap (Order of Priority) [/h1]
@@ -88,8 +85,15 @@ A:Yes! as of v0.8.0, we have an API your mods can access when loaded together. V
 
 
 [h1] Recent Changelog [/h1]
-0.8.1
+0.8.2
+ ~ Ajusted the language of some areas of the mod.
+ + Added a few extra tooltip and error messages to the mod.
+ + The mod now respects player research, and will not consume fully researched items.
+ * Fixed an issue where item tooltips would no longer show up. - Thanks @ba'alcipher#1544
+ * Fixed an issue where dirt could not be used for swapping. - Thanks @AncientAlphaWarrior#2950
  - Blacklisted Sandstone tiles by default.
+
+0.8.1
  - Hotfixed an issue with whitelists being ignored for some users. - Thanks @Phrog#2674!
 
 0.8.0
@@ -113,9 +117,6 @@ A:Yes! as of v0.8.0, we have an API your mods can access when loaded together. V
  - Removed a bunch of outdated patchwork fixes for dupes, crashes, and old compatibility issues.
  ... So many, many, other minor things like typos, bad logic, literally everything was changed.
 
-0.7.5
- + Added some groundwork for localization. Coming soon! We're also looking for translators!
- * Fixed wall excavations not working in instances where unrelated features were disabled.
 
 See all changelogs here: https://steamcommunity.com/sharedfiles/filedetails/changelog/2565639705
 
