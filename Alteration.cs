@@ -62,21 +62,21 @@ namespace OreExcavator
             return Main.player[player].CheckMana((int)(OreExcavator.ServerConfig.manaConsumption * manaCost), true, OreExcavator.ClientConfig.refillMana is false);
         }
 
-        internal bool HasAndConsumeItem(int item, int player = -1, int amount = -1)
+        internal bool HasAndConsumeItem(int item, int player = -1, short amount = 1)
         {
             if (item <= ItemID.None || player < 0)
                 return false;
             if (OreExcavator.ServerConfig.creativeMode is true || puppeting is true)
                 return true;
 
-            if (Main.mouseItem is not null && Main.mouseItem.netID == item && Main.mouseItem.stack >= 0)
-                Main.player[player].HeldItem.stack += amount;
-            else if (amount < 0)
+            if (Main.mouseItem is not null && Main.mouseItem.netID == item && Main.mouseItem.stack >= 0 + amount)
+                Main.player[player].HeldItem.stack -= amount;
+            else if (amount > 0)
             {
                 if (Main.player[player].ConsumeItem(consumesItemType) is false) // Does the player have items to place?
                     return false; // No inventory item
             }
-            else if (amount >= 0)
+            else if (amount < 0)
                 Main.player[player].QuickSpawnItem(Main.player[player].GetSource_FromThis(), consumesItemType, amount * -1);
 
             return true;
@@ -148,18 +148,18 @@ namespace OreExcavator
                         if (actionType == ActionType.WallReplaced)
                         {
                             if (WorldGen.ReplaceWall(x, y, (ushort)placeType) is false)
-                                { }//_ = HasAndConsumeItem(consumesItemType, playerID, 1);
+                                { }//_ = HasAndConsumeItem(consumesItemType, playerID, -1);
                         }
                         else if (actionType is not ActionType.ExtendPlacement)
                         {
                             if (WorldGen.ReplaceTile(x, y, (ushort)placeType, consumesItemSubtype < 0 ? (int)Main.tile[x, y].Slope : consumesItemSubtype) is false)
-                                { }//_ = HasAndConsumeItem(consumesItemType, playerID, 1);
+                                { }//_ = HasAndConsumeItem(consumesItemType, playerID, -1);
                         }
                         else if (Main.tile[x, y].HasTile is false)
                         {
                             if (WorldGen.PlaceTile(x, y, (ushort)placeType, true, false, playerID, consumesItemSubtype <= 0 ? (int)Main.tile[x, y].Slope : consumesItemSubtype) is false)
                             {
-                                _ = HasAndConsumeItem(consumesItemType, playerID, 1);
+                                _ = HasAndConsumeItem(consumesItemType, playerID, -1);
                                 return true;
                             }
                             WorldGen.KillTile(x, y, true, OreExcavator.ClientConfig.reducedEffects is false, true);
@@ -182,9 +182,8 @@ namespace OreExcavator
                         if (HasAndConsumeItem(consumesItemType, playerID) is false)
                             return true;
 
-                        // TODO: Retain paint?
                         WorldGen.KillTile(x, y, true, OreExcavator.ClientConfig.reducedEffects is false, true);
-                        WorldGen.SpreadGrass(x, y, Main.tile[x, y].TileType, placeType, false, 0);
+                        WorldGen.SpreadGrass(x, y, Main.tile[x, y].TileType, placeType, false, 0); // cannot use repeat because we want to consume items
                     }
                     return false;
 

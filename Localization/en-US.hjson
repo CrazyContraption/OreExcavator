@@ -26,7 +26,7 @@ Mods: {
 		Chain:
 		"Chain-"
 
-		KeyBinds: {
+		Keybind: {
 			None:
 			"No keybind set, please set one in your control settings to use OreExcavator!"
 
@@ -49,7 +49,7 @@ Mods: {
 			"\nHey! {0} here!\nWe've detected that you're using your mining key for excavations. We don't recommend this, but to protect your world, we've disabled non-veinmining features! (chain-swap, etc.)\nAs an alternative, we recommend using Right {1} for excavations! Go ahead and try it out!\n\nYou can turn these features back on in the client configurations at any time after you switch your keybind off of Left Mouse."
 		
 			NoBind:
-			"[{0}] - v{1}\n\t  We noticed you don't have a keybind set for the mod!\n\t  The mod won't work without one, so be sure it's bound before reporting bugs.\n\t  You can find bindings for mods @ Settings > Controls > Mod Controls (at the bottom) > {0}: {$Mods.OreExcavator.KeyBinds.Excavate}"
+			"[{0}] - v{1}\n\t  We noticed you don't have a keybind set for the mod!\n\t  The mod won't work without one, so be sure one is set before reporting bugs.\n\t  You can find bindings for mods @ Settings > Controls > Mod Controls (at the bottom) > {0}: {$Mods.OreExcavator.KeyBinds.Excavate}"
 		}
 
 		Network:
@@ -58,7 +58,7 @@ Mods: {
 			"{0} added '{1}' to their personal whitelist"
 
 			Removed:
-			"{0} removed '{1}' to their personal whitelist"
+			"{0} removed '{1}' from their personal whitelist"
 		}
 
 		UI:
@@ -156,21 +156,6 @@ Mods: {
 			Halted:
 			"Excavation Halted"
 
-			# Optional to translate, used by the whitelisting engine to output what decisions it made auto-whitelisting
-			OreSearch: {
-				Start:
-				"Looking for modded ores and gems to whitelist..."
-
-				Added:
-				"Found vein {0}, adding as {1}."
-
-				Found:
-				"Found vein {0}, but was already whitelisted as {1}."
-
-				Finish:
-				"Done whitelisting modded content."
-			}
-
 			# Optional to translate, used by the mod to give debug feedback to players. Nice to have, but optional
 			Warnings: {
 				NoKey:
@@ -187,30 +172,36 @@ Mods: {
 
 				Server: {
 					DisabledExcavations:
-					"{$Mods.OreExcavator.Logging.Halted}: Host has disabled Tile Excavations."
+					"{$Mods.OreExcavator.Logging.Halted}: Host has Tile Excavations disabled."
 
 					DisabledHammer:
-					"{$Mods.OreExcavator.Logging.Halted}: Host has disabled Wall Excavations"
+					"{$Mods.OreExcavator.Logging.Halted}: Host has Wall Excavations disabled."
 
 					DisabledSwap:
-					"{$Mods.OreExcavator.Logging.Halted}: Host has disabled Chain-Swapping."
+					"{$Mods.OreExcavator.Logging.Halted}: Host has Chain-Swapping disabled."
 
 					DisabledPlanting:
-					"{$Mods.OreExcavator.Logging.Halted}: Host has disabled Chain-Planting."
+					"{$Mods.OreExcavator.Logging.Halted}: Host has Chain-Planting disabled."
 
 					DisabledPainting:
-					"{$Mods.OreExcavator.Logging.Halted}: Host has disabled Chain-Painting."
+					"{$Mods.OreExcavator.Logging.Halted}: Host has Chain-Painting disabled."
 				}
 
 				Client: {
 					DisabledExcavations:
-					"{$Mods.OreExcavator.Logging.Halted}: You have disabled Tile Excavations."
+					"{$Mods.OreExcavator.Logging.Halted}: You have Tile Excavations disabled."
 
 					DisabledPlacing:
-					"{$Mods.OreExcavator.Logging.Halted}: You have disabled chain-placing features."
+					"{$Mods.OreExcavator.Logging.Halted}: You have chain-placing features disabled."
 				
 					DisabledAlternatives:
-					"{$Mods.OreExcavator.Logging.Halted}: You have disabled alternative features."
+					"{$Mods.OreExcavator.Logging.Halted}: You have alternative features disabled."
+
+					RejectSwapUnwhitelisted:
+					"Rejected chain-swapping '{0}' because it isn't whitelisted by you, \n Hover over the item in your inventory and press '{1}' to start chain-swapping!"
+
+					RejectSwapBlacklisted:
+					"Rejected chain-swapping '{0}' because it is blacklisted by the server host."
 				}
 
 				TypeInvalid:

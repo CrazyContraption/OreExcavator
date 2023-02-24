@@ -1,4 +1,4 @@
-﻿#if DEBUG
+﻿#if DEBUG && false
 
 using OreExcavator.Enumerations;
 using Terraria;

@@ -1,5 +1,5 @@
 ﻿
-[b]Welcome to Ore Excavator! - Last Updated 2/16/2023[/b]
+[b]Welcome to Ore Excavator! - Last Updated 2/24/2023[/b]
 
 
 Found an issue? Join our Discord and help report it: https://discord.gg/FtrsRtPe6h
@@ -46,7 +46,7 @@ We're also open to suggestions and feedback!
 
 [h1] !!! FAQ !!! [/h1]
 Q:"Why doesn't the mod work?"
-A:Common issues include: Not having the mod enabled (enable it); Not having an excavation keybind set (set it in the controls section); having a corrupt version of the mod (redownload it).
+A:Common issues include: Not having the mod enabled (enable it); Not having an excavation keybind set (set it in your controls); having a corrupt version of the mod (redownload it).
 
 Q:"How do I use the mod?"
 A:By default, holding tilde ( ` ) with any pick/hammer will excavate the corresponding elements they target. The key must be set in the controls first! Additional settings and keybinds are available in the mod's configurations, take a peek!
@@ -95,7 +95,7 @@ A:Yes! as of v0.8.0, we have an API your mods can access when loaded together. V
  + Added a toggle for chain-placing features to the server configurations.
  + Added a config for servers to block the mod's motd forever, can also be used in singleplayer.
  + Added translations! We're working on adding more languages, visit our Discord to help out!
- + Added English translations.
+ + Added English translations, more coming in the following updates.
  + Added a Mod.Call() API to the mod for modders to use.
  + Added Tunit testing suite, coming soon to the workshop!
  * Fixed connected gravity tiles not always updating following the conclusions of excavations.
@@ -104,7 +104,7 @@ A:Yes! as of v0.8.0, we have an API your mods can access when loaded together. V
  * Fixed crashes related to excavating trees.
  * Fixed crashes related to smart cursors and torch excavations.
  * Fixed controllers requiring a keyboard binding to function.
- * Fixed file saving, shouldn't cause any security issues anymore!
+ * Fixed file saving, shouldn't cause security issues anymore!
  - Removed a bunch of outdated patchwork fixes for dupes, crashes, and old compatibility issues.
 
 0.7.5
@@ -115,17 +115,6 @@ A:Yes! as of v0.8.0, we have an API your mods can access when loaded together. V
  ~ Updated debug messages server error messages to not show by default now.
  * Actually fixed the dirt appearing issue this time. We swear.
  * Actually fixed mud being replaced with dirt for grass excavations. We also swear.
-
-0.7.3
- + Added a config for forcing excavations to consume mana based on excavation complexity.
- + Added a config to allow players to choose if excavations will auto-consume mana potions if needed.
- + Added icons to the config, wow so pretty!
- + Added a /version command that allows users to get versions of mods and the modloader information in-game.
- * Fixed Dungeon and spider walls being in the wrong config list.
- * Fixed walls and their similar dirt rampages that tiles perviously had.
- * Fixed a bunch of issues with the mod not working for some individuals.
- * Fixed an issue where excavating grasses would always leave dirt behind - even if it should be mud!
- * Fixed another issue causing some modded ores to turn into dirt.
 
 See all changelogs here: https://steamcommunity.com/sharedfiles/filedetails/changelog/2565639705
 
