@@ -1,6 +1,6 @@
 displayName = Ore Excavator
 author = CrazyContraption
-version = 0.8.0
+version = 0.8.1
 hideCode = true
 hideResources = true
 includeSource = false
