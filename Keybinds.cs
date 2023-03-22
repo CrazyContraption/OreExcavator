@@ -218,7 +218,7 @@ namespace OreExcavator
                 OreExcavator.ClientConfig.wallWhitelist.Count +
                 OreExcavator.ClientConfig.itemWhitelist.Count)
             {
-                ModPacket packet = OreExcavator.myMod.GetPacket();
+                ModPacket packet = OreExcavator.MyMod.GetPacket();
                 packet.Write((byte)actionType);
                 packet.Write((ushort)typeId);
                 packet.Write((int)style);

@@ -61,6 +61,15 @@ namespace OreExcavator
         [Slider]
         public float manaConsumption;
 
+        [Label("$Mods.OreExcavator.Config.Server.OreMultiplier.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Server.OreMultiplier.Description")]
+        [DefaultValue(1)]
+        [Increment(0.5f)]
+        [DrawTicks]
+        [Range(1, 5f)]
+        [Slider]
+        public float oreMultiplier;
+
         [Label("$Mods.OreExcavator.Config.Server.TeleportLoot.Label")]
         [Tooltip("$Mods.OreExcavator.Config.Server.TeleportLoot.Description")]
         [DefaultValue(false)]
@@ -111,7 +120,8 @@ namespace OreExcavator
             "Terraria:" + TileID.Search.GetName(TileID.PinkDungeonBrick),
             "Terraria:" + TileID.Search.GetName(TileID.Containers),
             "Terraria:" + TileID.Search.GetName(TileID.Pots),
-            "Terraria:" + TileID.Search.GetName(TileID.Heart)
+            "Terraria:" + TileID.Search.GetName(TileID.Heart),
+            "CalamityMod:" + "NavyStone"
         };
 
 
@@ -272,6 +282,24 @@ namespace OreExcavator
         public bool inititalChecks;
 
 
+        [Header("$Mods.OreExcavator.Config.Client.Headers.Controls")]
+
+        [Label("$Mods.OreExcavator.Config.Client.ToggleExcavations.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.ToggleExcavations.Description")]
+        [DefaultValue(false)]
+        public bool toggleExcavations;
+
+        [Label("$Mods.OreExcavator.Config.Client.ReleaseCancelsExcavations.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.ReleaseCancelsExcavations.Description")]
+        [DefaultValue(false)]
+        public bool releaseCancelsExcavations;
+
+        [Label("$Mods.OreExcavator.Config.Client.DoSpecials.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.DoSpecials.Description")]
+        [DefaultValue(true)]
+        public bool doSpecials;
+
+
         [Header("$Mods.OreExcavator.Config.Client.Headers.Tiles")]
 
         [Label("$Mods.OreExcavator.Config.Client.TileWhitelistAll.Label")]
@@ -321,7 +349,7 @@ namespace OreExcavator
             "Terraria:" + TileID.Search.GetName(TileID.CrackedBlueDungeonBrick),
             "Terraria:" + TileID.Search.GetName(TileID.CrackedGreenDungeonBrick),
             "Terraria:" + TileID.Search.GetName(TileID.CrackedPinkDungeonBrick),
-            "Terraria:" + TileID.Search.GetName(TileID.Spikes)
+            "Terraria:" + TileID.Search.GetName(TileID.Spikes),
         };
 
 
@@ -425,23 +453,11 @@ namespace OreExcavator
             "Terraria:" + ItemID.Search.GetName(ItemID.WoodWall),*/
         };
 
+        [ReadOnly(true)]
+        public Dictionary<string, System.Version> modVersions = new()
+        {
 
-        [Header("$Mods.OreExcavator.Config.Client.Headers.Controls")]
-
-        [Label("$Mods.OreExcavator.Config.Client.ToggleExcavations.Label")]
-        [Tooltip("$Mods.OreExcavator.Config.Client.ToggleExcavations.Description")]
-        [DefaultValue(false)]
-        public bool toggleExcavations;
-
-        [Label("$Mods.OreExcavator.Config.Client.ReleaseCancelsExcavations.Label")]
-        [Tooltip("$Mods.OreExcavator.Config.Client.ReleaseCancelsExcavations.Description")]
-        [DefaultValue(false)]
-        public bool releaseCancelsExcavations;
-
-        [Label("$Mods.OreExcavator.Config.Client.DoSpecials.Label")]
-        [Tooltip("$Mods.OreExcavator.Config.Client.DoSpecials.Description")]
-        [DefaultValue(true)]
-        public bool doSpecials;
+        };
 
         [Label("$Mods.OreExcavator.Config.Client.Keybind.Label")]
         [Tooltip("$Mods.OreExcavator.Config.Client.Keybind.Description")]
@@ -449,5 +465,7 @@ namespace OreExcavator
         [ReadOnly(true)]
         [JsonIgnore]
         public string keybind => (OreExcavator.ExcavateHotkey is not null ? (OreExcavator.ExcavateHotkey.GetAssignedKeys(PlayerInput.UsingGamepad ? InputMode.XBoxGamepad : InputMode.Keyboard).Count > 0 ? OreExcavator.ExcavateHotkey.GetAssignedKeys(PlayerInput.UsingGamepad ? InputMode.XBoxGamepad : InputMode.Keyboard)[0] : "Not Set") : "Unknown");
+
+
     }
 }

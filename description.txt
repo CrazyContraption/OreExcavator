@@ -1,5 +1,5 @@
 ﻿
-Welcome to Ore Excavator! - Last Updated 2/24/2023
+Welcome to Ore Excavator! - Last Updated 3/13/2023
 
 
 Found an issue? Join our Discord and help report it: https://discord.gg/FtrsRtPe6h
@@ -16,6 +16,7 @@ FEATURES:
  - Chain-mine adjacent tiles/walls from a single block
  - Chain-swap adjacent tiles/walls from a single block
  - Chain-place platforms, ropes, tracks, planters, and more
+ - Optional ore multiplier!
  - Configurable whitelist & blacklist with block picker controls in-game
  - Fully configurable client controls and keybindings
  - Fully configurable client settings to tailor to dynamic performance needs

@@ -41,7 +41,7 @@ namespace OreExcavator /// The Excavator of Ores
         internal static ConcurrentDictionary<ushort?, Task> alterTasks = new();
         internal static ConcurrentQueue<(int, int, Alteration)> alterQueue = new();
 
-        internal static OreExcavator myMod = ModContent.GetInstance<OreExcavator>();
+        internal static OreExcavator MyMod = ModContent.GetInstance<OreExcavator>();
 
         /// <summary>
         /// Static boolean that signifies if an excavation-related actions are taking place.
@@ -74,11 +74,11 @@ namespace OreExcavator /// The Excavator of Ores
         public override void Load()
         {
 #if DEBUG
-            Log($"Loading [{myMod.DisplayName}] - v{myMod.Version}... (DEBUG)", default, LogType.Info);
+            Log($"Loading [{MyMod.DisplayName}] - v{MyMod.Version}... (DEBUG)", default, LogType.Info);
 #elif TML_2022_10
-            Log($"Loading [{myMod.DisplayName}] - v{myMod.Version}... (RELEASE)", default, LogType.Info);
+            Log($"Loading [{MyMod.DisplayName}] - v{MyMod.Version}... (PREVIEW)", default, LogType.Info);
 #else
-            Log($"Loading [{myMod.DisplayName}] - v{myMod.Version}... (PREVIEW)", default, LogType.Info);
+            Log($"Loading [{MyMod.DisplayName}] - v{MyMod.Version}... (RELEASE)", default, LogType.Info);
 #endif
 
             ExcavateHotkey = KeybindLoader.RegisterKeybind(this, "Excavate", "OemTilde");
@@ -180,7 +180,7 @@ namespace OreExcavator /// The Excavator of Ores
                 return;
             orig(i, j, type);
         }
-#endif
+
 
         /// <summary>
         /// IL-ready injection that returns any injected method immediately if the thread calling it is doing an excavation
@@ -201,8 +201,105 @@ namespace OreExcavator /// The Excavator of Ores
             cursor.Emit(Mono.Cecil.Cil.OpCodes.Ret); // If kill was called, return immediately, don't continue
             cursor.MarkLabel(label); // Label
         }
+#endif
 
 #if DEBUG == false
+
+        private static void ConvertConfigs()
+        {
+            Log("Detecting and converting old config entries...", default, LogType.Info);
+            int count = 0;
+
+            // Updates old entries
+            Dictionary<string, int> tempSet = new();
+            foreach (string entry in ClientConfig.tileWhitelist)
+            {
+                int index = entry.IndexOf('.') + 1;
+                if (index > 1 && index < entry.Length)
+                    tempSet.Add(entry, index);
+            }
+            foreach (var entry in tempSet)
+            {
+                ClientConfig.tileWhitelist.Remove(entry.Key);
+                ClientConfig.tileWhitelist.Add(entry.Key[entry.Value..]);
+            }
+            count += tempSet.Count;
+            tempSet.Clear();
+            foreach (string entry in ClientConfig.wallWhitelist)
+            {
+                int index = entry.IndexOf('.') + 1;
+                if (index > 1 && index < entry.Length)
+                    tempSet.Add(entry, index);
+            }
+            foreach (var entry in tempSet)
+            {
+                ClientConfig.wallWhitelist.Remove(entry.Key);
+                ClientConfig.wallWhitelist.Add(entry.Key[entry.Value..]);
+            }
+            count += tempSet.Count;
+            tempSet.Clear();
+            foreach (string entry in ClientConfig.itemWhitelist)
+            {
+                int index = entry.IndexOf('.') + 1;
+                if (index > 1 && index < entry.Length)
+                    tempSet.Add(entry, index);
+            }
+            foreach (var entry in tempSet)
+            {
+                ClientConfig.itemWhitelist.Remove(entry.Key);
+                ClientConfig.itemWhitelist.Add(entry.Key[entry.Value..]);
+            }
+            count += tempSet.Count;
+            tempSet.Clear();
+
+
+            foreach (string entry in ServerConfig.tileBlacklist)
+            {
+                int index = entry.IndexOf('.') + 1;
+                if (index > 1 && index < entry.Length)
+                    tempSet.Add(entry, index);
+            }
+            foreach (var entry in tempSet)
+            {
+                ServerConfig.tileBlacklist.Remove(entry.Key);
+                ServerConfig.tileBlacklist.Add(entry.Key[entry.Value..]);
+            }
+            count += tempSet.Count;
+            tempSet.Clear();
+            foreach (string entry in ServerConfig.wallBlacklist)
+            {
+                int index = entry.IndexOf('.') + 1;
+                if (index > 1 && index < entry.Length)
+                    tempSet.Add(entry, index);
+            }
+            foreach (var entry in tempSet)
+            {
+                ServerConfig.wallBlacklist.Remove(entry.Key);
+                ServerConfig.wallBlacklist.Add(entry.Key[entry.Value..]);
+            }
+            count += tempSet.Count;
+            tempSet.Clear();
+            foreach (string entry in ServerConfig.itemBlacklist)
+            {
+                int index = entry.IndexOf('.') + 1;
+                if (index > 1 && index < entry.Length)
+                    tempSet.Add(entry, index);
+            }
+            foreach (var entry in tempSet)
+            {
+                ServerConfig.itemBlacklist.Remove(entry.Key);
+                ServerConfig.itemBlacklist.Add(entry.Key[entry.Value..]);
+            }
+            count += tempSet.Count;
+            tempSet.Clear();
+
+
+            if (count != 0)
+                Log($"{count} entries were brought up-to-date. Outdated entries were removed.", default, LogType.Warn);
+            else
+                Log("All existing entries are up-to-date!", default, LogType.Info);
+        }
+
         /// <summary>
         /// Executes once most -if not all- modded content is loaded by tML.
         /// Looks for items from other mods that could be classified as ores, gems, chunks, etc.
@@ -210,134 +307,141 @@ namespace OreExcavator /// The Excavator of Ores
         /// </summary>
         public override void PostSetupContent()
         {
+            ConvertConfigs();
+
             Log("Auto-whitelist runner started. Looking for modded ores and gems to whitelist...", default, LogType.Info);
 
             Log("Running through tML Ore Tile Set...", default, LogType.Info);
 
-            foreach (var ore in TileID.Sets.Ore.GetTrueIndexes())
+            foreach (int ore in TileID.Sets.Ore.GetTrueIndexes())
             {
+                if (ore < TileID.Count)
+                    continue;
+
                 string name = GetFullNameById(ore, ActionType.TileWhiteListed);
                 if (ClientConfig.tileWhitelist.Contains(name) is false)
                 {
-                    Log($"Found ore from Ore Set: '{name}', adding to whitelist...", default, LogType.Info);
+                    Log($"Found ore from Ore Set: '{name}', adding to whitelist.", default, LogType.Info);
                     ClientConfig.tileWhitelist.Add(name);
                 }
                 else
-                    Log($"Found ore from Ore Set: '{name}', but was already whitelisted.", default, LogType.Info);
+                    Log($"Found ore from Ore Set: '{name}', but was already whitelisted.", default, LogType.Debug);
             }
 
-            if (ModLoader.TryGetMod("CalamityMod", out var calamityMod) && calamityMod != null)
-            {
-                Log("Found Calamity - Adding hard-coded tiles to whitelist!", default, LogType.Info);
-                string[] calamityTiles =
-                {
+            Log("Ore Set Search completed.", default, LogType.Info);
+            Log("Beginning manaual ore search...", default, LogType.Info);
 
-                };
-                if (calamityTiles.Length <= 0)
-                    Log("Ooops - nothing to whitelist, guess I didn't finish this. CALAMITY SEND ME YOUR ORE LIST YOU WANT WHITELISTED", default, LogType.Info);
-                foreach (string calamityTile in calamityTiles)
+            foreach (Mod mod in ModLoader.Mods)
+            {
+                if (ClientConfig.modVersions.TryGetValue(mod.Name, out Version version) && mod.Version == version)
                 {
-                    string calamityName = "CalamityMod.CalamityMod." + calamityTile;
-                    if (ClientConfig.tileWhitelist.Contains(calamityName) is false)
-                    {
-                        Log($"Found Calamity Ore: 'TileID.{calamityTile}'... Adding to whitelist as '{calamityName}'", default, LogType.Info);
-                        ClientConfig.tileWhitelist.Add(calamityName);
-                    }
-                    else
-                        Log($"Found Calamity Ore: 'TileID.{calamityTile}'... But already exists in whitelist as '{calamityName}'", default, LogType.Info);
+                    Log($"Found {mod.Name} - But we're already up-to-date with them! v({version}) ", default, LogType.Info);
+                    continue;
                 }
-                Log("CalamityMod manual whitelisting concluded.", default, LogType.Info);
-            }
-            if (ModLoader.TryGetMod("ThoriumMod", out var thoriumMod) && thoriumMod != null)
-            {
-                Log("Found ThroiumMod - Adding hard-coded tiles to whitelist!", default, LogType.Info);
-                string[] thoriumTiles =
+
+                string[] manualTileList = {};
+                switch (mod.Name)
                 {
-                    "Opal",
-                    "SmoothCoal",
-                    "Aquamarine",
-                    "LifeQuartz",
-                    "Aquaite",
-                    "ValadiumChunk",
-                    "LodestoneChunk",
-                    "LumiteChunk",
-                    "SynthGold",
-                    "SynthPlatinum",
-                    "ThoriumOre"
-                };
-                foreach (string thoriumTile in thoriumTiles)
-                {
-                    string thoriumName = "ThoriumMod.ThoriumMod." + thoriumTile;
-                    if (ClientConfig.tileWhitelist.Contains(thoriumName) is false)
-                    {
-                        Log($"Found Thorium Ore: 'TileID.{thoriumTile}'... Adding to whitelist as '{thoriumName}'", default, LogType.Info);
-                        ClientConfig.tileWhitelist.Add(thoriumName);
-                    }
-                    else
-                        Log($"Found Thorium Ore: 'TileID.{thoriumTile}'... But already exists in whitelist as '{thoriumName}'", default, LogType.Info);
+                    case "CalamityMod":
+                        manualTileList = new string[] {
+                            "AerialiteOreDisenchanted",
+                            "InfernalSuevite",
+                            "ScoriaOre",
+                            "SeaPrism",
+                            "SeaPrismCrystals",
+                        };
+                        goto case "_";
+
+                    case "ThoriumMod":
+                        manualTileList = new string[] {
+                            "Opal",
+                            "Aquamarine",
+                        };
+                        goto case "_";
+
+                    case "_":
+                        Log($"Found {mod.Name} - Adding {manualTileList.Length} hard-coded tiles to whitelist!", default, LogType.Info);
+
+                        if (manualTileList.Length <= 0)
+                            Log("Ooops - nothing to whitelist, guess I didn't finish this...", default, LogType.Warn);
+                        else
+                            ClientConfig.modVersions[mod.Name] = mod.Version;
+
+                        foreach (string manualTile in manualTileList)
+                        {
+                            string fullName = mod.Name + ':' + manualTile;
+                            if (ClientConfig.tileWhitelist.Contains(fullName) is false)
+                            {
+                                Log($"Found {mod.Name} Ore: 'TileID.{manualTile}'... Adding to whitelist as '{fullName}'", default, LogType.Info);
+                                ClientConfig.tileWhitelist.Add(fullName);
+                            }
+                            else
+                                Log($"Found {mod.Name} Ore: 'TileID.{manualTile}'... But already exists in whitelist as '{fullName}'", default, LogType.Debug);
+                        }
+
+                        Log($"Manual {mod.Name} whitelisting concluded.", default, LogType.Info);
+                        continue;
                 }
-                Log("ThoriumMod manual whitelisting concluded.", default, LogType.Info);
-            }
 
-            for (int id = TileID.Count; id < TileLoader.TileCount; id++)
-            {
-                string name;
-                ModTile tile = TileLoader.GetTile(id);
-                if (tile is null)
-                    name = TileID.Search.GetName(id);
-                else
-                    name = tile.Name;
-                
-                // Strip Tile and T from modded ores (common naming convention)
-                // This is done to use EndsWith in next if statement (faster than IndexOf). 
-                if (name.EndsWith("Tile", StringComparison.Ordinal))
-                    name = name[0..^4];
-                else if (name.EndsWith('T'))
-                    name = name[0..^1];
+                bool addedSomething = false;
+                foreach (ModTile tile in mod.GetContent<ModTile>())
+                {
+                    string tileName = tile.Name;
+                    if (tileName.EndsWith("Tile", StringComparison.Ordinal))
+                        tileName = tileName[0..^4];
+                    else if (tileName.EndsWith('T'))
+                        tileName = tileName[0..^1];
 
-                string newName = name;
+                    string newName = tileName;
 
-                // If modded tile is ore, gem, or chunk, replace with upper case (formatting).
-                // This if is used for auto-whitelist adding modded tiles later.
-                if (name.EndsWith("Ore", StringComparison.Ordinal))
-                    newName = newName.Replace("Ore", "'ORE'");
-                else if (name.EndsWith("Gem", StringComparison.Ordinal))
-                    newName = newName.Replace("Ore", "'GEM'");
-                else if (name.EndsWith("Chunk", StringComparison.Ordinal))
-                    newName = newName.Replace("Ore", "'CHUNK'");
-                else // Final else checks if the item dropped contains a matching check (to catch stragglers).
-                { 
-                    if (tile is not null)
+                    // If modded tile is ore, gem, or chunk, replace with upper case (formatting).
+                    // This if is used for auto-whitelist adding modded tiles later.
+                    if (tileName.EndsWith("Ore", StringComparison.Ordinal))
+                        newName = newName[0..^3] + "'ORE'";
+                    else if (tileName.EndsWith("Gem", StringComparison.Ordinal))
+                        newName = newName[0..^3] + "'GEM'";
+                    else if (tileName.EndsWith("Chunk", StringComparison.Ordinal))
+                        newName = newName[0..^5] + "'CHUNK'";
+                    else // Final else checks if the item dropped contains a matching check (to catch stragglers).
                     {
                         ModItem item = ItemLoader.GetItem(tile.ItemDrop);
+
                         if (item is not null)
-                            name = item.Name;
+                            tileName = item.Name;
                         else
-                            name = new Item(tile.ItemDrop).Name;
-                        newName = name;
-                        if ((name ?? "") != "")
+                            tileName = new Item(tile.ItemDrop).Name;
+                        newName = tileName;
+                        if ((tileName ?? "") != "")
                         {
-                            if (name.EndsWith("Ore", StringComparison.Ordinal))
-                                newName = newName.Replace("Ore", "'ORE'");
-                            else if (name.EndsWith("Gem", StringComparison.Ordinal))
-                                newName = newName.Replace("Ore", "'GEM'");
-                            else if (name.EndsWith("Chunk", StringComparison.Ordinal))
-                                newName = newName.Replace("Ore", "'CHUNK'");
+                            if (tileName.EndsWith("Ore", StringComparison.Ordinal))
+                                newName = newName[0..^3] + "'ORE'";
+                            else if (tileName.EndsWith("Gem", StringComparison.Ordinal))
+                                newName = newName[0..^3] + "'GEM'";
+                            else if (tileName.EndsWith("Chunk", StringComparison.Ordinal))
+                                newName = newName[0..^5] + "'CHUNK'";
                         }
                     }
-                }
-                if (name != newName)
-                {
-                    name = GetFullNameById(id, ActionType.TileWhiteListed);
-                    if (ClientConfig.tileWhitelist.Contains(name) is false)
+
+                    if (tileName != newName)
                     {
-                        Log($"Found Other Ore: 'TileID.{newName}'... Adding to whitelist as '{name}'", default, LogType.Info);
-                        ClientConfig.tileWhitelist.Add(name);
+                        if (addedSomething is false)
+                            addedSomething = true;
+
+                        tileName = mod.Name + ':' + tile.Name; //GetFullNameById(tile., ActionType.TileWhiteListed);
+                        if (ClientConfig.tileWhitelist.Contains(tileName) is false)
+                        {
+                            Log($"Found Other Ore: 'TileID.{newName}'... Adding to whitelist as '{tileName}'", default, LogType.Info);
+                            ClientConfig.tileWhitelist.Add(tileName);
+                        }
+                        else
+                            Log($"Found Other Ore: 'TileID.{newName}'... But already exists in whitelist as '{tileName}'", default, LogType.Debug);
                     }
-                    else
-                        Log($"Found Other Ore: 'TileID.{newName}'... But already exists in whitelist as '{name}'", default, LogType.Info);
                 }
+
+                if (addedSomething)
+                    ClientConfig.modVersions[mod.Name] = mod.Version;
             }
+
             ExcavatorSystem.SaveConfig(ClientConfig);
             Log("Auto-whitelist runner concluded. Finishing up...", default, LogType.Info);
         }
@@ -620,7 +724,7 @@ namespace OreExcavator /// The Excavator of Ores
             // Multi-non-puppet, or server 
             if (Main.netMode is NetmodeID.Server || (Main.netMode is NetmodeID.MultiplayerClient && puppeting is false))
             {
-                ModPacket packet = myMod.GetPacket();
+                ModPacket packet = MyMod.GetPacket();
                 if (Main.netMode is NetmodeID.Server)
                     packet.Write((byte)playerID);
                 packet.Write((byte)actionType);
@@ -893,7 +997,7 @@ namespace OreExcavator /// The Excavator of Ores
                 //Log(playerID + " HALTED");
                 if (Main.netMode is NetmodeID.MultiplayerClient && playerID == Main.myPlayer)
                 {
-                    ModPacket packet = myMod.GetPacket();
+                    ModPacket packet = MyMod.GetPacket();
                     packet.Write((byte)ActionType.HaltExcavations);
                     packet.Send();
                     //Log(playerID + " SENDING " + ActionType.HaltExcavations);
@@ -910,7 +1014,7 @@ namespace OreExcavator /// The Excavator of Ores
 
                 if (Main.netMode is NetmodeID.MultiplayerClient && playerID == Main.myPlayer)
                 {
-                    ModPacket packet = myMod.GetPacket();
+                    ModPacket packet = MyMod.GetPacket();
                     packet.Write((byte)ActionType.ResetExcavations);
                     packet.Send();
                     //Log(playerID + " SENDING " + ActionType.ResetExcavations);
@@ -1030,7 +1134,7 @@ namespace OreExcavator /// The Excavator of Ores
                 case ActionType.TileKilled:
                     ModTile modTile = TileLoader.GetTile(id);
                     if (modTile is not null)
-                        return $"{modTile.Mod}:{modTile.Name}" + (subtype >= 0 ? $":{subtype}" : "");
+                        return $"{modTile.Mod.Name}:{modTile.Name}" + (subtype >= 0 ? $":{subtype}" : "");
                     else if (id < TileID.Count)
                         return "Terraria:" + TileID.Search.GetName(id) + (subtype >= 0 ? $":{subtype}" : "");
                     else
@@ -1041,7 +1145,7 @@ namespace OreExcavator /// The Excavator of Ores
                 case ActionType.WallKilled:
                     ModWall modWall = WallLoader.GetWall(id);
                     if (modWall is not null)
-                        return $"{modWall.Mod}:{modWall.Name}";
+                        return $"{modWall.Mod.Name}:{modWall.Name}";
                     else if (id < WallID.Count)
                         return "Terraria:" + WallID.Search.GetName(id);
                     else
@@ -1054,7 +1158,7 @@ namespace OreExcavator /// The Excavator of Ores
                 case ActionType.SeedPlanted:
                     var modItem = ItemLoader.GetItem(id);
                     if (modItem is not null)
-                        return $"{modItem.Mod}:{modItem.Name}";
+                        return $"{modItem.Mod.Name}:{modItem.Name}";
                     else if (id < ItemID.Count)
                         return "Terraria:" + ItemID.Search.GetName(id);
                     else
@@ -1138,30 +1242,30 @@ namespace OreExcavator /// The Excavator of Ores
                 switch (type)
                 {
                     case LogType.Info:
-                        myMod.Logger.Info(msg);
+                        MyMod.Logger.Info(msg);
                         break;
 
                     case LogType.Debug:
                         if (ClientConfig.doDebugStuff)
-                            myMod.Logger.Debug(msg);
+                            MyMod.Logger.Debug(msg);
                         else
                         {
 #if DEBUG
-                            myMod.Logger.Debug(msg);
+                            MyMod.Logger.Debug(msg);
 #endif
                         }
                         break;
 
                     case LogType.Warn:
-                        myMod.Logger.Warn(msg);
+                        MyMod.Logger.Warn(msg);
                         break;
 
                     case LogType.Error:
-                        myMod.Logger.Error(msg);
+                        MyMod.Logger.Error(msg);
                         break;
 
                     case LogType.Fatal:
-                        myMod.Logger.Fatal(msg);
+                        MyMod.Logger.Fatal(msg);
                         break;
                 }
 #if DEBUG == false
@@ -1190,7 +1294,7 @@ namespace OreExcavator /// The Excavator of Ores
                             else
                                 Main.NewText(msg, color);
                         } catch(Exception e) {
-                            myMod.Logger.Error(e);
+                            MyMod.Logger.Error(e);
                             Main.NewText(msg, color);
                         }
                     }
@@ -1199,6 +1303,8 @@ namespace OreExcavator /// The Excavator of Ores
 
     internal class ExcavatorTile : GlobalTile
     {
+        private static float OreOwed = 0.0f;
+
         /// <summary>
         /// Called when the player hits a block.
         /// This handles the tile's death, and subsequently will kill other tiles under the right conditions.
@@ -1212,11 +1318,22 @@ namespace OreExcavator /// The Excavator of Ores
         /// <param name="noItem">Reference of if the tile should drop not item(s)</param>
         public override void KillTile(int x, int y, int oldType, ref bool fail, ref bool effectOnly, ref bool noItem)
         {
-            if (WorldGen.gen || Main.tile[x, y].HasTile is false || oldType < 0 || OreExcavator.KillCalled || Main.netMode == NetmodeID.Server || Main.gameMenu)
+            if (Main.PlayerLoaded is false || WorldGen.gen || Main.tile[x, y].HasTile is false || oldType < 0)
                 return;
 
             if (OreExcavator.ServerConfig.creativeMode)
                 noItem = true;
+
+            if (Main.netMode is not NetmodeID.MultiplayerClient && fail is false && OreExcavator.ServerConfig.oreMultiplier > 1.0f && TileID.Sets.Ore[oldType])
+            {
+                OreOwed += OreExcavator.ServerConfig.oreMultiplier - 1.0f;
+                if (noItem is false)
+                    for (WorldGen.KillTile_GetItemDrops(x, y, Framing.GetTileSafely(x, y), out int item1, out int _, out int _, out int _); OreOwed > 1.0f; OreOwed--)
+                        _ = Item.NewItem(new EntitySource_TileBreak(x, y), x * 16, y * 16, 0, 0, item1, 1);
+            }
+
+            if (OreExcavator.KillCalled || Main.netMode is NetmodeID.Server)
+                return;
 
             if (OreExcavator.ExcavateHotkey.GetAssignedKeys(PlayerInput.UsingGamepad ? InputMode.XBoxGamepad : InputMode.Keyboard).Count <= 0)
             {
@@ -1232,7 +1349,7 @@ namespace OreExcavator /// The Excavator of Ores
                     OreExcavator.masterTiles.Clear();
                     if (Main.netMode == NetmodeID.MultiplayerClient)
                     {
-                        ModPacket packet = OreExcavator.myMod.GetPacket();
+                        ModPacket packet = OreExcavator.MyMod.GetPacket();
                         packet.Write((byte)ActionType.ResetExcavations);
                         packet.Send();
                     }
@@ -1340,7 +1457,7 @@ namespace OreExcavator /// The Excavator of Ores
                     OreExcavator.masterTiles.Clear();
                     if (Main.netMode == NetmodeID.MultiplayerClient)
                     {
-                        ModPacket packet = OreExcavator.myMod.GetPacket();
+                        ModPacket packet = OreExcavator.MyMod.GetPacket();
                         packet.Write((byte)ActionType.ResetExcavations);
                         packet.Send();
                     }
@@ -1445,7 +1562,7 @@ namespace OreExcavator /// The Excavator of Ores
                 if (OreExcavator.ServerConfig.allowReplace && OreExcavator.ClientConfig.doSpecials)
                 {
                     OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Keybind.MainActionWarning",
-                        OreExcavator.myMod.Name, (PlayerInput.UsingGamepad ? "Trigger" : "Click")),
+                        OreExcavator.MyMod.Name, (PlayerInput.UsingGamepad ? "Trigger" : "Click")),
                         Color.Orange, LogType.Warn);
                     OreExcavator.ClientConfig.doSpecials = false;
                     OreExcavator.ClientConfig.showCursorTooltips = false;
@@ -1461,7 +1578,7 @@ namespace OreExcavator /// The Excavator of Ores
                     OreExcavator.masterTiles.Clear();
                     if (Main.netMode == NetmodeID.MultiplayerClient)
                     {
-                        ModPacket packet = OreExcavator.myMod.GetPacket();
+                        ModPacket packet = OreExcavator.MyMod.GetPacket();
                         packet.Write((byte)ActionType.ResetExcavations);
                         packet.Send();
                     }
@@ -1842,14 +1959,15 @@ namespace OreExcavator /// The Excavator of Ores
             // Keybind?
             if (excavateKey.Count <= 0)
             {
-                tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", $"[OE] [c/E11919:{Language.GetTextValue("Mods.OreExcavator.Keybind.None")}]"));
+                if ((item.pick != 0 && OreExcavator.ServerConfig.allowPickaxing) || (item.hammer != 0 && OreExcavator.ServerConfig.allowHammering) || (OreExcavator.ClientConfig.doSpecials && (item.createTile >= TileID.Dirt || item.createWall > WallID.None)))
+                    tooltips.Add(new TooltipLine(OreExcavator.MyMod, "HowToUse", $"[OE] [c/E11919:{Language.GetTextValue("Mods.OreExcavator.Keybind.None")}]"));
                 return;
             }
 
             // Blacklisted?
             if (OreExcavator.ServerConfig.itemBlacklistToggled && OreExcavator.ServerConfig.itemBlacklist.Contains(name))
             {
-                tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", $"[OE] [c/E11919:{Language.GetTextValue("Mods.OreExcavator.UI.Tooltips.Blacklisted")}]"));
+                tooltips.Add(new TooltipLine(OreExcavator.MyMod, "HowToUse", $"[OE] [c/E11919:{Language.GetTextValue("Mods.OreExcavator.UI.Tooltips.Blacklisted")}]"));
                 return;
             }
 
@@ -1862,8 +1980,8 @@ namespace OreExcavator /// The Excavator of Ores
                 keybind = "Left Click";
 
             // Pickaxe or Hammer?
-            if ((item.pick > 0 && OreExcavator.ServerConfig.allowPickaxing) || (item.hammer > 0 && OreExcavator.ServerConfig.allowHammering))
-                tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", $"[OE] [c/32FF82:{Language.GetTextValue("Mods.OreExcavator.UI.Tooltips.HoldToExcavate", keybind)}]"));
+            if ((item.pick != 0 && OreExcavator.ServerConfig.allowPickaxing) || (item.hammer != 0 && OreExcavator.ServerConfig.allowHammering))
+                tooltips.Add(new TooltipLine(OreExcavator.MyMod, "HowToUse", $"[OE] [c/32FF82:{Language.GetTextValue("Mods.OreExcavator.UI.Tooltips.HoldToExcavate", keybind)}]"));
             // Item?
             else if (OreExcavator.ClientConfig.doSpecials)
                 // Tile or Wall
@@ -1873,21 +1991,21 @@ namespace OreExcavator /// The Excavator of Ores
                     {
                         var whitelistKey = OreExcavator.WhitelistHotkey.GetAssignedKeys(PlayerInput.UsingGamepad ? InputMode.XBoxGamepad : InputMode.Keyboard);
                         if (whitelistKey.Count <= 0)
-                            tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", $"[OE] [c/E11919:{Language.GetTextValue("Mods.OreExcavator.Keybind.None")}]"));
+                            tooltips.Add(new TooltipLine(OreExcavator.MyMod, "HowToUse", $"[OE] [c/E11919:{Language.GetTextValue("Mods.OreExcavator.Keybind.None")}]"));
                         else
-                            tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", $"[OE] [c/FFF014:{Language.GetTextValue("Mods.OreExcavator.UI.Tooltips.PressToWhitelist", whitelistKey[0])}]"));
+                            tooltips.Add(new TooltipLine(OreExcavator.MyMod, "HowToUse", $"[OE] [c/FFF014:{Language.GetTextValue("Mods.OreExcavator.UI.Tooltips.PressToWhitelist", whitelistKey[0])}]"));
                     }
                     else if (OreExcavator.GetExtendsDirection(item.createTile) > Direction.None)
-                        tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", $"[OE] [c/32FF82:{Language.GetTextValue("Mods.OreExcavator.UI.Tooltips.HoldToPlace", keybind)}]"));
+                        tooltips.Add(new TooltipLine(OreExcavator.MyMod, "HowToUse", $"[OE] [c/32FF82:{Language.GetTextValue("Mods.OreExcavator.UI.Tooltips.HoldToPlace", keybind)}]"));
                     else if (OreExcavator.ServerConfig.chainSeeding)
                         if (item.Name.EndsWith("seeds", StringComparison.OrdinalIgnoreCase))
-                            tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", $"[OE] [c/32FF82:{Language.GetTextValue("Mods.OreExcavator.UI.Tooltips.HoldToPlant", keybind)}]"));
+                            tooltips.Add(new TooltipLine(OreExcavator.MyMod, "HowToUse", $"[OE] [c/32FF82:{Language.GetTextValue("Mods.OreExcavator.UI.Tooltips.HoldToPlant", keybind)}]"));
                         else if (OreExcavator.ServerConfig.allowReplace)
-                            tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", $"[OE] [c/32FF82:{Language.GetTextValue("Mods.OreExcavator.UI.Tooltips.HoldToSwap", keybind)}]"));
+                            tooltips.Add(new TooltipLine(OreExcavator.MyMod, "HowToUse", $"[OE] [c/32FF82:{Language.GetTextValue("Mods.OreExcavator.UI.Tooltips.HoldToSwap", keybind)}]"));
                 }
                 // Paint
                 else if (OreExcavator.ServerConfig.chainPainting && item.paint is PaintID.None && (item.Name.EndsWith("paintbrush", StringComparison.OrdinalIgnoreCase) || item.Name.EndsWith("paint roller", StringComparison.OrdinalIgnoreCase) || item.Name.EndsWith("paint scraper", StringComparison.OrdinalIgnoreCase)))
-                    tooltips.Add(new TooltipLine(OreExcavator.myMod, "HowToUse", $"[OE] [c/32FF82:{Language.GetTextValue("Mods.OreExcavator.UI.Tooltips.HoldToPaint", keybind)}]"));
+                    tooltips.Add(new TooltipLine(OreExcavator.MyMod, "HowToUse", $"[OE] [c/32FF82:{Language.GetTextValue("Mods.OreExcavator.UI.Tooltips.HoldToPaint", keybind)}]"));
         }
 
         public override bool CanUseItem(Item item, Player player)
@@ -1986,7 +2104,7 @@ namespace OreExcavator /// The Excavator of Ores
                 new Task(delegate
                 {
                     Thread.Sleep(2000);
-                    OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Keybind.NoBind", OreExcavator.myMod.DisplayName, OreExcavator.myMod.Version), Color.Red, LogType.Warn);
+                    OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Keybind.NoBind", OreExcavator.MyMod.DisplayName, OreExcavator.MyMod.Version), Color.Red, LogType.Warn);
                 }).Start();
             }
             else if (OreExcavator.ClientConfig.showWelcome080 && OreExcavator.ServerConfig.showWelcome)
@@ -1994,7 +2112,7 @@ namespace OreExcavator /// The Excavator of Ores
                 new Task(delegate
                 {
                     Thread.Sleep(2000);
-                    OreExcavator.Log($"[{OreExcavator.myMod.DisplayName}] - v{OreExcavator.myMod.Version}" +
+                    OreExcavator.Log($"[{OreExcavator.MyMod.DisplayName}] - v{OreExcavator.MyMod.Version}" +
                                      "\n\t  We have a discord for bug reporting and feature suggestions:" +
                                      "\n\t  https://discord.gg/FtrsRtPe6h" +
 

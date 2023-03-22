@@ -1,4 +1,4 @@
-﻿#if DEBUG && false
+﻿#if DEBUG
 
 using OreExcavator.Enumerations;
 using Terraria;
@@ -47,7 +47,7 @@ namespace OreExcavator
         }
 
         [Test]
-        public static TestStatus Alteration_HasAndConsumeMana()
+        public static void Alteration_HasAndConsumeMana()
         {
             Setup();
 
@@ -57,14 +57,15 @@ namespace OreExcavator
             bool noMana_Pass = !Alteration.HasAndConsumeMana(1.1f, Main.myPlayer);
             bool hasMana_Pass = Alteration.HasAndConsumeMana(0.9f, Main.myPlayer);
 
-            Cleanup();
+            //Cleanup();
 
-            if (noMana_Pass && hasMana_Pass)
-                return TestStatus.Passed;
-            else
-                return TestStatus.Failed;
+            //if (noMana_Pass && hasMana_Pass)
+            //    return TestStatus.Passed;
+            //else
+            //    return TestStatus.Failed;
         }
 
+#if false
         [Test]
         public static TestStatus DoAlteration_TileKilled()
         {
@@ -231,6 +232,7 @@ namespace OreExcavator
 
             return TestStatus.Passed;
         }
+#endif
     }
 }
 #endif

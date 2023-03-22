@@ -55,10 +55,13 @@ namespace OreExcavator
         {
             if (OreExcavator.ServerConfig.creativeMode is true)
                 return true;
-            if (manaCost <= 0)
+
+            if (manaCost <= 0 || Main.player[player].statManaMax2 < 100)
                 return true;
+
             if (player < 0)
                 return false;
+
             return Main.player[player].CheckMana((int)(OreExcavator.ServerConfig.manaConsumption * manaCost), true, OreExcavator.ClientConfig.refillMana is false);
         }
 
@@ -66,6 +69,7 @@ namespace OreExcavator
         {
             if (itemID <= ItemID.None || playerID < 0)
                 return false;
+
             if (OreExcavator.ServerConfig.creativeMode is true || puppeting is true)
                 return true;
 
@@ -120,6 +124,7 @@ namespace OreExcavator
                 case ActionType.TileKilled:
                     if (puppeting is false && HasAndConsumeMana(manaCost, playerID) is false)
                         return true;
+
                     WorldGen.KillTile(x, y, Main.tile[x, y].HasTile is false, false, OreExcavator.ServerConfig.creativeMode);
                     return false;
 

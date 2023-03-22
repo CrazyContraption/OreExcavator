@@ -62,13 +62,6 @@
             Prevents falling tiles from updating during an excavation.
             </summary>
         </member>
-        <member name="M:OreExcavator.OreExcavator.ReturnIfCalled(MonoMod.Cil.ILContext)">
-            <summary>
-            IL-ready injection that returns any injected method immediately if the thread calling it is doing an excavation
-            </summary>
-            
-            <param name="il"></param>
-        </member>
         <member name="M:OreExcavator.OreExcavator.PostSetupContent">
             <summary>
             Executes once most -if not all- modded content is loaded by tML.

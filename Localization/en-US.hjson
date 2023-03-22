@@ -367,6 +367,14 @@ Mods: {
 					"With values above 0, excavation actions will consume mana \n proportional to the action performed. (amount, toughness). \n 1 is normal balancing, 0.5 makes basic actions free. {$Mods.OreExcavator.Config.Common.Performance.NoImpact}."
 				}
 
+				OreMultiplier: {
+					Label:
+					"[i/p0:11]{$Mods.OreExcavator.Config.Common.IconBuffer} Ore Multiplier"
+
+					Description:
+					"Multiplies the amount of ores recieved from mining. This only applies to mod ores specified as Ores. \n Modded ores should work fine if defined properly. Regular tiles are unaffected. {$Mods.OreExcavator.Config.Common.Performance.DisableImproves}."
+				}
+
 				TeleportLoot: {
 					Label:
 					"[i/p0:5010]{$Mods.OreExcavator.Config.Common.IconBuffer} Teleport Loot to Player"
@@ -491,7 +499,7 @@ Mods: {
 					"{$Mods.OreExcavator.Config.Client.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} {$Mods.OreExcavator.Walls}"
 
 					Items:
-					"{$Mods.OreExcavator.Config.Client.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} {$Mods.OreExcavator.Mode.Replacing}"
+					"{$Mods.OreExcavator.Config.Client.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} {$Mods.OreExcavator.UI.Mode.Replacing}"
 
 					Controls:
 					"{$Mods.OreExcavator.Config.Client.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} Controls"
