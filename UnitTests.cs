@@ -10,6 +10,7 @@ using Terraria.ID;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
+using Ionic.Zip;
 
 namespace OreExcavator
 {
@@ -19,7 +20,7 @@ namespace OreExcavator
     {
         private static int? mana;
 
-        //private static Player myPlayer;
+        private static Player myPlayer;
 
         private static void Setup()
         {
@@ -56,98 +57,80 @@ namespace OreExcavator
 
             bool noMana_Pass = !Alteration.HasAndConsumeMana(1.1f, Main.myPlayer);
             bool hasMana_Pass = Alteration.HasAndConsumeMana(0.9f, Main.myPlayer);
-
-            //Cleanup();
-
-            //if (noMana_Pass && hasMana_Pass)
-            //    return TestStatus.Passed;
-            //else
-            //    return TestStatus.Failed;
+            Assert.AssertTrue(noMana_Pass && hasMana_Pass);
+            Cleanup();
         }
 
 #if false
         [Test]
-        public static TestStatus DoAlteration_TileKilled()
+        public static void DoAlteration_TileKilled()
         {
             Setup();
 
             Alteration alt = new(0, ActionType.TileKilled, (byte)Main.myPlayer, false, -1, -1);
 
             OreExcavator.ServerConfig.manaConsumption = 101f;
-            bool noMana_Pass = alt.DoAlteration(0,0);
+            bool noMana_Pass = alt.DoAlteration(0, 0);
             OreExcavator.ServerConfig.manaConsumption = 99f;
-            bool hasMana_Pass = !alt.DoAlteration(0,0);
-            
-            Cleanup();
+            bool hasMana_Pass = !alt.DoAlteration(0, 0);
 
-            if (noMana_Pass && hasMana_Pass)
-                return TestStatus.Passed;
-            else
-                return TestStatus.Failed;
+            Assert.AssertTrue(noMana_Pass && hasMana_Pass);
+            Cleanup();
         }
 
         [Test]
-        public static TestStatus DoAlteration_TileReplaced()
+        public static void DoAlteration_TileReplaced()
         {
             Setup();
 
             Alteration alt = new(0, ActionType.TileReplaced, (byte)Main.myPlayer, false, -1, -1);
-            
+
             OreExcavator.ServerConfig.manaConsumption = 51f;
-            bool noMana_Pass = alt.DoAlteration(0,0);
+            bool noMana_Pass = alt.DoAlteration(0, 0);
             OreExcavator.ServerConfig.manaConsumption = 49f;
-            bool hasMana_Pass = !alt.DoAlteration(0,0); // Fails due to lack of items
+            bool hasMana_Pass = !alt.DoAlteration(0, 0); // Fails due to lack of items
 
+
+            Assert.AssertTrue(noMana_Pass);
             Cleanup();
-
-            if (noMana_Pass)// && hasMana_Pass)
-                return TestStatus.Passed;
-            else
-                return TestStatus.Failed;
         }
 
         [Test]
-        public static TestStatus DoAlteration_WallKilled()
+        public static void DoAlteration_WallKilled()
         {
             Setup();
 
             Alteration alt = new(0, ActionType.WallKilled, (byte)Main.myPlayer, false, -1, -1);
 
             OreExcavator.ServerConfig.manaConsumption = 202f;
-            bool noMana_Pass = alt.DoAlteration(0,0);
+            bool noMana_Pass = alt.DoAlteration(0, 0);
             OreExcavator.ServerConfig.manaConsumption = 198f;
-            bool hasMana_Pass = !alt.DoAlteration(0,0);
+            bool hasMana_Pass = !alt.DoAlteration(0, 0);
 
             Cleanup();
 
-            if (noMana_Pass && hasMana_Pass)
-                return TestStatus.Passed;
-            else
-                return TestStatus.Failed;
+            Assert.AssertTrue(noMana_Pass && hasMana_Pass);
         }
 
         [Test]
-        public static TestStatus DoAlteration_WallReplaced()
+        public static void DoAlteration_WallReplaced()
         {
             Setup();
 
             Alteration alt = new(0, ActionType.WallReplaced, (byte)Main.myPlayer, false, -1, -1);
 
             OreExcavator.ServerConfig.manaConsumption = 51f;
-            bool noMana_Pass = alt.DoAlteration(0,0);
+            bool noMana_Pass = alt.DoAlteration(0, 0);
             OreExcavator.ServerConfig.manaConsumption = 49f;
-            bool hasMana_Pass = !alt.DoAlteration(0,0); // Fails due to lack of items
+            bool hasMana_Pass = !alt.DoAlteration(0, 0); // Fails due to lack of items
 
             Cleanup();
 
-            if (noMana_Pass)// && hasMana_Pass)
-                return TestStatus.Passed;
-            else
-                return TestStatus.Failed;
+            Assert.AssertTrue(noMana_Pass);
         }
 
         [Test]
-        public static TestStatus DoAlteration_IronExcavation_Return50Ore() // Needs to be async
+        public static void DoAlteration_IronExcavation_Return50Ore()
         {
             Setup();
             // Setup initial conditions
@@ -164,9 +147,7 @@ namespace OreExcavator
             Tools.GenerateRectangle(initX, initY, length, height, tile);
 
             // Execute Spooler
-            Task<TestStatus> task = new Task<TestStatus>(() =>
-            {
-                ushort? taskId = OreExcavator.ModifySpooler(ActionType.TileKilled,
+            OreExcavator.ModifySpooler(ActionType.TileKilled,
                     initX,
                     initY,
                     (byte)OreExcavator.ClientConfig.recursionDelay,
@@ -175,28 +156,17 @@ namespace OreExcavator
                     (byte)Main.myPlayer,
                     tile);
 
-                if (taskId is null)
-                    return TestStatus.Failed;
 
-                // Wait for excavation to complete
-                while (OreExcavator.alterTasks.TryGetValue(taskId, out var thread) && thread.IsCompleted is false)
-                    Thread.Sleep(500);
+            // Check inventory for success
 
-                // Check factors for success
-
-                return TestStatus.Passed;
-            });
-            task.Start();
-            TestStatus response = task.Result;
+            Assert.AssertInventory(ItemID.IronOre, height * length, Main.myPlayer, exact: true, remove: true, wait: 500);
 
             OreExcavator.ServerConfig.teleportLoot = false;
             Cleanup();
-
-            return response;
         }
 
         [Test]
-        public static TestStatus DoAlteration_RailPlacement_Remove50()
+        public static void DoAlteration_RailPlacement_Remove50()
         {
             // Setup initial conditions
             ushort initX = 2118;
@@ -226,11 +196,12 @@ namespace OreExcavator
                 tile);
 
             // Test if placement was successfull
+            // TODO: Add Assert when AssertRectangle is done
 
-            // Imagine being multithreaded.
+
             Tools.RemoveItem(Main.myPlayer, loc, length, item);
 
-            return TestStatus.Passed;
+            Assert.AssertTrue(true);
         }
 #endif
     }

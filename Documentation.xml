@@ -62,12 +62,22 @@
             Prevents falling tiles from updating during an excavation.
             </summary>
         </member>
-        <member name="M:OreExcavator.OreExcavator.PostSetupContent">
+        <member name="M:OreExcavator.OreExcavator.WorldGen_CheckOrb(On.Terraria.WorldGen.orig_CheckOrb,System.Int32,System.Int32,System.Int32)">
             <summary>
-            Executes once most -if not all- modded content is loaded by tML.
-            Looks for items from other mods that could be classified as ores, gems, chunks, etc.
-            May change from time to time as mods change their preferences.
+            Prevents orb duplication during an excavation.
             </summary>
+        </member>
+        <member name="M:OreExcavator.OreExcavator.WorldGen_CheckPot(On.Terraria.WorldGen.orig_CheckPot,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Prevents pot duplication during an excavation.
+            </summary>
+        </member>
+        <member name="M:OreExcavator.OreExcavator.ReturnIfCalled(MonoMod.Cil.ILContext)">
+            <summary>
+            IL-ready injection that returns any injected method immediately if the thread calling it is doing an excavation
+            </summary>
+            
+            <param name="il"></param>
         </member>
         <member name="M:OreExcavator.OreExcavator.HandlePacket(System.IO.BinaryReader,System.Int32)">
             <summary>
