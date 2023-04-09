@@ -52,32 +52,17 @@
             This binds various important aspects of the mod.
             </summary>
         </member>
-        <member name="M:OreExcavator.OreExcavator.Detour_Update(On.Terraria.Main.orig_Update,Terraria.Main,Microsoft.Xna.Framework.GameTime)">
-            <summary>
-            Pops alteration tasks off the queue to be updated in-game in a thread-safe way respective of Draw.
-            </summary>
-        </member>
         <member name="M:OreExcavator.OreExcavator.Detour_SpawnFallingBlockProjectile(On.Terraria.WorldGen.orig_SpawnFallingBlockProjectile,System.Int32,System.Int32,Terraria.Tile,Terraria.Tile,Terraria.Tile,System.Int32)">
             <summary>
             Prevents falling tiles from updating during an excavation.
             </summary>
         </member>
-        <member name="M:OreExcavator.OreExcavator.WorldGen_CheckOrb(On.Terraria.WorldGen.orig_CheckOrb,System.Int32,System.Int32,System.Int32)">
+        <member name="M:OreExcavator.OreExcavator.PostSetupContent">
             <summary>
-            Prevents orb duplication during an excavation.
+            Executes once most -if not all- modded content is loaded by tML.
+            Looks for items from other mods that could be classified as ores, gems, chunks, etc.
+            May change from time to time as mods change their preferences.
             </summary>
-        </member>
-        <member name="M:OreExcavator.OreExcavator.WorldGen_CheckPot(On.Terraria.WorldGen.orig_CheckPot,System.Int32,System.Int32,System.Int32)">
-            <summary>
-            Prevents pot duplication during an excavation.
-            </summary>
-        </member>
-        <member name="M:OreExcavator.OreExcavator.ReturnIfCalled(MonoMod.Cil.ILContext)">
-            <summary>
-            IL-ready injection that returns any injected method immediately if the thread calling it is doing an excavation
-            </summary>
-            
-            <param name="il"></param>
         </member>
         <member name="M:OreExcavator.OreExcavator.HandlePacket(System.IO.BinaryReader,System.Int32)">
             <summary>
@@ -235,6 +220,11 @@
             
             <param name="item">The item in question</param>
             <param name="player">The player using the item in question</param>
+        </member>
+        <member name="M:OreExcavator.ExcavatorSystem.PostUpdateEverything">
+            <summary>
+            Pops alteration tasks off the queue to be updated in-game in a thread-safe way respective of Draw.
+            </summary>
         </member>
         <member name="M:OreExcavator.ExcavatorSystem.SaveConfig(Terraria.ModLoader.Config.ModConfig)">
             <summary>

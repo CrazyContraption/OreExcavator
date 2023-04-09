@@ -85,8 +85,6 @@ namespace OreExcavator /// The Excavator of Ores
             WhitelistHotkey = KeybindLoader.RegisterKeybind(this, "Whitelist", "Insert");
             BlacklistHotkey = KeybindLoader.RegisterKeybind(this, "UnWhitelist", "Delete");
             
-            On.Terraria.Main.Update += Detour_Update; // Alteration updates to main world, required
-            
             // Optional edits for QoL
             if (ServerConfig.aggressiveModCompatibility is false)
             {
@@ -100,46 +98,6 @@ namespace OreExcavator /// The Excavator of Ores
                 //IL.Terraria.WorldGen.KillTile_PlaySounds += ReturnIfCalled;
                 //IL.Terraria.WorldGen.KillWall_PlaySounds += ReturnIfCalled;
             }
-        }
-
-        /// <summary>
-        /// Pops alteration tasks off the queue to be updated in-game in a thread-safe way respective of Draw.
-        /// </summary>
-        private void Detour_Update(On.Terraria.Main.orig_Update orig, Main self, GameTime gameTime)
-        {
-            while (alterQueue.IsEmpty is false && (Main.gamePaused is false || Main.netMode is NetmodeID.MultiplayerClient))
-            {
-                _ = alterQueue.TryDequeue(out (int x, int y, Alteration alteration) alteration);
-                if (alteration.alteration is not null)
-                {
-                    bool taskIsAlive = TaskOkay(alteration.alteration.threadID);
-                    if (taskIsAlive)
-                    {
-                        KillCalled = true;
-                        bool fatal = alteration.alteration.DoAlteration(alteration.x, alteration.y);
-                        KillCalled = false;
-
-                        if (Main.netMode is not NetmodeID.Server)
-                            if (alteration.x == Player.tileTargetX && alteration.y == Player.tileTargetY)
-                                lookingAtTile.CopyFrom(Main.tile[alteration.x, alteration.y]);
-
-                        if (fatal)
-                        {
-                            Log($"Excavation killed - Fatal response (#{alteration.alteration.threadID})", Color.Orange);
-
-                            if (Main.netMode is NetmodeID.MultiplayerClient)
-                            {
-                                ModPacket packet = GetPacket();
-                                packet.Write((byte)ActionType.HaltExcavation);
-                                packet.Write((ushort)(alteration.alteration.threadID ?? 0));
-                                packet.Send(-1, Main.myPlayer);
-                            }
-                            _ = alterTasks.TryRemove(alteration.alteration.threadID, out _);
-                        }
-                    }
-                }
-            }
-            orig(self, gameTime);
         }
 
         /// <summary>
@@ -2161,6 +2119,45 @@ namespace OreExcavator /// The Excavator of Ores
             c.Emit(Mono.Cecil.Cil.OpCodes.Ldc_R4, 80f);
         }
 #endif
+
+        /// <summary>
+        /// Pops alteration tasks off the queue to be updated in-game in a thread-safe way respective of Draw.
+        /// </summary>
+        public override void PostUpdateEverything()
+        {
+            while (OreExcavator.alterQueue.IsEmpty is false && (Main.gamePaused is false || Main.netMode is NetmodeID.MultiplayerClient))
+            {
+                _ = OreExcavator.alterQueue.TryDequeue(out (int x, int y, Alteration alteration) alteration);
+                if (alteration.alteration is not null)
+                {
+                    bool taskIsAlive = OreExcavator.TaskOkay(alteration.alteration.threadID);
+                    if (taskIsAlive)
+                    {
+                        OreExcavator.KillCalled = true;
+                        bool fatal = alteration.alteration.DoAlteration(alteration.x, alteration.y);
+                        OreExcavator.KillCalled = false;
+
+                        if (Main.netMode is not NetmodeID.Server)
+                            if (alteration.x == Player.tileTargetX && alteration.y == Player.tileTargetY)
+                                OreExcavator.lookingAtTile.CopyFrom(Main.tile[alteration.x, alteration.y]);
+
+                        if (fatal)
+                        {
+                            OreExcavator.Log($"Excavation killed - Fatal response (#{alteration.alteration.threadID})", Color.Orange);
+
+                            if (Main.netMode is NetmodeID.MultiplayerClient)
+                            {
+                                ModPacket packet = OreExcavator.MyMod.GetPacket();
+                                packet.Write((byte)ActionType.HaltExcavation);
+                                packet.Write((ushort)(alteration.alteration.threadID ?? 0));
+                                packet.Send(-1, Main.myPlayer);
+                            }
+                            _ = OreExcavator.alterTasks.TryRemove(alteration.alteration.threadID, out _);
+                        }
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// For whatever reason, ModConfig has no native way of saving runtime changes to a config.

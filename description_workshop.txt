@@ -1,5 +1,5 @@
 ﻿
-[b]Welcome to Ore Excavator! - Last Updated 3/13/2023[/b]
+[b]Welcome to Ore Excavator! - Last Updated 4/08/2023[/b]
 
 
 Found an issue? Join our Discord and help report it: https://discord.gg/FtrsRtPe6h
@@ -86,6 +86,9 @@ A:Yes! as of v0.8.0, we have an API your mods can access when loaded together. V
 
 
 [h1] Recent Changelog [/h1]
+0.8.4
+ ~ Refactored some core code to no longer trip on crashes from other mods. Mods will now correctly be faulted for crashes they cause. Not OE!
+
 0.8.3
  ~ Reworked whitelist naming conventions for modded entries (to save space). An auto-transfer tool was implemented to carry your existing lists over - but it might not work. Your white/blacklists might break!
  ~ Updated client configs to have all options above the long whitelist sections. People weren't scrolling!
