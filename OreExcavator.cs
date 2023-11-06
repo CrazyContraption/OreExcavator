@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;       // XNA
+using MonoMod.RuntimeDetour;
 using MonoMod.RuntimeDetour.HookGen; // Rip my soul
 using MonoMod.Cil;                   // IL
 using OreExcavator.Enumerations;     // Enums
@@ -22,7 +23,6 @@ using Terraria.ModLoader;            // Modloader
 using Terraria.ModLoader.Config;     // Configs
 using Terraria.ObjectData;           // No a clue
 using Terraria.UI.Chat;              // Used for message de-duplication
-
 
 
 namespace OreExcavator /// The Excavator of Ores
@@ -65,7 +65,6 @@ namespace OreExcavator /// The Excavator of Ores
         internal static bool[] playerHalt = new bool[Main.maxPlayers + 1];
         internal static bool excavationToggled = false;
         internal static int msgReps = 1;
-        internal static bool hostOnly = true;
 
         /// <summary>
         /// Called by tML when the mod is asked to load.
@@ -84,14 +83,19 @@ namespace OreExcavator /// The Excavator of Ores
             ExcavateHotkey = KeybindLoader.RegisterKeybind(this, "Excavate", "OemTilde");
             WhitelistHotkey = KeybindLoader.RegisterKeybind(this, "Whitelist", "Insert");
             BlacklistHotkey = KeybindLoader.RegisterKeybind(this, "UnWhitelist", "Delete");
-            
+
+            if (ClientConfig is null)
+                ClientConfig = ModContent.GetInstance<OreExcavatorConfig_Client>();
+            if (ServerConfig is null)
+                ServerConfig = ModContent.GetInstance<OreExcavatorConfig_Server>();
+
             // Optional edits for QoL
-            if (ServerConfig.aggressiveModCompatibility is false)
+            if (ServerConfig is null || ServerConfig.aggressiveModCompatibility is false)
             {
                 // Detours
-                On.Terraria.WorldGen.SpawnFallingBlockProjectile += Detour_SpawnFallingBlockProjectile; // Stop falling tile gravity during excavations
-                //On.Terraria.WorldGen.CheckOrb += WorldGen_CheckOrb;
-                //On.Terraria.WorldGen.CheckPot += WorldGen_CheckPot;
+                Terraria.On_WorldGen.SpawnFallingBlockProjectile += Detour_SpawnFallingBlockProjectile; // Stop falling tile gravity during excavations
+                //Terraria.On_WorldGen.CheckOrb += WorldGen_CheckOrb;
+                //Terraria.On_WorldGen.CheckPot += WorldGen_CheckPot;
 
                 // IL edits
                 //IL.Terraria.WorldGen.KillTile += ReturnIfCalled; // Stop vanilla cracked dungeon brick break propigation
@@ -104,7 +108,7 @@ namespace OreExcavator /// The Excavator of Ores
         /// Prevents falling tiles from updating during an excavation.
         /// </summary>
         private bool Detour_SpawnFallingBlockProjectile(
-            On.Terraria.WorldGen.orig_SpawnFallingBlockProjectile orig,
+            Terraria.On_WorldGen.orig_SpawnFallingBlockProjectile orig,
             int x,
             int y,
             Tile tileCache,
@@ -122,7 +126,7 @@ namespace OreExcavator /// The Excavator of Ores
         /// <summary>
         /// Prevents orb duplication during an excavation.
         /// </summary>
-        private void WorldGen_CheckOrb(On.Terraria.WorldGen.orig_CheckOrb orig, int i, int j, int type)
+        private void WorldGen_CheckOrb(Terraria.On_WorldGen.orig_CheckOrb orig, int i, int j, int type)
         {
             if (Puppeting || KillCalled)
                 return;
@@ -132,7 +136,7 @@ namespace OreExcavator /// The Excavator of Ores
         /// <summary>
         /// Prevents pot duplication during an excavation.
         /// </summary>
-        private void WorldGen_CheckPot(On.Terraria.WorldGen.orig_CheckPot orig, int i, int j, int type)
+        private void WorldGen_CheckPot(Terraria.On_WorldGen.orig_CheckPot orig, int i, int j, int type)
         {
             if (Puppeting || KillCalled)
                 return;
@@ -265,7 +269,7 @@ namespace OreExcavator /// The Excavator of Ores
         /// </summary>
         public override void PostSetupContent()
         {
-            ConvertConfigs();
+            //ConvertConfigs();
 
             Log("Auto-whitelist runner started. Looking for modded ores and gems to whitelist...", default, LogType.Info);
 
@@ -273,7 +277,7 @@ namespace OreExcavator /// The Excavator of Ores
 
             foreach (int ore in TileID.Sets.Ore.GetTrueIndexes())
             {
-                if (ore < TileID.Count)
+                if (ore < TileID.Count) // Ignore vanilla ores
                     continue;
 
                 string name = GetFullNameById(ore, ActionType.TileWhiteListed);
@@ -302,18 +306,38 @@ namespace OreExcavator /// The Excavator of Ores
                 {
                     case "CalamityMod":
                         manualTileList = new string[] {
+                            "AerialiteOre",
                             "AerialiteOreDisenchanted",
+                            "AstralOre",
+                            "AuricOre",
+                            "ChaoticOre",
+                            "CharredOre",
+                            "CryonicOre",
+                            "ExodiumOre",
+                            "HallowedOre",
                             "InfernalSuevite",
+                            "PerennialOre",
                             "ScoriaOre",
                             "SeaPrism",
                             "SeaPrismCrystals",
+                            "UelibloomOre"
                         };
                         goto case "_";
 
                     case "ThoriumMod":
                         manualTileList = new string[] {
-                            "Opal",
+                            "Aquaite",
+                            "AquaiteBare",
                             "Aquamarine",
+                            "IllumiteChunk",
+                            "LifeQuartz",
+                            "LodeStone",
+                            "Opal",
+                            "SmoothCoal",
+                            "SynthGold",
+                            "SynthPlatinum",
+                            "ThoriumOre",
+                            "ValadiumChunk"
                         };
                         goto case "_";
 
@@ -338,9 +362,10 @@ namespace OreExcavator /// The Excavator of Ores
                         }
 
                         Log($"Manual {mod.Name} whitelisting concluded.", default, LogType.Info);
-                        continue;
+                        continue; // Move on to next mod
                 }
 
+                // If no manual list is available... search manually from that mod's set of tiles
                 bool addedSomething = false;
                 foreach (ModTile tile in mod.GetContent<ModTile>())
                 {
@@ -362,12 +387,13 @@ namespace OreExcavator /// The Excavator of Ores
                         newName = newName[0..^5] + "'CHUNK'";
                     else // Final else checks if the item dropped contains a matching check (to catch stragglers).
                     {
-                        ModItem item = ItemLoader.GetItem(tile.ItemDrop);
+                        int itemID = TileLoader.GetItemDropFromTypeAndStyle(tile.Type);
+                        ModItem item = ItemLoader.GetItem(itemID);
 
                         if (item is not null)
                             tileName = item.Name;
                         else
-                            tileName = new Item(tile.ItemDrop).Name;
+                            tileName = new Item(itemID).Name;
                         newName = tileName;
                         if ((tileName ?? "") != "")
                         {
@@ -899,7 +925,7 @@ namespace OreExcavator /// The Excavator of Ores
                             {
                                 queue.Enqueue(nextPoint);
                                 if (ClientConfig.reducedEffects is false && checkTile.TileType != Main.tile[originX, originY].TileType)
-                                    Dust.NewDustPerfect(new Vector2(x * 16, y * 16), DustID.Teleporter);
+                                    WorldGen.KillTile_MakeTileDust(x, y, Main.tile[x, y]);
                             }
                         }
                         else if (isWallBounded is false && WorldGen.CanKillTile(x, y) && checkTile.HasTile && checkTile.TileType == targetType)
@@ -926,16 +952,16 @@ namespace OreExcavator /// The Excavator of Ores
                                     {
                                         queue.Enqueue(nextPoint);
                                         if (ClientConfig.reducedEffects is false)
-                                            Dust.NewDustPerfect(new Vector2(x * 16, y * 16), DustID.Teleporter);
+                                            WorldGen.KillTile_MakeTileDust(x, y, Main.tile[x, y]);
                                     }
                                     continue;
                             }
-                        else if (isWallBounded && (Main.tile[x, y].HasTile is false || Main.tile[x, y].Slope != SlopeType.Solid || WorldGen.SolidTile(x, y) is false) && Main.tile[x, y].WallType == targetType)
+                        else if (isWallBounded && (Main.tile[currentPoint.X, currentPoint.Y].HasTile is false || Main.tile[currentPoint.X, currentPoint.Y].Slope != SlopeType.Solid || WorldGen.SolidTile(currentPoint.X, currentPoint.Y) is false) && Main.tile[x, y].WallType == targetType)
                             if (checkTile.WallColor == targetColor)
                             {
                                 queue.Enqueue(nextPoint);
                                 if (ClientConfig.reducedEffects is false)
-                                    Dust.NewDustPerfect(new Vector2(x * 16, y * 16), DustID.Teleporter);
+                                    WorldGen.KillTile_MakeTileDust(x, y, Main.tile[x,y]);
                             }
                 }
                 if ((playerHalt[playerID] && Puppeting) || (Main.netMode != NetmodeID.Server && playerID == Main.myPlayer && ClientConfig.releaseCancelsExcavations && (ClientConfig.toggleExcavations ? excavationToggled : OreExcavatorKeybinds.excavatorHeld) is false))
@@ -1273,10 +1299,11 @@ namespace OreExcavator /// The Excavator of Ores
         /// <param name="oldType">Tile ID of the tile that was struck</param>
         /// <param name="fail">Reference of if the tile that was struck was killed or not. Death strike = fail is false</param>
         /// <param name="effectOnly">Reference of if the tile was actually struck with a poweful enough pickaxe to hurt it</param>
-        /// <param name="noItem">Reference of if the tile should drop not item(s)</param>
+        /// <param name="noItem">Reference of if the tile should not drop item(s)</param>
         public override void KillTile(int x, int y, int oldType, ref bool fail, ref bool effectOnly, ref bool noItem)
         {
-            if (Main.PlayerLoaded is false || WorldGen.gen || Main.tile[x, y].HasTile is false || oldType < 0)
+            Tile tile = Framing.GetTileSafely(x, y);
+            if (Main.PlayerLoaded is false || WorldGen.gen || tile.HasTile is false || oldType < 0)
                 return;
 
             if (OreExcavator.ServerConfig.creativeMode)
@@ -1286,8 +1313,20 @@ namespace OreExcavator /// The Excavator of Ores
             {
                 OreOwed += OreExcavator.ServerConfig.oreMultiplier - 1.0f;
                 if (noItem is false)
-                    for (WorldGen.KillTile_GetItemDrops(x, y, Framing.GetTileSafely(x, y), out int item1, out int _, out int _, out int _); OreOwed > 1.0f; OreOwed--)
-                        _ = Item.NewItem(new EntitySource_TileBreak(x, y), x * 16, y * 16, 0, 0, item1, 1);
+                {
+                    ModTile modTile = TileLoader.GetTile(tile.TileType);
+                    while (OreOwed > 1.0f) {
+                        if (modTile is null)
+                            _ = Item.NewItem(new EntitySource_TileBreak(x, y), x * 16, y * 16, 0, 0, TileLoader.GetItemDropFromTypeAndStyle(tile.TileType), 1, noGrabDelay: true);
+                        else
+                        {
+                            var enumerator = modTile.GetItemDrops(x, y).GetEnumerator();
+                            while (enumerator.MoveNext())
+                                _ = Item.NewItem(new EntitySource_TileBreak(x, y), x * 16, y * 16, 0, 0, enumerator.Current.type, 1, noGrabDelay: true);
+                        }
+                        OreOwed--;
+                    }
+                }
             }
 
             if (OreExcavator.KillCalled || Main.netMode is NetmodeID.Server)
@@ -1480,16 +1519,6 @@ namespace OreExcavator /// The Excavator of Ores
 
     internal class ExcavatorItem : GlobalItem
     {
-        internal Direction GetExtendsDirection(int tileID)
-        {
-            return tileID switch
-            {
-                TileID.Platforms or TileID.MinecartTrack or TileID.PlanterBox => Direction.Horizontal,
-                TileID.Rope or TileID.VineRope or TileID.WebRope => Direction.Vertical,
-                _ => Direction.None,
-            };
-        }
-
         /// <summary>
         /// Called whenever a player uses an item.
         /// We use this as a hook for block swap excavations.
@@ -1613,7 +1642,7 @@ namespace OreExcavator /// The Excavator of Ores
                             OreExcavator.Log(Language.GetTextValue("Mods.OreExcavator.Logging.Warnings.Client.DisabledPlacing"), Color.Red);
                             return null;
                         }
-                        else if (GetExtendsDirection(item.createTile) > Direction.None)
+                        else if (OreExcavator.GetExtendsDirection(item.createTile) > Direction.None)
                         {
                             actionType = ActionType.ExtendPlacement;
                             OreExcavator.ModifySpooler(actionType, (ushort)x, (ushort)y,
@@ -1840,12 +1869,12 @@ namespace OreExcavator /// The Excavator of Ores
             return true;
         }
 
-        public override bool? CanBurnInLava(Item item)
-        {
-            if (item.noWet && OreExcavator.ServerConfig.safeItems)
-                return false;
-            return base.CanBurnInLava(item);
-        }
+        //public override bool? CanBurnInLava(Item item)
+        //{
+        //    if (item.noWet && OreExcavator.ServerConfig.safeItems)
+        //        return false;
+        //    return base.CanBurnInLava(item);
+        //}
 
         /// <summary>
         /// Called when an item is created
@@ -2001,7 +2030,7 @@ namespace OreExcavator /// The Excavator of Ores
         /// <returns></returns>
         public override bool AltFunctionUse(Item item, Player player)
         {
-            if (Main.netMode != NetmodeID.Server &&
+            if (Main.netMode is not NetmodeID.Server &&
                 (
                     OreExcavatorKeybinds.excavatorHeld ||
                     OreExcavator.excavationToggled
@@ -2043,7 +2072,7 @@ namespace OreExcavator /// The Excavator of Ores
                            ((item.createTile >= 0.0 || item.createWall >= 0.0) && (!OreExcavator.ClientConfig.inititalChecks || OreExcavator.ClientConfig.itemWhitelist.Contains(OreExcavator.GetFullNameById(item.type, ActionType.ItemWhiteListed)))))
                         {
                             player.controlUseItem = true; // Yes, we're using the item normally, even though we're really not
-                            player.ItemCheck(player.selectedItem); // Run the item's normal actions on whatever we're holding
+                            player.ItemCheck(/*player.selectedItem*/); // Run the item's normal actions on whatever we're holding
                             player.controlUseItem = false; // Yes, we're using the item normally, even though we're really not
                             //await Task.Delay(item.useTime * 13);
                             Thread.Sleep(item.useTime * 10);
@@ -2055,7 +2084,7 @@ namespace OreExcavator /// The Excavator of Ores
 
     internal class ExcavatorPlayer : ModPlayer
     {
-        public override void OnEnterWorld(Player player) // Startup message
+        public override void OnEnterWorld(/*Player player*/) // Startup message
         {
             if (OreExcavator.ExcavateHotkey.GetAssignedKeys(PlayerInput.UsingGamepad ? InputMode.XBoxGamepad : InputMode.Keyboard).Count <= 0)
             {
@@ -2091,9 +2120,9 @@ namespace OreExcavator /// The Excavator of Ores
 
     class ExcavatorSystem : ModSystem
     {
+#if DEBUG
         MethodInfo OnBindMethod = typeof(ModLoader).Assembly.GetType("Terraria.ModLoader.Config.UI.IntInputElement").GetMethod("OnBind", BindingFlags.Public | BindingFlags.Instance);
 
-#if DEBUG
         public override void Load()
         {
             HookEndpointManager.Modify(OnBindMethod, OnBindIL);
@@ -2189,12 +2218,6 @@ namespace OreExcavator /// The Excavator of Ores
         /// <param name="config">The configuration object to write to storage from memory.</param>
         internal static void LoadConfig(ModConfig config)
         {
-            if (Main.netMode is NetmodeID.Server && Main.CurrentFrameFlags.ActivePlayersCount > 1)
-            {
-                OreExcavator.hostOnly = false;
-                return;
-            }
-
             OreExcavator.Log($"Loading config '{config.Name}' from files...");
             MethodInfo loadMethodInfo = typeof(ConfigManager).GetMethod("Load", BindingFlags.Static | BindingFlags.NonPublic);
             if (loadMethodInfo is not null)

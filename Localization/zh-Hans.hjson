@@ -1,0 +1,784 @@
+# NOTICE TO TRANSLATORS
+# These are comments. These don't need translations, they're here for your context.
+# Only text within "examples" like this should be translated, everything is IDs and structure used by the mod.
+# Instances of numbers like {0} represent information passed by the mod - usually just an item name etc. They're included here so you can shift them around as languages require.
+# Instances of {$Mod.x.y.z} represent a value from another point of this file. Usually to reduce redundancy of re-translating similar phrases.
+# Instances of /n /t are special characters, newline and tab respectively. They are not errors. Please leave them when translating - they help space things out in-game.
+# Instances of [i/p0:236] represent Terraria Chat filters. These may either represent an icon, color, or combination thereof. Please leave them as is.
+
+Mods: {
+	OreExcavator: {
+		Tile: 物块
+		Tiles: 物块
+		Wall: 墙壁
+		Walls: 墙壁
+		Item: 物品
+		Chain: 连锁-
+
+		Keybind: {
+			None: 没有绑定按键，请在控件设置中为连锁绑定一个按键以使用OreExcavator!
+			Enabled: 启用挖掘
+			Disabled: 禁用挖掘
+			Excavate: 挖掘(采矿时)
+			Whitelist: 将鼠标所指的方块/墙壁/物品加入白名单
+			UnWhitelist: 将鼠标所指的方块/墙壁/物品加入白名单
+			MainActionWarning:
+				'''
+				嘿! {0} 这里!我们检测到您正在使用连锁进行挖掘，我们不建议这样做，但为了保护您的世界，我们已禁用非矿石挖掘功能！(连锁替换等)
+				作为替代方法，我们建议使用方向右键→ {1} 用于挖掘！快来试试吧！
+				        	在关闭鼠标左键绑定后，您可以随时在客户端配置中重新打开这些功能
+				'''
+			NoBind:
+				'''
+				[{0}] - v{1}
+					  我们注意到您没有为模组设置绑定按键!
+					  如果没有设置，模组将无法运行，因此在报告错误前请确保已设置
+					  您可以在这里找到模组的按键绑定 @ 设置 > 控件 > 模组控件(底部) > {0}: {$Mods.OreExcavator.KeyBinds.Excavate}
+				'''
+		}
+
+		Network: {
+			Added: "{0} 添加 '{1}' 到他们的个人白名单中"
+			Removed: "{0} 移除 '{1}' 从他们的个人白名单中"
+		}
+
+		UI: {
+			# Item tooltips depending on context
+			Tooltips: {
+				HoldToExcavate: 按住 '{0}' 连锁挖掘!
+				HoldToPaint: 按住 '{0}' 连锁喷漆!
+				HoldToPlace: 按住 '{0}' 连锁放置到连锁位置!
+				HoldToPlant: 按住 '{0}' 连锁种植!
+				HoldToHarvest: 按住 '{0}' 连锁收获!
+				HoldToSwap: 按住 '{0}' 连锁替换!
+				PressToWhitelist: 按下 '{0}' 将物品加入白名单!
+				Blacklisted: 此物品已被服务器主机加入黑名单
+			}
+
+			# Cursor tooltips when excavations are active, depending on what is hovered
+			Mode: {
+				Excavating: 挖掘
+				Painting: 喷漆
+				Placing: 放置
+				Planting: 种植
+				Replacing: 替换
+			}
+		}
+
+		Whitelisting: {
+			# In English, this is a bit of a joke, feel free to make your own respective jokes in different languages. Please be respectful!
+			NoPlace: 你这条狡猾的狗， '{0}' 没有放置任何东西，你为什么要把它加入白名单？
+			Nothing: 您无法添加/删除任何内容！将鼠标悬停在物块、墙壁或者物品上，然后重试
+			AddOff: 你知道你的白名单关闭了吧？我们将添加 '{0}' 不过为了你！!
+			RemoveOff: 你知道你的白名单关闭了吧？我们将删除 '{0}' 不过为了你！
+			Added: 已添加 '{0}' 到您的白名单
+			# Often tacked onto the line above, when a blacklist is overriden on singleplayer
+			Ignore: ", 并忽略这次的黑名单"
+			Removed: 已删除 '{0}' 从您的白名单
+			Contains: 已拒绝添加 '{0}', 它已被加入白名单
+			Missing: 已拒绝删除 '{0}', 因为它没有被加入白名单
+			Blacklisted: 拒绝修改 '{0}', 因为它被服务器主机加入了黑名单
+			Override: 由于这是一个单人游戏世界，您可以点击两次键以覆盖您的 {0} 黑名单
+			ContactHost: 如果您认为这是一个错误，请要求主机删除 '{0}' 从服务器的黑名单配置
+		}
+
+		Logging: {
+			# Prefix for a lot of debug messages
+			Halted: 停止挖掘
+
+			# Optional to translate, used by the mod to give debug feedback to players. Nice to have, but optional
+			Warnings: {
+				NoKey: "{$Mods.OreExcavator.Logging.Halted}: 没有绑定连锁的按键"
+				PositionMismatch: "{$Mods.OreExcavator.Logging.Halted}: 光标和服务器位置不匹配 - 玩家移动光标太快"
+				WhitelistFailed: "{$Mods.OreExcavator.Logging.Halted}: 黑名单或白名单检查失败"
+				TilePending: "{$Mods.OreExcavator.Logging.Halted}: 位置数据已在处理中！"
+
+				Server: {
+					DisabledExcavations: "{$Mods.OreExcavator.Logging.Halted}: 主机已禁用连锁物块"
+					DisabledHammer: "{$Mods.OreExcavator.Logging.Halted}: 主机已禁用连锁墙壁"
+					DisabledSwap: "{$Mods.OreExcavator.Logging.Halted}: 主机已禁用连锁替换"
+					DisabledPlanting: "{$Mods.OreExcavator.Logging.Halted}: 主机已禁用连锁种植"
+					DisabledPainting: "{$Mods.OreExcavator.Logging.Halted}: 主机已禁用连锁喷漆"
+				}
+
+				Client: {
+					DisabledExcavations: "{$Mods.OreExcavator.Logging.Halted}: 您已禁用连锁物块"
+					DisabledPlacing: "{$Mods.OreExcavator.Logging.Halted}: 您已禁用连锁放置"
+					DisabledAlternatives: "{$Mods.OreExcavator.Logging.Halted}: 您已禁用连锁替换"
+					RejectSwapUnwhitelisted:
+						'''
+						拒绝连锁替换 '{0}' 因为您没有将其加入白名单
+						 将鼠标悬停在物品栏中的物品上，然后按 '{1}' 开始连锁交换！
+						'''
+					RejectSwapBlacklisted: 拒绝连锁替换 '{0}' 因为它被服务器主机加入了黑名单
+				}
+
+				TypeInvalid: "{$Mods.OreExcavator.Logging.Halted}: 操作类型无效"
+				Blocked: "{$Mods.OreExcavator.Logging.Halted}: 操作被另一个物块阻止"
+				Unaltered: "{$Mods.OreExcavator.Logging.Halted}: 位置未因原版功能/操作而改变"
+				DoesNotExist: "{$Mods.OreExcavator.Logging.Halted}: 位置不存在或不应该存在"
+				NoPaint: "{$Mods.OreExcavator.Logging.Halted}: 玩家背包中没有油漆"
+				BadOperation: "{$Mods.OreExcavator.Logging.Halted}: 尝试的操作无效，未定义的行为"
+				Unachored: "{$Mods.OreExcavator.Logging.Halted}: 位置不固定，无处泄洪"
+			}
+		}
+
+		Config: {
+			Common: {
+				Properties: 性能
+				Blocks: 物块
+				Walls: 墙壁
+				Items: 物品
+				IconBuffer: " :"
+				HeaderBuffer: " -"
+				WorkInProgress: "               正常使用！"
+
+				Performance: {
+					Prefix: "\n\n"
+					NoImpact: "{$Mods.OreExcavator.Config.Common.Performance.Prefix} 不影响性能"
+					SmallImpact: "{$Mods.OreExcavator.Config.Common.Performance.Prefix} 启用后会轻微影响性能"
+					CanImpact: "{$Mods.OreExcavator.Config.Common.Performance.Prefix} 最大值会对性能产生影响"
+					DisableImproves: "{$Mods.OreExcavator.Config.Common.Performance.Prefix} 禁用此功能可能会提高性能"
+					EnableImproves: "{$Mods.OreExcavator.Config.Common.Performance.Prefix} 启用此功能可能会提高性能"
+				}
+
+				# Used by the server when the client attempts to update server configs.
+				Changes: {
+					Remote: 接受更改 (原因：通过远程请求更改)
+					// NotHost: Rejected changes (Reason: You are not hostuu)
+				}
+			}
+
+			Server: {
+				Headers: {
+					Header: 世界设置
+					Properties: "{$Mods.OreExcavator.Config.Server.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} 属性"
+					Tiles: "{$Mods.OreExcavator.Config.Server.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} {$Mods.OreExcavator.Tiles}"
+					Walls: "{$Mods.OreExcavator.Config.Server.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} {$Mods.OreExcavator.Walls}"
+					Items: "{$Mods.OreExcavator.Config.Server.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} {$Mods.OreExcavator.Swapping}"
+				}
+
+				ShowWelcome: {
+					Label: "[i/p0:4792]{$Mods.OreExcavator.Config.Common.IconBuffer} 显示启动信息 - 服务器覆盖"
+					Description:
+						'''
+						禁用后，欢迎消息将对所有服务器客户端强制隐藏
+						新版本不会重新启用此功能
+						'''
+				}
+
+				RecursionLimit: {
+					Label: "[i/p0:18]{$Mods.OreExcavator.Config.Common.IconBuffer} 区块修改限制"
+					Description:
+						'''
+						确定物块的最大数量，每次挖掘均可更改！
+						客户端将使用客户端和服务器之间的最小限制
+						设为0则禁用该模式，设为最大则让玩家自行决定限制 {$Mods.OreExcavator.Config.Common.Performance.CanImpact}!
+						'''
+				}
+
+				AllowDiagonals: {
+					Label: "[i/p0:2799]{$Mods.OreExcavator.Config.Common.IconBuffer} 允许对角线连锁"
+					Description: 启用后，玩家可以在连锁时检查源对角线的匹配项一起连锁 {$Mods.OreExcavator.Config.Common.Performance.DisableImproves}!
+				}
+
+				ChainSeeding: {
+					Label: "[i/p0:62]{$Mods.OreExcavator.Config.Common.IconBuffer} 允许连锁种植"
+					Description:
+						'''
+						启用后，玩家可以连锁种植种子 
+						不适用于树苗（目前还不行！）仅适用于草地 {$Mods.OreExcavator.Config.Common.Performance.SmallImpact}!
+						'''
+				}
+
+				ChainPainting: {
+					Label: "[i/p0:1071]{$Mods.OreExcavator.Config.Common.IconBuffer} 允许连锁喷漆"
+					Description:
+						'''
+						启用后，玩家可以在大面积区域内进行连锁喷漆 
+						正常消耗油漆 - 忽略喷漆器 {$Mods.OreExcavator.Config.Common.Performance.SmallImpact}!
+						'''
+				}
+
+				ChainPlacing: {
+					Label: "[i/p0:2340]{$Mods.OreExcavator.Config.Common.IconBuffer} 允许连锁放置"
+					Description:
+						'''
+						启用后，玩家将被允许大线条连锁放置
+						正常消耗物品 
+						适用于绳索、栅栏、花盆、平台等物品 {$Mods.OreExcavator.Config.Common.Performance.SmallImpact}!
+						'''
+				}
+
+				AllowQuickWhitelisting: {
+					Label: "[i/p0:3186]{$Mods.OreExcavator.Config.Common.IconBuffer} 允许快速白名单键"
+					Description: 启用后，使用白名单绑定按键将在自己的白名单中添加/删除鼠标所指的物块/墙壁/物品 {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+				}
+
+				ManaConsumption: {
+					Label: "[i/p0:109]{$Mods.OreExcavator.Config.Common.IconBuffer} 挖掘消耗魔力"
+					Description:
+						'''
+						数组大于0时，挖掘操作将消耗魔力值
+						与执行的操作成比例（数量、硬度）
+						1是正常平衡，0.5使基本动作不消耗 {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+						'''
+				}
+
+				OreMultiplier: {
+					Label: "[i/p0:11]{$Mods.OreExcavator.Config.Common.IconBuffer} 矿石倍数"
+					Description:
+						'''
+						倍增采矿获得的矿石数量，这只适用于模组指定为矿石的矿石 
+						如果定义正确，修改后的矿石倍数应该可以正常运行，常规物块不受影响 {$Mods.OreExcavator.Config.Common.Performance.DisableImproves}.
+						'''
+				}
+
+				TeleportLoot: {
+					Label: "[i/p0:5010]{$Mods.OreExcavator.Config.Common.IconBuffer} 将连锁的掉落物传送给玩家"
+					Description:
+						'''
+						启用后，挖掘到的水将被流向为使用连锁的玩家。
+						不建议在多人服务器上使用！！ {$Mods.OreExcavator.Config.Common.Performance.DisableImproves}!
+						'''
+				}
+
+				SafeItems: {
+					Label: "[i/p0:193]{$Mods.OreExcavator.Config.Common.IconBuffer} 让掉落物无敌"
+					Description:
+						'''
+						启用后，物品掉落将不受危险影响
+						这包括熔岩之类的东西 {$Mods.OreExcavator.Config.Common.Performance.EnableImproves}, 
+						但这也可能被认为是作弊... {$Mods.OreExcavator.Config.Common.WorkInProgress}
+						'''
+				}
+
+				CreativeMode: {
+					Label: "[i/p0:36]{$Mods.OreExcavator.Config.Common.IconBuffer} 创意模式"
+					Description:
+						'''
+						启用后，物品不会掉落，物品不会被消耗，镐力将被忽略 {$Mods.OreExcavator.Config.Common.Performance.EnableImproves}, 
+						但这也可能被认为是作弊... {$Mods.OreExcavator.Config.Common.WorkInProgress}
+						'''
+				}
+
+				AggressiveModCompatibility: {
+					Label: "[i/p0:3000]{$Mods.OreExcavator.Config.Common.IconBuffer} 使用强烈的模组兼容性"
+					Description:
+						'''
+						启用后，将在连锁时强制执行额外的检查 
+						以确定绑定修改后的物块、工具、墙壁和物品 {$Mods.OreExcavator.Config.Common.Performance.EnableImproves}, 但以不稳定为代价！ {$Mods.OreExcavator.Config.Common.WorkInProgress}
+						'''
+				}
+
+				AllowPickaxing: {
+					Label: "[i/p0:3509]{$Mods.OreExcavator.Config.Common.IconBuffer} 允许镐挖掘"
+					Description:
+						'''
+						启用后，挖掘算法将允许
+						使用足够镐力的镐时允许用物块挖掘. {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+						'''
+				}
+
+				TileBlacklistToggled: {
+					Label: "[i/p0:3497]{$Mods.OreExcavator.Config.Common.IconBuffer} 启用物块黑名单"
+					Description:
+						'''
+						启用后，世界将对其玩家强制执行物块黑名单 
+						禁用此选项可让玩家对物块自由进行白名单控制 {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+						'''
+				}
+
+				TileBlacklist: {
+					Label: "[i/p0:2697]{$Mods.OreExcavator.Config.Common.IconBuffer} 物块黑名单"
+					Description:
+						'''
+						配置此列表以手动设置哪些物块不能连锁挖掘 
+						以拥有它们的模式为前缀，玩家的白名单无效 {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+						'''
+				}
+
+				AllowHammering: {
+					Label: "[i/p0:196]{$Mods.OreExcavator.Config.Common.IconBuffer} 允许锤挖掘"
+					Description:
+						'''
+						启用后，挖掘算法将允许
+						使用足够锤力的锤时允许用墙壁挖掘 {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+						'''
+				}
+
+				WallBlacklistToggled: {
+					Label: "[i/p0:654]{$Mods.OreExcavator.Config.Common.IconBuffer} 启用墙壁黑名单"
+					Description:
+						'''
+						启用后，世界将对其玩家强制执行墙壁黑名单 
+						禁用此选项可让玩家对墙壁自由进行白名单控制 {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+						'''
+				}
+
+				WallBlacklist: {
+					Label: "[i/p0:2698]{$Mods.OreExcavator.Config.Common.IconBuffer} 墙壁黑名单"
+					Description:
+						'''
+						配置此列表以手动设置哪些墙壁不能连锁挖掘 
+						以拥有它们的模式为前缀，玩家的白名单无效 {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+						'''
+				}
+
+				AllowReplace: {
+					Label: "[i/p0:9]{$Mods.OreExcavator.Config.Common.IconBuffer} 允许区块替换挖掘"
+					Description:
+						'''
+						启用后，挖掘算法将允许
+						在更换物块/墙壁时允许进行块体交换 {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+						'''
+				}
+
+				ItemBlacklistToggled: {
+					Label: "[i/p0:619]{$Mods.OreExcavator.Config.Common.IconBuffer} 启用物品黑名单"
+					Description:
+						'''
+						启用后，服务器将对其玩家强制执行物品黑名单 
+						禁用此选项可让玩家对物品自由进行白名单控制 {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+						'''
+				}
+
+				ItemBlacklist: {
+					Label: "[i/p0:236]{$Mods.OreExcavator.Config.Common.IconBuffer} 物品黑名单"
+					Description:
+						'''
+						如果你不知道这是什么，你可能不应该碰它...
+						这控制了玩家禁止哪些物品加入白名单 {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+						'''
+				}
+			}
+
+			Client: {
+				Headers: {
+					Header: 玩家设置
+					UI: "{$Mods.OreExcavator.Config.Client.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} 界面"
+					Core: "{$Mods.OreExcavator.Config.Client.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} 核心"
+					Tiles: "{$Mods.OreExcavator.Config.Client.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} {$Mods.OreExcavator.Tiles}"
+					Walls: "{$Mods.OreExcavator.Config.Client.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} {$Mods.OreExcavator.Walls}"
+					Items: "{$Mods.OreExcavator.Config.Client.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} {$Mods.OreExcavator.UI.Mode.Replacing}"
+					Controls: "{$Mods.OreExcavator.Config.Client.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} 控件"
+				}
+
+				ShowWelcome: {
+					Label: "[i/p0:4792]{$Mods.OreExcavator.Config.Common.IconBuffer} 显示启动信息"
+					Description:
+						'''
+						禁用后，欢迎消息将在此版本中被隐藏
+						新版本将重新启用此功能
+						'''
+				}
+
+				ShowCursorTooltips: {
+					Label: "[i/p0:5075]{$Mods.OreExcavator.Config.Common.IconBuffer} 显示挖掘工具提示"
+					Description:
+						'''
+						禁用后，按住挖掘键将不再提供上下文工具提示
+						请在报告错误之前启用此功能！
+						'''
+				}
+
+				ShowItemTooltips: {
+					Label: "[i/p0:267]{$Mods.OreExcavator.Config.Common.IconBuffer} 显示物品工具提示"
+					Description:
+						'''
+						禁用后，物品、墙壁和物块将不再提供上下文工具提示
+						请在报告错误之前启用此功能！
+						'''
+				}
+
+				ReducedEffects: {
+					Label: "[i/p0:150]{$Mods.OreExcavator.Config.Common.IconBuffer} 减少影响"
+					Description:
+						'''
+						滞后？禁用后，模组会尝试降低状态，以图形方式提供更好的性能
+						除了外观差异之外，不会在功能上改变任何东西
+						'''
+				}
+
+				RefillMana: {
+					Label: "[i/p0:555]{$Mods.OreExcavator.Config.Common.IconBuffer} 挖掘时自动使用法力药水"
+					Description:
+						'''
+						启用且世界开启法力要求时 
+						如果您的法力耗尽模组应该尝试为您补充法力 {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+						'''
+				}
+
+				DoDebugStuff: {
+					Label: "[i/p0:37]{$Mods.OreExcavator.Config.Common.IconBuffer} 显示调试日志"
+					Description:
+						'''
+						禁用后，调试日志将被隐藏 
+						如果您在理解模组时遇到问题，请启用此功能
+						请在报告错误之前启用此功能！
+						'''
+				}
+
+				RecursionLimit: {
+					Label: "[i/p0:18]{$Mods.OreExcavator.Config.Common.IconBuffer} 区块修改限制"
+					Description:
+						'''
+						确定物块的最大数量 
+						每次挖掘均可更改
+						较大的数字会对性能产生影响
+						'''
+				}
+
+				DoDiagonals: {
+					Label: "[i/p0:2799]{$Mods.OreExcavator.Config.Common.IconBuffer} 进行对角线搜索"
+					Description:
+						'''
+						启用后，挖掘算法将 
+						也会检查自身对角线上的匹配，禁用这一功能将提高性能！
+						'''
+				}
+
+				RecursionDelay: {
+					Label: "[i/p0:3099]{$Mods.OreExcavator.Config.Common.IconBuffer} 断块延迟"
+					Description:
+						'''
+						区块中断之间的毫秒延迟
+						更高的值可能会提高性能！
+						'''
+				}
+
+				InititalChecks: {
+					Label: "[i/p0:321]{$Mods.OreExcavator.Config.Common.IconBuffer} 执行初始白名单检查"
+					Description:
+						'''
+						启用后，算法会在之前检查白名单和黑名单 
+						尝试挖掘，当绑定到鼠标时 {$Mods.OreExcavator.Config.Common.Performance.SmallImpact} 
+						但可能会产生更稳定的行为！
+						'''
+				}
+
+				TileWhitelistAll: {
+					Label: "[i/p0:3509]{$Mods.OreExcavator.Config.Common.IconBuffer} 将所有物块加入白名单"
+					Description: 启用后，默认情况下所有物块都将被加入白名单 {$Mods.OreExcavator.Config.Common.Performance.EnableImproves}!
+				}
+
+				TileWhitelist: {
+					Label: "[i/p0:2695]{$Mods.OreExcavator.Config.Common.IconBuffer} 物块白名单"
+					Description:
+						'''
+						配置此列表以手动设置哪些物块可以连锁挖掘
+						以拥有它们的模式为前缀，也会进入主机的黑名单 {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+						'''
+				}
+
+				WallWhitelistAll: {
+					Label: "[i/p0:196]{$Mods.OreExcavator.Config.Common.IconBuffer} 将所有墙壁加入白名单"
+					Description: 启用后，默认情况下所有墙壁都将被加入白名单 {$Mods.OreExcavator.Config.Common.Performance.EnableImproves}!
+				}
+
+				WallWhitelist: {
+					Label: "[i/p0:2696]{$Mods.OreExcavator.Config.Common.IconBuffer} 墙壁白名单"
+					Description:
+						'''
+						配置此列表以手动设置哪些墙壁可以连锁挖掘
+						以拥有它们的模式为前缀，也会进入主机的黑名单 {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+						'''
+				}
+
+				ItemWhitelistAll: {
+					Label: "[i/p0:9]{$Mods.OreExcavator.Config.Common.IconBuffer} 将所有物品加入白名单"
+					Description: 启用后，默认情况下所有物品都将加入白名单 {$Mods.OreExcavator.Config.Common.Performance.EnableImproves}!
+				}
+
+				ItemWhitelist: {
+					Label: "[i/p0:38]{$Mods.OreExcavator.Config.Common.IconBuffer} 物品白名单"
+					Description:
+						'''
+						配置此列表可手动设置哪些物品可以连锁替换 
+						以拥有它们的模式为前缀，也会进入主机的黑名单 {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+						'''
+				}
+
+				ToggleExcavations: {
+					Label: "[i/p0:513]{$Mods.OreExcavator.Config.Common.IconBuffer} 绑定按键切换挖掘"
+					Description:
+						'''
+						启用后，点击绑定按键将切换 
+						连锁矿石的运行状态 {$Mods.OreExcavator.Config.Common.Performance.NoImpact}!
+						'''
+				}
+
+				ReleaseCancelsExcavations: {
+					Label: "[i/p0:166]{$Mods.OreExcavator.Config.Common.IconBuffer} 取消绑定按键松开时的挖掘"
+					Description:
+						'''
+						取消绑定按键松开时的挖掘 
+						松开绑定按键键将停止所有挖掘 
+						不建议在多人服务器上使用！！ {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+						'''
+				}
+
+				DoSpecials: {
+					Label: "[i/p0:3230]{$Mods.OreExcavator.Config.Common.IconBuffer} 启用替换功能"
+					Description:
+						'''
+						启用后，客户端将允许非连锁矿石操作 
+						如果您不打算使用这些功能，或者将连锁按键绑定到鼠标左键，请禁用此功能
+						对性能有一定影响！
+						'''
+				}
+
+				Keybind: {
+					Label: "[g:25]{$Mods.OreExcavator.Config.Common.IconBuffer} 寻找您的绑定按键？"
+					Description:
+						'''
+						在原版控件区域中设置绑定按键
+						这只是为了显示和引导困惑的用户
+						'''
+				}
+
+				ModVersions: {
+					// Label: "[g:3095]{$Mods.OreExcavator.Config.Common.IconBuffer} Mod Connection Versions"
+					/* Description:
+						'''
+						Outlines the latest stored version of modded content.
+						 Used by the mod internally to know when to re-check for new Ores etc.
+
+						 DELETE ME TO FORCE A RE-SYNC FOR ANY/ALL MODS
+						''' */
+				}
+			}
+		}
+
+		Keybinds: {
+			Excavate.DisplayName: 连锁
+			Whitelist.DisplayName: 添加白名单
+			UnWhitelist.DisplayName: 移除白名单
+		}
+
+		Configs: {
+			OreExcavatorConfig_Client: {
+				DisplayName: 玩家配置
+
+				showWelcome080: {
+					Label: "{$Mods.OreExcavator.Config.Client.ShowWelcome.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.ShowWelcome.Description}"
+				}
+
+				showCursorTooltips: {
+					Label: "{$Mods.OreExcavator.Config.Client.ShowCursorTooltips.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.ShowCursorTooltips.Description}"
+				}
+
+				showItemTooltips: {
+					Label: "{$Mods.OreExcavator.Config.Client.ShowItemTooltips.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.ShowItemTooltips.Description}"
+				}
+
+				reducedEffects: {
+					Label: "{$Mods.OreExcavator.Config.Client.ReducedEffects.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.ReducedEffects.Description}"
+				}
+
+				refillMana: {
+					Label: "{$Mods.OreExcavator.Config.Client.RefillMana.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.RefillMana.Description}"
+				}
+
+				doDebugStuff: {
+					Label: "{$Mods.OreExcavator.Config.Client.DoDebugStuff.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.DoDebugStuff.Description}"
+				}
+
+				recursionLimit: {
+					Label: "{$Mods.OreExcavator.Config.Client.RecursionLimit.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.RecursionLimit.Description}"
+				}
+
+				doDiagonals: {
+					Label: "{$Mods.OreExcavator.Config.Client.DoDiagonals.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.DoDiagonals.Description}"
+				}
+
+				recursionDelay: {
+					Label: "{$Mods.OreExcavator.Config.Client.RecursionDelay.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.RecursionDelay.Description}"
+				}
+
+				inititalChecks: {
+					Label: "{$Mods.OreExcavator.Config.Client.InititalChecks.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.InititalChecks.Description}"
+				}
+
+				toggleExcavations: {
+					Label: "{$Mods.OreExcavator.Config.Client.ToggleExcavations.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.ToggleExcavations.Description}"
+				}
+
+				releaseCancelsExcavations: {
+					Label: "{$Mods.OreExcavator.Config.Client.ReleaseCancelsExcavations.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.ReleaseCancelsExcavations.Description}"
+				}
+
+				doSpecials: {
+					Label: "{$Mods.OreExcavator.Config.Client.DoSpecials.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.DoSpecials.Description}"
+				}
+
+				tileWhitelistAll: {
+					Label: "{$Mods.OreExcavator.Config.Client.TileWhitelistAll.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.TileWhitelistAll.Description}"
+				}
+
+				tileWhitelist: {
+					Label: "{$Mods.OreExcavator.Config.Client.TileWhitelist.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.TileWhitelist.Description}"
+				}
+
+				wallWhitelistAll: {
+					Label: "{$Mods.OreExcavator.Config.Client.WallWhitelistAll.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.WallWhitelistAll.Description}"
+				}
+
+				wallWhitelist: {
+					Label: "{$Mods.OreExcavator.Config.Client.WallWhitelist.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.WallWhitelist.Description}"
+				}
+
+				itemWhitelistAll: {
+					Label: "{$Mods.OreExcavator.Config.Client.ItemWhitelistAll.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.ItemWhitelistAll.Description}"
+				}
+
+				itemWhitelist: {
+					Label: "{$Mods.OreExcavator.Config.Client.ItemWhitelist.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.ItemWhitelist.Description}"
+				}
+
+				modVersions: {
+					Label: 模组版本
+					Tooltip: ""
+				}
+
+				keybind: {
+					Label: "{$Mods.OreExcavator.Config.Client.Keybind.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.Keybind.Description}"
+				}
+			}
+
+			OreExcavatorConfig_Server: {
+				DisplayName: "{$Mods.OreExcavator.Config.Server.Headers.Header}"
+
+				showWelcome: {
+					Label: "{$Mods.OreExcavator.Config.Server.ShowWelcome.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.ShowWelcome.Description}"
+				}
+
+				recursionLimit: {
+					Label: "{$Mods.OreExcavator.Config.Server.RecursionLimit.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.RecursionLimit.Description}"
+				}
+
+				allowDiagonals: {
+					Label: "{$Mods.OreExcavator.Config.Server.AllowDiagonals.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.AllowDiagonals.Description}"
+				}
+
+				chainPlacing: {
+					Label: "{$Mods.OreExcavator.Config.Server.ChainPlacing.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.ChainPlacing.Description}"
+				}
+
+				chainSeeding: {
+					Label: "{$Mods.OreExcavator.Config.Server.ChainSeeding.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.ChainSeeding.Description}"
+				}
+
+				chainPainting: {
+					Label: "{$Mods.OreExcavator.Config.Server.ChainPainting.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.ChainPainting.Description}"
+				}
+
+				allowQuickWhitelisting: {
+					Label: "{$Mods.OreExcavator.Config.Server.AllowQuickWhitelisting.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.AllowQuickWhitelisting.Description}"
+				}
+
+				manaConsumption: {
+					Label: "{$Mods.OreExcavator.Config.Server.ManaConsumption.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.ManaConsumption.Description}"
+				}
+
+				oreMultiplier: {
+					Label: "{$Mods.OreExcavator.Config.Server.OreMultiplier.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.OreMultiplier.Description}"
+				}
+
+				teleportLoot: {
+					Label: "{$Mods.OreExcavator.Config.Server.TeleportLoot.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.TeleportLoot.Description}"
+				}
+
+				safeItems: {
+					Label: "{$Mods.OreExcavator.Config.Server.SafeItems.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.SafeItems.Description}"
+				}
+
+				creativeMode: {
+					Label: "{$Mods.OreExcavator.Config.Server.CreativeMode.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.CreativeMode.Description}"
+				}
+
+				aggressiveModCompatibility: {
+					Label: "{$Mods.OreExcavator.Config.Server.AggressiveModCompatibility.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.AggressiveModCompatibility.Description}"
+				}
+
+				allowPickaxing: {
+					Label: "{$Mods.OreExcavator.Config.Server.AllowPickaxing.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.AllowPickaxing.Description}"
+				}
+
+				tileBlacklistToggled: {
+					Label: "{$Mods.OreExcavator.Config.Server.TileBlacklistToggled.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.TileBlacklistToggled.Description}"
+				}
+
+				tileBlacklist: {
+					Label: "{$Mods.OreExcavator.Config.Server.TileBlacklist.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.TileBlacklist.Description}"
+				}
+
+				allowHammering: {
+					Label: "{$Mods.OreExcavator.Config.Server.AllowHammering.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.AllowHammering.Description}"
+				}
+
+				wallBlacklistToggled: {
+					Label: "{$Mods.OreExcavator.Config.Server.WallBlacklistToggled.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.WallBlacklistToggled.Description}"
+				}
+
+				wallBlacklist: {
+					Label: "{$Mods.OreExcavator.Config.Server.WallBlacklist.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.WallBlacklist.Description}"
+				}
+
+				allowReplace: {
+					Label: "{$Mods.OreExcavator.Config.Server.AllowReplace.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.AllowReplace.Description}"
+				}
+
+				itemBlacklistToggled: {
+					Label: "{$Mods.OreExcavator.Config.Server.ItemBlacklistToggled.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.ItemBlacklistToggled.Description}"
+				}
+
+				itemBlacklist: {
+					Label: "{$Mods.OreExcavator.Config.Server.ItemBlacklist.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.ItemBlacklist.Description}"
+				}
+			}
+		}
+	}
+}

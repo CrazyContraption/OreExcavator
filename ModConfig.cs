@@ -201,20 +201,12 @@ namespace OreExcavator
 
         public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message)
         {
-
-            if (OreExcavator.hostOnly && Main.CurrentFrameFlags.ActivePlayersCount <= 0 && whoAmI == 0)
+            if (Main.countsAsHostForGameplay[whoAmI])
             {
                 message = Language.GetTextValue("Mods.OreExcavator.Config.Common.Changes.Remote");
                 return true;
             }
-            else if (OreExcavator.hostOnly && Main.CurrentFrameFlags.ActivePlayersCount == 1 && whoAmI == 0)
-            {
-                message = Language.GetTextValue("Mods.OreExcavator.Config.Common.Changes.HostOnly");
-                return true;
-            }
-
-            OreExcavator.hostOnly = false;
-            message = Language.GetTextValue("Mods.OreExcavator.Config.Common.Changes.NoHost");
+            message = Language.GetTextValue("Mods.OreExcavator.Config.Common.Changes.NotHost");
             return false;
         }
     }
@@ -453,19 +445,22 @@ namespace OreExcavator
             "Terraria:" + ItemID.Search.GetName(ItemID.WoodWall),*/
         };
 
-        [ReadOnly(true)]
-        public Dictionary<string, System.Version> modVersions = new()
-        {
-
-        };
-
         [Label("$Mods.OreExcavator.Config.Client.Keybind.Label")]
         [Tooltip("$Mods.OreExcavator.Config.Client.Keybind.Description")]
         [DefaultValue("Unknown")]
         [ReadOnly(true)]
         [JsonIgnore]
-        public string keybind => (OreExcavator.ExcavateHotkey is not null ? (OreExcavator.ExcavateHotkey.GetAssignedKeys(PlayerInput.UsingGamepad ? InputMode.XBoxGamepad : InputMode.Keyboard).Count > 0 ? OreExcavator.ExcavateHotkey.GetAssignedKeys(PlayerInput.UsingGamepad ? InputMode.XBoxGamepad : InputMode.Keyboard)[0] : "Not Set") : "Unknown");
+        public string keybind => (OreExcavator.ExcavateHotkey is not null ? 
+            (OreExcavator.ExcavateHotkey.GetAssignedKeys(PlayerInput.UsingGamepad ? InputMode.XBoxGamepad : InputMode.Keyboard).Count > 0 ?
+                OreExcavator.ExcavateHotkey.GetAssignedKeys(PlayerInput.UsingGamepad ? InputMode.XBoxGamepad : InputMode.Keyboard)[0] : "Not Set")
+            : "Unknown");
 
+        [ReadOnly(true)]
+        [Label("$Mods.OreExcavator.Config.Client.ModVersions.Label")]
+        [Tooltip("$Mods.OreExcavator.Config.Client.ModVersions.Description")]
+        public Dictionary<string, System.Version> modVersions = new()
+        {
 
+        };
     }
 }

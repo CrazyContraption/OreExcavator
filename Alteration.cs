@@ -56,7 +56,7 @@ namespace OreExcavator
             if (OreExcavator.ServerConfig.creativeMode is true)
                 return true;
 
-            if (manaCost <= 0 || Main.player[player].statManaMax2 < 100)
+            if (manaCost <= 0 || Main.player[player].statManaMax2 <= 0)
                 return true;
 
             if (player < 0)
@@ -200,7 +200,7 @@ namespace OreExcavator
                             return true;
 
                         WorldGen.KillTile(x, y, true, OreExcavator.ClientConfig.reducedEffects is false, true);
-                        WorldGen.SpreadGrass(x, y, Main.tile[x, y].TileType, placeType, false, 0); // cannot use repeat because we want to consume items
+                        WorldGen.SpreadGrass(x, y, Main.tile[x, y].TileType, placeType, false); // cannot use repeat because we want to consume items
                     }
                     return false;
 

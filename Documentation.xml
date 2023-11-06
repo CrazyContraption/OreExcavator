@@ -52,7 +52,7 @@
             This binds various important aspects of the mod.
             </summary>
         </member>
-        <member name="M:OreExcavator.OreExcavator.Detour_SpawnFallingBlockProjectile(On.Terraria.WorldGen.orig_SpawnFallingBlockProjectile,System.Int32,System.Int32,Terraria.Tile,Terraria.Tile,Terraria.Tile,System.Int32)">
+        <member name="M:OreExcavator.OreExcavator.Detour_SpawnFallingBlockProjectile(Terraria.On_WorldGen.orig_SpawnFallingBlockProjectile,System.Int32,System.Int32,Terraria.Tile,Terraria.Tile,Terraria.Tile,System.Int32)">
             <summary>
             Prevents falling tiles from updating during an excavation.
             </summary>

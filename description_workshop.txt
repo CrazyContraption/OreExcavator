@@ -1,5 +1,5 @@
 ﻿
-[b]Welcome to Ore Excavator! - Last Updated 4/08/2023[/b]
+[b]Welcome to Ore Excavator! - Last Updated Oct. 3rd, 2023[/b]
 
 
 Found an issue? Join our Discord and help report it: https://discord.gg/FtrsRtPe6h
@@ -86,6 +86,18 @@ A:Yes! as of v0.8.0, we have an API your mods can access when loaded together. V
 
 
 [h1] Recent Changelog [/h1]
+0.8.6
+ ~ Fixed some more 1.4.4+ issues.
+ + Updated for increased compatibility of new tML versions.
+ + Added better host detection for server config updating.
+ + Added a submitted version of (Simplified) Chinese from a @mochen5530 on Discord. Thanks!
+ + Fixed some underlying duplication exploits.
+ - Removed some redundant code, and moved it to reflections of existing tML or vanilla versions for maintainability.
+
+0.8.5
+ ~ Fixed a few outlying 1.4.3 issues, and we're working on more as reports of 1.4.4 issues roll in.
+ + Updated to 1.4.4 compatibility.
+
 0.8.4
  ~ Refactored some core code to no longer trip on crashes from other mods. Mods will now correctly be faulted for crashes they cause. Not OE!
 
@@ -106,15 +118,12 @@ A:Yes! as of v0.8.0, we have an API your mods can access when loaded together. V
  * Fixed an issue where dirt could not be used for swapping. - Thanks @AncientAlphaWarrior#2950
  - Blacklisted Sandstone tiles by default.
 
-0.8.1
- - Hotfixed an issue with whitelists being ignored for some users. - Thanks @Phrog#2674!
-
 
 See all changelogs here: https://steamcommunity.com/sharedfiles/filedetails/changelog/2565639705
 
 Found an issue? Join our Discord and help report it: https://discord.gg/FtrsRtPe6h
 
-[quote=@a frog#4478]"x is the best keybind 💀"[/quote]
+[quote=@xphrogx]"x is the best keybind 💀"[/quote]
 
 Looking for something simpler but equally powerful? 
 [quote=Aitherix][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2838188064]Basic Automated Mining[/url] (BAM) is a simple, lightweight veinminer alternative.[/quote]

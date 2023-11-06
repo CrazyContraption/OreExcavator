@@ -17,7 +17,7 @@ namespace OreExcavator.Commands
                $"\n /{Command} [ModInternalName1] [ModInternalName2] [ModInternalName3]...";
 
         public override string Description
-            => "Displays the installed version of a specified mod, such as OreExcavator.";
+            => "Displays the installed version of a specified mod or tML itself, such as OreExcavator.";
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
