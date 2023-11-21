@@ -1,5 +1,5 @@
 ﻿
-[b]Welcome to Ore Excavator! - Last Updated Oct. 3rd, 2023[/b]
+[b]Welcome to Ore Excavator! - Last Updated Nov. 21st, 2023[/b]
 
 
 Found an issue? Join our Discord and help report it: https://discord.gg/FtrsRtPe6h
@@ -86,6 +86,10 @@ A:Yes! as of v0.8.0, we have an API your mods can access when loaded together. V
 
 
 [h1] Recent Changelog [/h1]
+0.8.7
+ ~ Fixed an issue with modded ores not being mineable.
+ + Updated to 1.4.4 compatibility.
+
 0.8.6
  ~ Fixed some more 1.4.4+ issues.
  + Updated for increased compatibility of new tML versions.

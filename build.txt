@@ -1,6 +1,6 @@
 displayName = Ore Excavator (1.4.3/1.4.4 Veinminer)
 author = CrazyContraption
-version = 0.8.6
+version = 0.8.7
 hideCode = true
 hideResources = true
 includeSource = false
