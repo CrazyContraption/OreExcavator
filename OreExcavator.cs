@@ -1302,14 +1302,20 @@ namespace OreExcavator /// The Excavator of Ores
         /// <param name="noItem">Reference of if the tile should not drop item(s)</param>
         public override void KillTile(int x, int y, int oldType, ref bool fail, ref bool effectOnly, ref bool noItem)
         {
+            if (fail is true) // CHANGED
+                return;
+            
+            if (!Main.PlayerLoaded || WorldGen.gen || oldType < 0)
+                return;
+
             Tile tile = Framing.GetTileSafely(x, y);
-            if (Main.PlayerLoaded is false || WorldGen.gen || tile.HasTile is false || oldType < 0)
+            if (!tile.HasTile)
                 return;
 
             if (OreExcavator.ServerConfig.creativeMode)
                 noItem = true;
 
-            if (Main.netMode is not NetmodeID.MultiplayerClient && fail is false && OreExcavator.ServerConfig.oreMultiplier > 1.0f && TileID.Sets.Ore[oldType])
+            if (Main.netMode is not NetmodeID.MultiplayerClient && OreExcavator.ServerConfig.oreMultiplier > 1.0f && TileID.Sets.Ore[oldType])
             {
                 OreOwed += OreExcavator.ServerConfig.oreMultiplier - 1.0f;
                 if (noItem is false)
@@ -2211,7 +2217,7 @@ namespace OreExcavator /// The Excavator of Ores
         }
 
         /// <summary>
-        /// For whatever reason, ModConfig has no native way of saving runtime changes to a config.
+        /// For whatever reason, ModConfig has no native way of loading runtime changes to a config.
         /// So here I am, writing a file system to manually save changes, usually just whitelist changes.
         /// </summary>
         /// 
