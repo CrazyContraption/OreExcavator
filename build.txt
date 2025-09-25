@@ -1,8 +1,7 @@
 displayName = Ore Excavator (1.4.3/1.4.4 Veinminer)
 author = CrazyContraption
-version = 0.8.7
+version = 0.8.9
 hideCode = true
 hideResources = true
 includeSource = false
-weakReferences = TUnit@0.0
 buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*, README.*, *.xml

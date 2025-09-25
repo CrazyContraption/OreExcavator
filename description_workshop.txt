@@ -1,5 +1,5 @@
 ﻿
-[b]Welcome to Ore Excavator! - Last Updated Nov. 21st, 2023[/b]
+[b]Welcome to Ore Excavator! - Last Updated August 14th, 2024[/b]
 
 
 Found an issue? Join our Discord and help report it: https://discord.gg/FtrsRtPe6h
@@ -15,14 +15,13 @@ Credit to NanobotZ for the base code and the original concept!
 
 [h1] !!! FEATURES !!! [/h1]
 [list]
-    [*]Chain-mine adjacent tiles/walls from a single block
-    [*]Chain-swap adjacent tiles/walls from a single block
+    [*]Chain-mine or swap adjacent tiles/walls from a single block
     [*]Chain-place platforms, ropes, tracks, planters, and more
     [*]Optional ore multiplier!
     [*]Configurable whitelist & blacklist with block picker controls in-game
     [*]Fully configurable client controls and keybindings
     [*]Fully configurable client settings to tailor to dynamic performance needs
-    [*]Fully threaded support
+    [*]Fully threaded support for older machines
     [*]Mod.Call API for modders
     [*]Autoswing compatible
     [*]Progression friendly
@@ -33,12 +32,11 @@ Credit to NanobotZ for the base code and the original concept!
 [/list]
 
 [h1] !!! THIS IS AN INCOMPLETE MOD !!! [/h1]
-This is intended for early access users wishing to play on 1.4, and is likely to be broken several times!
-
+I am actively developing and improving the mod as time goes on.
 I will do my best to ensure that the mod stays for compatible and issue updates as needed, especially for multiplayer.
 
 Due to the nature of the mod, bugs involving deleting massive amounts of blocks, walls, and similar issues are to be expected.
-Please report any issues -no matter how small- to me on the tModloader Discord (@CrazyContraption#0666), or our Discord server!
+Please report any issues -no matter how small- to me on the tModloader Discord (@CrazyContraption), or our Discord server!
 
 PLEASE REPORT ANY ISSUES, EVEN IF YOU THINK IT MAY ALREADY BE REPORTED!!
 It helps us deduce how common the issue is, and to better gather data on who, and how it happens.
@@ -48,7 +46,7 @@ We're also open to suggestions and feedback!
 
 [h1] !!! FAQ !!! [/h1]
 Q:"Why doesn't the mod work?"
-A:Common issues include: Not having the mod enabled (enable it); Not having an excavation keybind set (set it in your controls); having a corrupt version of the mod (redownload it).
+A:Common issues include: Not having the mod enabled (enable it); Not having an excavation keybind set (set it in your controls); having a corrupt version of the mod (redownload it). Also try resetting both config files back to default.
 
 Q:"How do I use the mod?"
 A:By default, holding tilde ( ` ) with any pick/hammer will excavate the corresponding elements they target. The key must be set in the controls first! Additional settings and keybinds are available in the mod's configurations, take a peek!
@@ -86,6 +84,14 @@ A:Yes! as of v0.8.0, we have an API your mods can access when loaded together. V
 
 
 [h1] Recent Changelog [/h1]
+0.8.9
+ + Added a French Translation for the mod. A mega thank-you to Dulceeyt on Discord, as well as @Hazooloo for their feedback.
+
+0.8.8
+ ~ More minor fixes as better functionalities are implemented into tML
+ + Improved compatibility with some existing mods. If the mod didn't work before, try it again now!
+ + Added a Russian Translation for the mod. Huge thanks to @defoxza on Discord, as well as @berurinn and @spoonkuh for their feedback and efforts.
+
 0.8.7
  ~ Fixed an issue with modded ores not being mineable.
  + Updated to 1.4.4 compatibility.
@@ -104,23 +110,6 @@ A:Yes! as of v0.8.0, we have an API your mods can access when loaded together. V
 
 0.8.4
  ~ Refactored some core code to no longer trip on crashes from other mods. Mods will now correctly be faulted for crashes they cause. Not OE!
-
-0.8.3
- ~ Reworked whitelist naming conventions for modded entries (to save space). An auto-transfer tool was implemented to carry your existing lists over - but it might not work. Your white/blacklists might break!
- ~ Updated client configs to have all options above the long whitelist sections. People weren't scrolling!
- + Added an ore multiplier setting to the world configs. Grinding begone!
- + Reworked the auto-whitelist runner, it now caches data between mod updates instead of running each reload, and more - cutting off loading times by ~90%.
- + Added Calamity auto-whitelist support, with tiles like Sea Prisms.
- * Fixed an issue with mana costs being affected by negative mana values. Invalid mana setups are now exempt from checks.
- - Removed unbound keybind tooltips from irrelevant items. Oops!
-
-0.8.2
- ~ Ajusted the language of some areas of the mod.
- + Added a few extra tooltip and error messages to the mod.
- + The mod now respects player research, and will not consume fully researched items.
- * Fixed an issue where item tooltips would no longer show up. - Thanks @ba'alcipher#1544
- * Fixed an issue where dirt could not be used for swapping. - Thanks @AncientAlphaWarrior#2950
- - Blacklisted Sandstone tiles by default.
 
 
 See all changelogs here: https://steamcommunity.com/sharedfiles/filedetails/changelog/2565639705
