@@ -1,10 +1,10 @@
 # NOTICE TO TRANSLATORS
 # These are comments. These don't need translations, they're here for your context.
-# Only text within "examples" like this should be translated, everything is IDs and structure used by the mod.
+# Only text within "examples" like this should be translated, everything else is IDs and structure used by the mod.
 # Instances of numbers like {0} represent information passed by the mod - usually just an item name etc. They're included here so you can shift them around as languages require.
 # Instances of {$Mod.x.y.z} represent a value from another point of this file. Usually to reduce redundancy of re-translating similar phrases.
 # Instances of /n /t are special characters, newline and tab respectively. They are not errors. Please leave them when translating - they help space things out in-game.
-# Instances of [i/p0:236] represent Terraria Chat filters. These may either represent an icon, color, or combination thereof. Please leave them as is.
+# Instances of [i/p0:236] represent Terraria Chat filters. These may either represent an icon, color, or combination thereof. Please leave them as is for consistency with other languages.
 
 Mods: {
 	OreExcavator: {
@@ -145,7 +145,7 @@ Mods: {
 				# Used by the server when the client attempts to update server configs.
 				Changes: {
 					Remote: 接受更改 (原因：通过远程请求更改)
-					// NotHost: Rejected changes (Reason: You are not hostuu)
+					// NotHost: Rejected changes (Reason: You are not host)
 				}
 			}
 

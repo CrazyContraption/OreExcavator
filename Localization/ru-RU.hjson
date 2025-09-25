@@ -1,0 +1,745 @@
+# NOTICE TO TRANSLATORS
+# These are comments. These don't need translations, they're here for your context.
+# Only text within "examples" like this should be translated, everything else is IDs and structure used by the mod.
+# Instances of numbers like {0} represent information passed by the mod - usually just an item name etc. They're included here so you can shift them around as languages require.
+# Instances of {$Mod.x.y.z} represent a value from another point of this file. Usually to reduce redundancy of re-translating similar phrases.
+# Instances of /n /t are special characters, newline and tab respectively. They are not errors. Please leave them when translating - they help space things out in-game.
+# Instances of [i/p0:236] represent Terraria Chat filters. These may either represent an icon, color, or combination thereof. Please leave them as is for consistency with other languages.
+
+Mods: {
+	OreExcavator: {
+		Tile: Блок
+		Tiles: Блоки
+		Wall: Стена
+		Walls: Стены
+		Item: Предмет
+		Chain: Момент-
+
+		Keybind: {
+			None: Отсутствует привязка клавиш, привяжите их, чтобы использовать OreExcavator!
+			Enabled: Мульти-добыча руды включена
+			Disabled: Мульти-добыча руды отключена
+			Excavate: Мульти-добыча руды (Во время раскопки)
+			Whitelist: Белый список наведённых плиток/стен/предметов
+			UnWhitelist: Удалить из белого списка плитку/стену/предмет
+			MainActionWarning:
+				'''
+				{0}, привет! 
+				Мы обнаружили, что вы используете клавишу для добычи при мульти-добыче. Мы не рекомендуем это, но для защиты вашего мира мы отключили возможность использования других функций, кроме мульти добычи руды, обмен цепью и т.д.
+				В качестве альтернативы мы рекомендуем использовать ПКМ {1} для мульти-добычи! Попробуйте это сами!
+				После того, как вы отключите привязку клавиш с левой кнопки мыши, вы сможете в любое время вернуть эти функции, изменив настройки клиента.				
+				'''
+			NoBind:
+				'''
+				[{0}] - v{1}
+				Было обнаружено, что у вас нету привязки клавиш к этому моду, пожалуйста, зайдите в настройки и привяжите их, чтобы игровой процесс был комфортным для вас!
+				Мод не будет правильно функционировать, поэтому проверьте, назначены ли клавиши, прежде чем писать отчет об ошибке.
+				Вы можете найти соответствующие настройки клавиш по этому пути @ настройки > управление > управление модами (может быть чуть ниже чем остальные моды) > {0}: {$Mods.OreExcavator.KeyBinds.Excavate}
+				'''
+		}
+
+		Network: {
+			Added: "{0} добавил '{1}' в личный белый список"
+			Removed: "{0} удалил '{1}' из своего личного белого списка "
+		}
+
+		UI: {
+			# Item tooltips depending on context
+			Tooltips: {
+				HoldToExcavate: Удерживайте '{0}' для мульти-добычи!
+				HoldToPaint: Удерживайте  '{0}' для моментальной покраски!
+				HoldToPlace: Удерживайте '{0}' для моментальной разметки!
+				HoldToPlant: Удерживайте'{0}' для моментальной рассадки растений!
+				HoldToHarvest: Удерживайте '{0}' для моментального сбора урожая!
+				HoldToSwap: Удерживайте '{0}' для моментальной замены!
+				PressToWhitelist: Нажмите '{0}' над элементом, чтобы внести его в белый список!
+				Blacklisted: Этот элемент был внесён в черный список хостом сервера
+			}
+
+			# Cursor tooltips when excavations are active, depending on what is hovered
+			Mode: {
+				Excavating: Мульти-добыча
+				Painting: Красить
+				Placing: Разместить
+				Planting: Рассадка
+				Replacing: Замена
+			}
+		}
+
+		Whitelisting: {
+			# In English, this is a bit of a joke, feel free to make your own respective jokes in different languages. Please be respectful!
+			NoPlace: Дурачок ты, '{0}' ничего не размещает. Зачем ты пытаешься его добавить в белый список? Скажи мне, зачем?
+			Nothing: Ты не можешь добавить или удалить ничего! Наведи курсор на плитку, стену или предмет и попробуй снова!
+			AddOff: Ты в курсе, что у тебя выключен белый список, да? Но в любом случае, мы все равно добавим '{0}' для тебя!
+			RemoveOff: '''Ты же знаешь, что у тебя	отключен белый список, верно? В любом случае, мы удалим '{0}' для тебя!'''
+			Added: "'{0}'добавлен в ваш белый список"
+			# Often tacked onto the line above, when a blacklist is overriden on singleplayer
+			Ignore: ", Его черный список игнорируется на данной сессии"
+			Removed: "'{0}' удален из вашего белого списка."
+			Contains: "'{0}' не может перейти в белый список, так как он уже в нем находится."
+			Missing: "'{0}' не может быть удален из белого списка, так как он не находится в нем."
+			Blacklisted: "'{0}' не может быть подвергнут изменениям, поскольку его добавление в черный список осуществлено администратором сервера."
+			Override: Поскольку это одиночная игра, вы можете дважды нажать клавишу, чтобы переопределить ваш черный список для '{0}'"
+			ContactHost: Если вы считаете, что это ошибка, попросите администратора сервера удалить '{0}' из конфигурации черного списка сервера.
+		}
+
+		Logging: {
+			# Prefix for a lot of debug messages
+			Halted: Мульти-добыча прекращена
+
+			# Optional to translate, used by the mod to give debug feedback to players. Nice to have, but optional
+			Warnings: {
+				NoKey: "{$Mods.OreExcavator.Logging.Halted}: Не назначена клавиша для мульти-добычи."
+				PositionMismatch: "{$Mods.OreExcavator.Logging.Halted}: Несоответствие положения курсора и сервера — игрок слишком быстро перемещает курсор."
+				WhitelistFailed: "{$Mods.OreExcavator.Logging.Halted}: Проверка белого или черного списка не удалась."
+				TilePending: "{$Mods.OreExcavator.Logging.Halted}: Данные о местоположении уже обрабатываются!"
+
+				Server: {
+					DisabledExcavations: "{$Mods.OreExcavator.Logging.Halted}: Хост отключил мульти-добычу блоков по курсору."
+					DisabledHammer: "{$Mods.OreExcavator.Logging.Halted}: Хост отключил моментальную добычу стен по курсору."
+					DisabledSwap: "{$Mods.OreExcavator.Logging.Halted}: Хост отключил моментальную замену."
+					DisabledPlanting: "{$Mods.OreExcavator.Logging.Halted}: Хост отключил моментальную рассадку."
+					DisabledPainting: "{$Mods.OreExcavator.Logging.Halted}: Хост отключил моментальную покраску."
+				}
+
+				Client: {
+					DisabledExcavations: "{$Mods.OreExcavator.Logging.Halted}: У вас отключена мульти добыча блоков по курсору."
+					DisabledPlacing: "{$Mods.OreExcavator.Logging.Halted}: У вас отключена цепная разметка."
+					DisabledAlternatives: "{$Mods.OreExcavator.Logging.Halted}: У вас отключены альтернативные функции."
+					RejectSwapUnwhitelisted:
+						'''
+						"Отказано в моментальной замене '{0}', так как он не в вашем белом списке. Наведите курсор на предмет в инвентаре и нажмите '{1}' для запуска моментальной замены."
+
+
+
+
+
+
+						'''
+					RejectSwapBlacklisted: Отклонено цепное перемещение '{0}', так как оно находится в черном списке у хоста сервера.
+				}
+
+				TypeInvalid: "{$Mods.OreExcavator.Logging.Halted}: Недопустимый тип действия."
+				Blocked: "{$Mods.OreExcavator.Logging.Halted}: Действие было заблокировано другой плиткой."
+				Unaltered: "{$Mods.OreExcavator.Logging.Halted}:Местоположение не было изменено стандартной функцией или же действием."
+				DoesNotExist: "{$Mods.OreExcavator.Logging.Halted}: Местоположение либо не существует, либо не должно существовать."
+				NoPaint: "{$Mods.OreExcavator.Logging.Halted}: В инвентаре игрока отсутсвует краска."
+				BadOperation: "{$Mods.OreExcavator.Logging.Halted}: Попытка выполнить недопустимую операцию. Неопределенное поведение."
+				Unachored: "{$Mods.OreExcavator.Logging.Halted}: Местоположение не привязано, нет места для заливки."
+			}
+		}
+
+		Config: {
+			Common: {
+				Properties: Свойства
+				Blocks: Блоки
+				Walls: Стены
+				Items: Предметы
+				IconBuffer: " :"
+				HeaderBuffer: " -"
+				WorkInProgress:
+					'''
+
+
+					РАБОТА В ПРОЦЕССЕ!!
+					'''
+
+				Performance: {
+					Prefix: "\n\n"
+					NoImpact: "{$Mods.OreExcavator.Config.Common.Performance.Prefix} Не влияет на производительность."
+					SmallImpact: "{$Mods.OreExcavator.Config.Common.Performance.Prefix} Незначительно влияет на производительность при включении."
+					CanImpact: "{$Mods.OreExcavator.Config.Common.Performance.Prefix} Экстремальные значения могут ОТРИЦАТЕЛЬНО влиять на производительность."
+					DisableImproves: "{$Mods.OreExcavator.Config.Common.Performance.Prefix} Отключение этой функции может улучшить производительность."
+					EnableImproves: "{$Mods.OreExcavator.Config.Common.Performance.Prefix} Включение этой функции может улучшить производительность."
+				}
+
+				# Used by the server when the client attempts to update server configs.
+				Changes: {
+					Remote: Accepting changes (Reason:Запрошены изменения через удаленный хост.)
+					NotHost: Rejected changes (Reason: Вы не являетесь хостом.)
+				}
+			}
+
+			Server: {
+				Headers: {
+					Header: Настройки мира
+					Properties: "{$Mods.OreExcavator.Config.Server.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} Свойства"
+					Tiles: "{$Mods.OreExcavator.Config.Server.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} {$Mods.OreExcavator.Tiles}"
+					Walls: "{$Mods.OreExcavator.Config.Server.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} {$Mods.OreExcavator.Walls}"
+					Items: "{$Mods.OreExcavator.Config.Server.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} {$Mods.OreExcavator.Swapping}"
+				}
+
+				ShowWelcome: {
+					Label: "[i/p0:4792]{$Mods.OreExcavator.Config.Common.IconBuffer} Показать сообщение при запуске - переопределение сервера."
+					Description:
+						'''
+						Когда отключено, приветственные сообщения
+						 будут принудительно скрыты для всех клиентов сервера
+
+						  Новые версии НЕ включат эту функцию автоматически.
+						'''
+				}
+
+				RecursionLimit: {
+					Label: "[i/p0:18]{$Mods.OreExcavator.Config.Common.IconBuffer} Лимит модификации блоков"
+					Description:
+						'''
+						Задает максимальное количество плиток
+						 Изменяемое количество за одну выемку для ВСЕХ клиентов! 
+						 Будет использовано наименьшее ограничение между клиентом и сервером для каждого клиента. 
+						 Установите значение 0, чтобы отключить мод, или максимальное значение, чтобы позволить игрокам устанавливать свои собственные ограничения. {$Mods.OreExcavator.Config.Common.Performance.CanImpact}!
+						'''
+				}
+
+				AllowDiagonals: {
+					Label: "[i/p0:2799]{$Mods.OreExcavator.Config.Common.IconBuffer} Разрешить диагональный поиск"
+					Description:
+						'''
+						При включении, игрокам также будет разрешено
+						проверять совпадения от источника при поиске. {$Mods.OreExcavator.Config.Common.Performance.DisableImproves}!
+						'''
+				}
+
+				ChainSeeding: {
+					Label: "[i/p0:62]{$Mods.OreExcavator.Config.Common.IconBuffer} Разрешить моментальное размещение начального состояния"
+					Description: При включении игрокам будет разрешена моментальна рассадка. Не работает с саженцами (пока), только с травами.{$Mods.OreExcavator.Config.Common.Performance.SmallImpact}!
+				}
+
+				ChainPainting: {
+					Label: "[i/p0:1071]{$Mods.OreExcavator.Config.Common.IconBuffer} Разрешить моментальную покраску"
+					Description:
+						'''
+						При включении игрокам будет разрешено моментальное окрашивание больших областей. Потребляется как обычно - игнорирует распылитель краски. {$Mods.OreExcavator.Config.Common.Performance.SmallImpact}!
+
+						'''
+				}
+
+				ChainPlacing: {
+					Label: "[i/p0:2340]{$Mods.OreExcavator.Config.Common.IconBuffer} Разрешить моментальное размещение"
+					Description:
+						'''
+						При включении игрокам будет разрешено моментально размещение больших линий. 
+						Потребляет предметы как обычно. Работает для предметов, таких как веревки, рельсы, горшки, платформы и т.д. {$Mods.OreExcavator.Config.Common.Performance.SmallImpact}!
+						'''
+				}
+
+				AllowQuickWhitelisting: {
+					Label: "[i/p0:3186]{$Mods.OreExcavator.Config.Common.IconBuffer} Разрешить быстрые клавиши для белого списка"
+					Description: При включении, использование быстрых клавиш белого списка будет добавлять или удалять наведенные плитки, стены или предметы из их собственного белого списка. {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+				}
+
+				ManaConsumption: {
+					Label: "[i/p0:109]{$Mods.OreExcavator.Config.Common.IconBuffer} Множитель маны для мульти-добычи"
+					Description:
+						'''
+						При значениях выше 0, действия добычи будут потреблять ману пропорционально сложности и количеству выполненных действий. 
+						Значение 1 соответствует нормальному балансированию, а 0,5 делает базовые действия бесплатными. {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+						'''
+				}
+
+				OreMultiplier: {
+					Label: "[i/p0:11]{$Mods.OreExcavator.Config.Common.IconBuffer} Множитель руды"
+					Description:
+						'''
+						Умножает количество руды, получаемое при добыче.
+						Это применяется только к модовым рудам, определенным как Ores. Модовые руды должны работать нормально, если они правильно определены. 
+						Обычные плитки не затрагиваются. {$Mods.OreExcavator.Config.Common.Performance.DisableImproves}.
+						'''
+				}
+
+				TeleportLoot: {
+					Label: "[i/p0:5010]{$Mods.OreExcavator.Config.Common.IconBuffer} Перемещение добычи к игроку"
+					Description:
+						'''
+						При включении, добыча, добытая во время выемки, будет перемещена к игроку, который отдал команду на выемку(и).
+						НЕ РЕКОМЕНДУЕТСЯ ДЛЯ МУЛЬТИПЛЕЕРНЫХ СЕРВЕРОВ!! {$Mods.OreExcavator.Config.Common.Performance.DisableImproves}!
+						'''
+				}
+
+				SafeItems: {
+					Label: "[i/p0:193]{$Mods.OreExcavator.Config.Common.IconBuffer} Сделать добычу неуязвимой"
+					Description:
+						'''
+						 При включении, предметы, выпавшие при добыче, будут невосприимчивы к опасностям, 
+						 Это включает в себя такие вещи, как лава. 
+						 Но это также может быть рассмотрено как мошенничество...
+						 {$Mods.OreExcavator.Config.Common.Performance.EnableImproves}, 					 
+
+						 {$Mods.OreExcavator.Config.Common.WorkInProgress}
+						'''
+				}
+
+				CreativeMode: {
+					Label: "[i/p0:36]{$Mods.OreExcavator.Config.Common.IconBuffer} Творческий режим"
+					Description:
+						'''
+						При включении не будут выпадать предметы
+						Предметы не будут расходоваться, и сила добычи будет игнорироваться.
+						Но это также может быть рассмотрено как мошенничество... {$Mods.OreExcavator.Config.Common.WorkInProgress}
+						'''
+				}
+
+				AggressiveModCompatibility: {
+					Label: "[i/p0:3000]{$Mods.OreExcavator.Config.Common.IconBuffer} Использовать совместимость с модом 'Aggressive'"
+					Description:
+						'''
+						При включении будут проведены дополнительные проверки в попытке правильно связать модифицированные плитки, инструменты, 
+						стены и предметы {$Mods.OreExcavator.Config.Common.Performance.EnableImproves}  {$Mods.OreExcavator.Config.Common.WorkInProgress}
+						'''
+				}
+
+				AllowPickaxing: {
+					Label: "[i/p0:3509]{$Mods.OreExcavator.Config.Common.IconBuffer} Разрешить мульти-добычу киркой"
+					Description: При включении алгоритм добычи будет применяться к блокам при использовании подходящей кирки. {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+				}
+
+				TileBlacklistToggled: {
+					Label: "[i/p0:3497]{$Mods.OreExcavator.Config.Common.IconBuffer} Включить черный список блоков"
+					Description: " При включении, мир будет применять черный список блоков к игрокам. Отключите это, чтобы дать игрокам свободное управление белым списком блоков. {$Mods.OreExcavator.Config.Common.Performance.NoImpact}."
+				}
+
+				TileBlacklist: {
+					Label: "[i/p0:2697]{$Mods.OreExcavator.Config.Common.IconBuffer} Черный список блоков"
+					Description:
+						'''
+						Настройте этот список, чтобы вручную указать, какие блоки НЕ могут быть добыты мульти-добычей. 
+						Префикс определяет мод, которому они принадлежат. Белые списки игроков переопределяются. {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+						'''
+				}
+
+				AllowHammering: {
+					Label: "[i/p0:196]{$Mods.OreExcavator.Config.Common.IconBuffer} Разрешить мульти-добычу молотом"
+					Description: " При включении алгоритм добычи будет применяться к стенам при использовании подходящего молота. {$Mods.OreExcavator.Config.Common.Performance.NoImpact}."
+				}
+
+				WallBlacklistToggled: {
+					Label: "[i/p0:654]{$Mods.OreExcavator.Config.Common.IconBuffer} Включить черный список стен"
+					Description: Когда включено, мир будет принудительно применять черный список стен к игрокам. Отключите это, чтобы дать игрокам свободный контроль над белым списком стен. {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+				}
+
+				WallBlacklist: {
+					Label: "[i/p0:2698]{$Mods.OreExcavator.Config.Common.IconBuffer} Черный список стен"
+					Description:
+						'''
+						Настройте этот список, чтобы вручную указать, какие стены НЕ могут быть добыты мульти-добычей. 
+						Префикс определяет мод, которому они принадлежат. Белые списки игроков переопределяются. {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+						'''
+				}
+
+				AllowReplace: {
+					Label: "[i/p0:9]{$Mods.OreExcavator.Config.Common.IconBuffer} Разрешить замену блоков при добыче/мульти-добыче"
+					Description: При включении, алгоритм добычи/мульти-добычи будет разрешать замену блоков при замене плитки/стены. {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+				}
+
+				ItemBlacklistToggled: {
+					Label: "[i/p0:619]{$Mods.OreExcavator.Config.Common.IconBuffer} Включить черный список предметов"
+					Description: При включении сервер будет применять черный список предметов к игрокам. Отключите это, чтобы дать игрокам свободный контроль над белым списком предметов. {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+				}
+
+				ItemBlacklist: {
+					Label: "[i/p0:236]{$Mods.OreExcavator.Config.Common.IconBuffer} Черный список предметов"
+					Description: Если вы не знаете, что это такое, вам, вероятно, не следует этого трогать... Это управляет тем, какие предметы запрещены игроками для добавления в белый список. {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+				}
+			}
+
+			Client: {
+				Headers: {
+					Header: Настройки игрока
+					UI: "{$Mods.OreExcavator.Config.Client.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} Интерфейс"
+					Core: "{$Mods.OreExcavator.Config.Client.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} Ядро"
+					Tiles: "{$Mods.OreExcavator.Config.Client.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} {$Mods.OreExcavator.Tiles}"
+					Walls: "{$Mods.OreExcavator.Config.Client.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} {$Mods.OreExcavator.Walls}"
+					Items: "{$Mods.OreExcavator.Config.Client.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} {$Mods.OreExcavator.UI.Mode.Replacing}"
+					Controls: "{$Mods.OreExcavator.Config.Client.Headers.Header}{$Mods.OreExcavator.Config.Common.HeaderBuffer} Управление"
+				}
+
+				ShowWelcome: {
+					Label: "[i/p0:4792]{$Mods.OreExcavator.Config.Common.IconBuffer} Показать сообщение при запуске"
+					Description:
+						'''
+						Когда отключено, приветственные сообщения будут скрыты для этой версии мода.
+
+						                  Новые версии будут снова включать эту функцию.
+						'''
+				}
+
+				ShowCursorTooltips: {
+					Label: "[i/p0:5075]{$Mods.OreExcavator.Config.Common.IconBuffer} Показать всплывающую подсказку для добычи"
+					Description:
+						'''
+						Когда отключено, удерживание клавиши добычи больше не будет отображать контекстную подсказку.
+						Пожалуйста, включите это перед сообщением об ошибках!
+						'''
+				}
+
+				ShowItemTooltips: {
+					Label: "[i/p0:267]{$Mods.OreExcavator.Config.Common.IconBuffer} Показывать всплывающие подсказки для предметов"
+					Description:
+						'''
+						Когда отключено, предметы, стены и плитки больше не будут отображать контекстную подсказку.
+						Пожалуйста, включите это перед сообщением об ошибках
+						'''
+				}
+
+				ReducedEffects: {
+					Label: "[i/p0:150]{$Mods.OreExcavator.Config.Common.IconBuffer} Сокращенные эффекты"
+					Description:
+						'''
+						Имеется задержка? При отключении мод попытается работать в сокращенном режиме, обеспечивая лучшую графическую производительность.
+						Функционально это ничего не изменит, за исключением косметических различий.
+						'''
+				}
+
+				RefillMana: {
+					Label: "[i/p0:555]{$Mods.OreExcavator.Config.Common.IconBuffer} Автоматическое использование зелий маны для добычи"
+					Description: При включении и включенных требованиях к мане в мире, мод должен попытаться пополнить ваш запас маны, если вы его исчерпаете. {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+				}
+
+				DoDebugStuff: {
+					Label: "[i/p0:37]{$Mods.OreExcavator.Config.Common.IconBuffer} Показать журналы отладки"
+					Description:
+						'''
+						Когда отключено, отладочные журналы будут скрыты. Включите это, если у вас возникают проблемы с пониманием мода.
+						      		    Пожалуйста, включите это перед сообщением об ошибках!
+						'''
+				}
+
+				RecursionLimit: {
+					Label: '''[i/p0:18]{$Mods.OreExcavator.Config.Common.IconBuffer} 	Предел модификации блоков'''
+					Description: Определяет максимальное количество плиток, которые можно изменить за одну добычу. Большие значения негативно скажутся на производительности!
+				}
+
+				DoDiagonals: {
+					Label: "[i/p0:2799]{$Mods.OreExcavator.Config.Common.IconBuffer} Включить диагональный поиск"
+					Description: При включении алгоритм добычи также будет проверять совпадения напрямую по диагонали от себя. Отключение этого УЛУЧШИТ производительность!
+				}
+
+				RecursionDelay: {
+					Label: "[i/p0:3099]{$Mods.OreExcavator.Config.Common.IconBuffer} Задержка при разрушении блоков"
+					Description:
+						'''
+						Задержка в миллисекундах между разрушениями блоков. 
+						Большие значения могут улучшить производительность!
+						'''
+				}
+
+				InititalChecks: {
+					Label: "[i/p0:321]{$Mods.OreExcavator.Config.Common.IconBuffer} Выполнить начальные проверки белого списка"
+					Description:
+						'''
+						При включении алгоритм проверяет белые и черные списки ПЕРЕД попыткой добычи, когда связан с правой кнопкой мыши. 
+						Это имеет небольшое влияние на производительность, но может обеспечить более стабильное поведение! {$Mods.OreExcavator.Config.Common.Performance.SmallImpact}
+						   
+						'''
+				}
+
+				TileWhitelistAll: {
+					Label: "[i/p0:3509]{$Mods.OreExcavator.Config.Common.IconBuffer} Добавить все плитки в белый список"
+					Description: При включении все плитки будут добавлены в белый список по умолчанию. {$Mods.OreExcavator.Config.Common.Performance.EnableImproves}!
+				}
+
+				TileWhitelist: {
+					Label: "[i/p0:2695]{$Mods.OreExcavator.Config.Common.IconBuffer} Белый список плиток"
+					Description:
+						'''
+						Настройте этот список, чтобы вручную указать, какие плитки могут быть добыты цепной добычей.
+						Префикс определяет мод которому они принадлежат. Также подчиняется черному списку хоста.
+						{$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+						'''
+				}
+
+				WallWhitelistAll: {
+					Label: "[i/p0:196]{$Mods.OreExcavator.Config.Common.IconBuffer} Добавить все стены в белый список"
+					Description: При включении все стены будут добавлены в белый список по умолчанию. {$Mods.OreExcavator.Config.Common.Performance.EnableImproves}!
+				}
+
+				WallWhitelist: {
+					Label: "[i/p0:2696]{$Mods.OreExcavator.Config.Common.IconBuffer} Белый список стен"
+					Description: Настройте этот список, чтобы вручную указать, какие стены могут быть добыты цепной добычей. Префикс определяет мод, которому они принадлежат. Также подчиняется черному списку хоста {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+				}
+
+				ItemWhitelistAll: {
+					Label: "[i/p0:9]{$Mods.OreExcavator.Config.Common.IconBuffer} Добавить все предметы в белый список"
+					Description: При включении все предметы будут добавлены в белый список по умолчанию. {$Mods.OreExcavator.Config.Common.Performance.EnableImproves}!
+				}
+
+				ItemWhitelist: {
+					Label: "[i/p0:38]{$Mods.OreExcavator.Config.Common.IconBuffer} Белый список предметов"
+					Description:
+						'''
+						Настройте этот список, чтобы вручную указать, какие предметы могут быть моментально заменены. 
+						Префикс определяет мод, которому они принадлежат. Также подчиняется черному списку хоста. {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+						'''
+				}
+
+				ToggleExcavations: {
+					Label: "[i/p0:513]{$Mods.OreExcavator.Config.Common.IconBuffer} Назначение клавиш для переключения режима добычи"
+					Description: При включении нажатие клавиши переключит активное состояние начала добычи. {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+				}
+
+				ReleaseCancelsExcavations: {
+					Label: "[i/p0:166]{$Mods.OreExcavator.Config.Common.IconBuffer} Отменить мульти-добычу при отпускании клавиши"
+					Description:
+						'''
+						При включении, отпускание клавиши управления добычей прекратит все операции добычи.	
+						НЕ РЕКОМЕНДУЕТСЯ НА МНОГОПОЛЬЗОВАТЕЛЬСКИХ СЕРВЕРАХ!! {$Mods.OreExcavator.Config.Common.Performance.NoImpact}.
+						'''
+				}
+
+				DoSpecials: {
+					Label: "[i/p0:3230]{$Mods.OreExcavator.Config.Common.IconBuffer} Включить альтернативные функции"
+					Description:
+						'''
+						При включении клиент разрешит особые действия без мульти-добычи. Отключите это, если не планируете использовать эти функции или привязываете добычу к Mouse1
+						Умеренно влияет на производительность!
+						'''
+				}
+
+				Keybind: {
+					Label: "[g:25]{$Mods.OreExcavator.Config.Common.IconBuffer} Ищете свою клавишу"
+					Description: Установите свою клавишу в разделе управления игрой. Здесь она просто для отображения и для тех, кто запутался.
+				}
+
+				ModVersions: {
+					Label: "[g:3095]{$Mods.OreExcavator.Config.Common.IconBuffer} Совместимые версии мода"
+					Description:
+						'''
+						Определяет последнюю сохраненную версию модифицированного контента. Используется модом внутренне для определения момента перепроверки наличия новых руд и т.д.
+						 УДАЛИТЕ МЕНЯ ДЛЯ ПРИНУДИТЕЛЬНОЙ СИНХРОНИЗАЦИИ ДЛЯ ЛЮБЫХ/ВСЕХ МОДОВ
+						'''
+				}
+			}
+		}
+
+		Keybinds: {
+			Excavate.DisplayName: Мульти-добыча
+			Whitelist.DisplayName: Белый список
+			UnWhitelist.DisplayName: Убрать из белого списка
+		}
+
+		Configs: {
+			OreExcavatorConfig_Client: {
+				DisplayName: Конфиг игрока
+
+				showWelcome080: {
+					Label: "{$Mods.OreExcavator.Config.Client.ShowWelcome.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.ShowWelcome.Description}"
+				}
+
+				showCursorTooltips: {
+					Label: "{$Mods.OreExcavator.Config.Client.ShowCursorTooltips.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.ShowCursorTooltips.Description}"
+				}
+
+				showItemTooltips: {
+					Label: "{$Mods.OreExcavator.Config.Client.ShowItemTooltips.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.ShowItemTooltips.Description}"
+				}
+
+				reducedEffects: {
+					Label: "{$Mods.OreExcavator.Config.Client.ReducedEffects.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.ReducedEffects.Description}"
+				}
+
+				refillMana: {
+					Label: "{$Mods.OreExcavator.Config.Client.RefillMana.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.RefillMana.Description}"
+				}
+
+				doDebugStuff: {
+					Label: "{$Mods.OreExcavator.Config.Client.DoDebugStuff.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.DoDebugStuff.Description}"
+				}
+
+				recursionLimit: {
+					Label: "{$Mods.OreExcavator.Config.Client.RecursionLimit.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.RecursionLimit.Description}"
+				}
+
+				doDiagonals: {
+					Label: "{$Mods.OreExcavator.Config.Client.DoDiagonals.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.DoDiagonals.Description}"
+				}
+
+				recursionDelay: {
+					Label: "{$Mods.OreExcavator.Config.Client.RecursionDelay.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.RecursionDelay.Description}"
+				}
+
+				inititalChecks: {
+					Label: "{$Mods.OreExcavator.Config.Client.InititalChecks.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.InititalChecks.Description}"
+				}
+
+				toggleExcavations: {
+					Label: "{$Mods.OreExcavator.Config.Client.ToggleExcavations.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.ToggleExcavations.Description}"
+				}
+
+				releaseCancelsExcavations: {
+					Label: "{$Mods.OreExcavator.Config.Client.ReleaseCancelsExcavations.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.ReleaseCancelsExcavations.Description}"
+				}
+
+				doSpecials: {
+					Label: "{$Mods.OreExcavator.Config.Client.DoSpecials.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.DoSpecials.Description}"
+				}
+
+				tileWhitelistAll: {
+					Label: "{$Mods.OreExcavator.Config.Client.TileWhitelistAll.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.TileWhitelistAll.Description}"
+				}
+
+				tileWhitelist: {
+					Label: "{$Mods.OreExcavator.Config.Client.TileWhitelist.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.TileWhitelist.Description}"
+				}
+
+				wallWhitelistAll: {
+					Label: "{$Mods.OreExcavator.Config.Client.WallWhitelistAll.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.WallWhitelistAll.Description}"
+				}
+
+				wallWhitelist: {
+					Label: "{$Mods.OreExcavator.Config.Client.WallWhitelist.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.WallWhitelist.Description}"
+				}
+
+				itemWhitelistAll: {
+					Label: "{$Mods.OreExcavator.Config.Client.ItemWhitelistAll.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.ItemWhitelistAll.Description}"
+				}
+
+				itemWhitelist: {
+					Label: "{$Mods.OreExcavator.Config.Client.ItemWhitelist.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.ItemWhitelist.Description}"
+				}
+
+				modVersions: {
+					Label: mod Versions
+					Tooltip: ""
+				}
+
+				keybind: {
+					Label: "{$Mods.OreExcavator.Config.Client.Keybind.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Client.Keybind.Description}"
+				}
+			}
+
+			OreExcavatorConfig_Server: {
+				DisplayName: "{$Mods.OreExcavator.Config.Server.Headers.Header}"
+
+				showWelcome: {
+					Label: "{$Mods.OreExcavator.Config.Server.ShowWelcome.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.ShowWelcome.Description}"
+				}
+
+				recursionLimit: {
+					Label: "{$Mods.OreExcavator.Config.Server.RecursionLimit.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.RecursionLimit.Description}"
+				}
+
+				allowDiagonals: {
+					Label: "{$Mods.OreExcavator.Config.Server.AllowDiagonals.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.AllowDiagonals.Description}"
+				}
+
+				chainPlacing: {
+					Label: "{$Mods.OreExcavator.Config.Server.ChainPlacing.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.ChainPlacing.Description}"
+				}
+
+				chainSeeding: {
+					Label: "{$Mods.OreExcavator.Config.Server.ChainSeeding.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.ChainSeeding.Description}"
+				}
+
+				chainPainting: {
+					Label: "{$Mods.OreExcavator.Config.Server.ChainPainting.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.ChainPainting.Description}"
+				}
+
+				allowQuickWhitelisting: {
+					Label: "{$Mods.OreExcavator.Config.Server.AllowQuickWhitelisting.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.AllowQuickWhitelisting.Description}"
+				}
+
+				manaConsumption: {
+					Label: "{$Mods.OreExcavator.Config.Server.ManaConsumption.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.ManaConsumption.Description}"
+				}
+
+				oreMultiplier: {
+					Label: "{$Mods.OreExcavator.Config.Server.OreMultiplier.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.OreMultiplier.Description}"
+				}
+
+				teleportLoot: {
+					Label: "{$Mods.OreExcavator.Config.Server.TeleportLoot.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.TeleportLoot.Description}"
+				}
+
+				safeItems: {
+					Label: "{$Mods.OreExcavator.Config.Server.SafeItems.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.SafeItems.Description}"
+				}
+
+				creativeMode: {
+					Label: "{$Mods.OreExcavator.Config.Server.CreativeMode.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.CreativeMode.Description}"
+				}
+
+				aggressiveModCompatibility: {
+					Label: "{$Mods.OreExcavator.Config.Server.AggressiveModCompatibility.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.AggressiveModCompatibility.Description}"
+				}
+
+				allowPickaxing: {
+					Label: "{$Mods.OreExcavator.Config.Server.AllowPickaxing.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.AllowPickaxing.Description}"
+				}
+
+				tileBlacklistToggled: {
+					Label: "{$Mods.OreExcavator.Config.Server.TileBlacklistToggled.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.TileBlacklistToggled.Description}"
+				}
+
+				tileBlacklist: {
+					Label: "{$Mods.OreExcavator.Config.Server.TileBlacklist.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.TileBlacklist.Description}"
+				}
+
+				allowHammering: {
+					Label: "{$Mods.OreExcavator.Config.Server.AllowHammering.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.AllowHammering.Description}"
+				}
+
+				wallBlacklistToggled: {
+					Label: "{$Mods.OreExcavator.Config.Server.WallBlacklistToggled.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.WallBlacklistToggled.Description}"
+				}
+
+				wallBlacklist: {
+					Label: "{$Mods.OreExcavator.Config.Server.WallBlacklist.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.WallBlacklist.Description}"
+				}
+
+				allowReplace: {
+					Label: "{$Mods.OreExcavator.Config.Server.AllowReplace.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.AllowReplace.Description}"
+				}
+
+				itemBlacklistToggled: {
+					Label: "{$Mods.OreExcavator.Config.Server.ItemBlacklistToggled.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.ItemBlacklistToggled.Description}"
+				}
+
+				itemBlacklist: {
+					Label: "{$Mods.OreExcavator.Config.Server.ItemBlacklist.Label}"
+					Tooltip: "{$Mods.OreExcavator.Config.Server.ItemBlacklist.Description}"
+				}
+			}
+		}
+	}
+}
